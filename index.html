@@ -3469,10 +3469,14 @@
           cta_text.length > 0
         );
 
+        // Oddly specific square rules
         const square_force_button_bottom_right =
           canvas_content.orientation == "square" &&
           canvas_content.portal_size_percent > 30 &&
-          canvas_content.text_bottom_aligned == false;
+          canvas_content.text_bottom_aligned == false &&
+          (canvas_content.portal_side == "top" ||
+            canvas_content.portal_side == "bottom");
+
         // Check if button is out of bounds
         var button_overlapping_logo = false;
         var button_bottom_right = false;
