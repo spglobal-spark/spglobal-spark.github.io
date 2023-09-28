@@ -1,0 +1,131 @@
+Glitches:
+Sometimes the SLIDER Doesnt register on the first slide
+
+Need to be able to set the minimum width to the minimum width of the word in the body, headline, and button (calculate_headline_minimum_container_width())
+
+Spark Social
+
+TO DO NEXT
+-- Solve for single sign on
+-- See if we can use Github
+
+
+Notes:
+Password protected — Check "The199"
+------------- Changed the minimum font size
+-- Solve for ONLY SOCIAL MEDIA sizes. Limit all other sizes
+---- TURN OFF HORIZONTAL 50-50 layouts on verticals -- DONE
+-- Tooltips on hover (As a tutorial) on the main menu. Identify what the button does -- DONE
+----- Toggle on and off description visibility
+----- Toggle on and off button visiibility
+-- LIMIT DOUBLE PORTAL to 70% SCALE
+-- No margins on portrait single images
+-- Remove "GENERATE RANDOM COPY"
+-- Would like the background color selector be a THEME selector to be cards that show the background color and font color
+-- Check if you are exceeding the WIDTH of the text box and issue error
+-- Uploading TEMPLATES created a weird scenario
+-- Spellcheck -- https://github.com/brandonaaron/jquery-spellcheck/blob/master/test.html
+
+
+Text to the RIGHT of the logo for ultra wide formats
+-- Text is vertically centered
+-- Button is bottom right side
+
+canvas_content.logo_offset_text = false;
+
+how
+Add toggle button for centered text.  --- LATER Only on horizontal canvases
+Calculate the size of the logo
+Calculate the size of the button -- THIS IS A CHALLENGE. I have to calculate the button size after calculating the headline size
+
+
+Calculate the height of the canvas minus the margins
+
+Calculate the vertical center of the headline + description or just headline
+
+Now need to center the text below the button text section
+
+render_text()
+canvas_content.vertically_centered_text
+
+
+------------------------------------------
+
+
+When canvas_content.button_style == "none" — There should be a icon you can set to make it look clickable. Ie like caret CTA > or a plus CTA +
+Button color set to red as an option?
+
+Dynamic character count should
+--- For the headline calculate how many characters can fit as the headline with no other copy
+--- For description calculate how many characters can fit based on the description size
+--- Consider how much space the text is taking up. Does it look absurd?
+--- For CTA calculate based on remaining available spaces
+------ Can if fit in the width of the text box
+------ Can it fit below the text without exceeding the height of the textbox safe space
+------ Can it fit in the bottom right hand corner
+
+70% text container width -- should be — Canvas is square or landscape. Width is greater than 1080
+Do not think we should always downgrade the size of the button copy when the headline is shrunk
+
+CTAs need character limits
+Need to calculate the max number of characters based on the available space
+Need to calculate when the text should be vertically centered
+Need to limit the number of image sizes you can set based on the size of the canvas
+Need to limit where the portal can be located based on the canvas size
+Toggle button visiibility
+Toggle description visibility
+CTAs could be dropdowns
+Need to calculate the available SPACE to the right of the LOGO — Check if its an option for the CTA
+Add an additional MARGIN to the right of the text box when there is an image on the right and space allows for it, so that the description or headline don't get uncomfortablity closePath
+Add auto-balance text to the body copy?
+
+Auto capitalize, font size, can all be smaller buttons
+
+------
+
+- Need option for vertical or horizontal text alignment.
+- Need to be able to set character limits and show how much you have left in the editor panels
+- Button or text should never exceed available visual space -- HIDE IT and WARN if it does
+- Consider hiding buttons when they go off screen; perform collision checks.
+= Identify appropriate layouts for specific content cases; hide text boxes when they are not suitable.
+- Improve AI recognition of the logo's size and location, and understand its impact on the text.
+
+-------------------------------------- NOTES --------------------------------------
+
+
+
+
+Objectives
+-- Logo
+---- Need to create custom breakpoints for determining logo size like I did for the fonts
+
+-- Copy
+---- Character count limits — Red warnings when text overlaps / collides with logo
+
+-- Layouts
+---- Text & Logo & Button placement
+
+
+
+
+Downscaling image code
+https://stackoverflow.com/questions/18922880/html5-canvas-resize-downscale-image-high-quality#:~:text=To%20downsample%20an%20image%2C%20we,its%20value%20for%20the%20destination.
+
+STRETCH GOALS
+
+-- Prevent S&P Global being split with _ underscore, then merge back to S&P Global after
+-- HEADLINE Left DESCRIPTION Right (A design option that should exist) -- Super rare occurence so can be ignored for now
+Styles
+---- Seek & Prosper
+-------- Seek & Prosper text highlighting
+---- CI Event -- ADD EVENT NAME
+---- Podcast
+-- Speakers*
+-- Hide portal should be a separate toggle switch?
+--- CI Events content with the Event Names
+
+Scope creep
+-- Automatic capitalization of divisions, products, countries
+-- Force best practices through the interface
+-- Image library integration through he media portal
+-- Keep track of content created and who created it (Maybe in the future)
