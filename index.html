@@ -3473,7 +3473,10 @@
         var button_overlapping_logo = false;
         var button_bottom_right = false;
         // Check if the button is outside of the bounds
-        if (button_outside_bounds == true) {
+        if (
+          button_outside_bounds == true ||
+          canvas_content.orientation == "square"
+        ) {
           // Render the button in the bottom right hand corner
           button_position_y =
             canvas_content.marginBottom - button_properties.height;
@@ -3560,7 +3563,10 @@
           button_overlapping_logo = false;
           button_bottom_right = false;
           // Check if the button is outside of the bounds
-          if (button_outside_bounds == true) {
+          if (
+            button_outside_bounds == true ||
+            canvas_content.orientation == "square"
+          ) {
             // Render the button in the bottom right hand corner
             button_position_y =
               canvas_content.marginBottom - button_properties.height;
