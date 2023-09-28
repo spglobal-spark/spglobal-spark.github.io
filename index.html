@@ -3469,14 +3469,15 @@
           cta_text.length > 0
         );
 
+        const square_force_button_bottom_right =
+          canvas_content.orientation == "square" &&
+          canvas_content.portal_size_percent > 30 &&
+          canvas_content.text_bottom_aligned == false;
         // Check if button is out of bounds
         var button_overlapping_logo = false;
         var button_bottom_right = false;
         // Check if the button is outside of the bounds
-        if (
-          button_outside_bounds == true ||
-          canvas_content.orientation == "square"
-        ) {
+        if (button_outside_bounds == true || square_force_button_bottom_right) {
           // Render the button in the bottom right hand corner
           button_position_y =
             canvas_content.marginBottom - button_properties.height;
@@ -3565,7 +3566,7 @@
           // Check if the button is outside of the bounds
           if (
             button_outside_bounds == true ||
-            canvas_content.orientation == "square"
+            square_force_button_bottom_right
           ) {
             // Render the button in the bottom right hand corner
             button_position_y =
