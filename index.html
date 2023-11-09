@@ -2242,7 +2242,7 @@
           if (canvas_content.background_color == spglobal_colors.black) {
             add_label_to_inside_tools_container("Call to action");
             let select_position = create_dropdown_menu(
-              ["white", "red"],
+              ["white", "red", "yellow"],
               "button_color",
               canvas_content.button_color
             );
@@ -3030,6 +3030,12 @@
 
         svgElement.getElementById("Wordmark").style.fill =
           canvas_content.color_wordmark;
+
+        // Exception for yellow
+        if (canvas_content.button_color == "yellow") {
+          svgElement.getElementById("Wordmark").style.fill =
+            spglobal_colors.white;
+        }
 
         // Set to solid color if the canvas image fills the entire screen
         if (is_fullscreen_image()) {
