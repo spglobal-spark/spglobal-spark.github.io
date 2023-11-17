@@ -888,6 +888,13 @@
 
     <!-- Application Scripts -->
     <script>
+      if (window !== window.top) {
+        // If the page is inside an iframe
+        console.log("This page is being viewed within an iframe.");
+        // You can take actions here, such as redirecting the page
+        // window.location.href = "https://example.com";
+      }
+
       /* Application starts */
       var canvas, ctx;
 
