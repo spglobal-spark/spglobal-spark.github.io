@@ -880,7 +880,7 @@
           // Create a reference to the Collection and Document
           //const docRef = db.collection("Download-Data").doc("Download-Data-ID");
           const docRef = addDoc(
-            collection(db, "Download-Data"),
+            collection(db, "Download-" + retrievedDataObject.download),
             retrievedDataObject
           );
         });
@@ -1388,6 +1388,7 @@
 
         // Your data object
         var data_object = {
+          download: "PNG",
           timestamp: new Date().toString(),
           project_name: my_project_name,
           headline: canvas_content.headline,
@@ -2055,6 +2056,32 @@
             var filename = prompt("Enter the filename");
             if (filename) {
               downloadAsJson(filename);
+
+              // Your data object
+              var data_object = {
+                download: "JSON",
+                timestamp: new Date().toString(),
+                project_name: filename,
+                headline: canvas_content.headline,
+                description: canvas_content.body,
+                cta: canvas_content.button,
+                logo: canvas_content.logo.name,
+                orientation: canvas_content.orientation,
+                portal_size: canvas_content.portal_size_percent,
+                portal_count: canvas_content.portal_count,
+                background_color: canvas_content.background_color,
+                canvas_width: canvas_content.canvas_width,
+                canvas_height: canvas_content.canvas_height,
+              };
+
+              // Convert object to JSON string
+              var jsonString = JSON.stringify(data_object);
+
+              // Update the HTML content of the "data-container" div
+              document.getElementById("data-container").innerHTML = jsonString;
+
+              // Click the send data button
+              document.getElementById("firebase-data-button").click();
             }
           }
         }
@@ -2473,7 +2500,7 @@
 
           let download_label = found_errors
             ? "Fix errors before downloading"
-            : "Download PNG";
+            : "Download Image (.PNG)";
           let download_button = add_button_to_inside_tools_container(
             download_label,
             "download_template"
@@ -2488,11 +2515,11 @@
 
           add_label_to_inside_tools_container("SAVE YOUR DESIGN");
           add_button_to_inside_tools_container(
-            "Save File (.JSON)",
+            "Save Editable File (.JSON)",
             "save_template"
           );
           add_button_to_inside_tools_container(
-            "Open File (.JSON)",
+            "Open Editable File (.JSON)",
             "import_template"
           );
         }
