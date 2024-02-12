@@ -235,6 +235,13 @@
         pointer-events: none;
       }
 
+      .toolbox_fixed_width_button {
+        width: 36px;
+        display: inline-block;
+        margin-right: 4px;
+        text-align: center;
+      }
+
       .toolbox_expanded_label {
         padding: 11px 0;
         width: 100%;
@@ -772,6 +779,31 @@
         </svg>
         <span class="tooltiptext">Logo</span>
       </button>
+      <!-- Speaker -->
+
+      <button
+        class="toolbox_button"
+        name="event_button"
+        onclick="pressed_toolbox_button(this.name)"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="25"
+          height="20"
+          viewBox="0 0 25 20"
+        >
+          <path
+            id="Path_11107"
+            data-name="Path 11107"
+            d="M3.125-5a.625.625,0,0,1,.625-.625A.625.625,0,0,1,4.375-5a.625.625,0,0,1-.625.625A.625.625,0,0,1,3.125-5ZM6.25-5A2.5,2.5,0,0,0,5-7.165a2.5,2.5,0,0,0-2.5,0A2.5,2.5,0,0,0,1.25-5,2.5,2.5,0,0,0,2.5-2.835a2.5,2.5,0,0,0,2.5,0A2.5,2.5,0,0,0,6.25-5ZM7.5,2.5,6.25-1.25h-5L0,2.5ZM11.875-5a.625.625,0,0,1,.625-.625A.625.625,0,0,1,13.125-5a.625.625,0,0,1-.625.625A.625.625,0,0,1,11.875-5ZM15-5a2.5,2.5,0,0,0-1.25-2.165,2.5,2.5,0,0,0-2.5,0A2.5,2.5,0,0,0,10-5a2.5,2.5,0,0,0,1.25,2.165,2.5,2.5,0,0,0,2.5,0A2.5,2.5,0,0,0,15-5Zm1.25,7.5L15-1.25H10L8.75,2.5Zm5-8.125A.625.625,0,0,1,21.875-5a.625.625,0,0,1-.625.625A.625.625,0,0,1,20.625-5,.625.625,0,0,1,21.25-5.625Zm0,3.125a2.5,2.5,0,0,0,2.165-1.25,2.5,2.5,0,0,0,0-2.5A2.5,2.5,0,0,0,21.25-7.5a2.5,2.5,0,0,0-2.165,1.25,2.5,2.5,0,0,0,0,2.5A2.5,2.5,0,0,0,21.25-2.5Zm2.5,1.25h-5L17.5,2.5H25ZM21.875-8.7a3.717,3.717,0,0,1,1.875.9v-9.7H1.25v9.7a3.749,3.749,0,0,1,1.875-.9v-6.926h18.75Z"
+            transform="translate(0 17.5)"
+            fill="#707070"
+          />
+        </svg>
+
+        <span class="tooltiptext">Event</span>
+      </button>
+
       <!-- Help -->
       <button
         class="toolbox_button"
@@ -970,6 +1002,17 @@
       canvas_content.body_visibility = true;
       canvas_content.button_visibility = false;
 
+      // Textbox
+      var last_active_textbox = "input_headline";
+      var headline_character_limit = 65;
+      var body_character_limit = 175;
+      var button_character_limit = 24;
+
+      // Event
+      canvas_content.event_name = "";
+      canvas_content.speaker_name = "";
+      canvas_content.speaker_title = "";
+
       // Downscaled images
       temp_portal_downscaled_image = [null, null];
       temp_portal_image = [];
@@ -986,6 +1029,7 @@
       canvas_content.portal_image_scale = [0, 0];
       canvas_content.portal_image_src = [];
       canvas_content.portal_focal_point = [];
+
       // Set focal point defaults
       for (var i = 0; i < 2; i++) {
         canvas_content.portal_focal_point[i] = {
@@ -1000,8 +1044,9 @@
 
       const template_sizes = [
         "1200x628 Landscape",
-        "1200x1200 Square (Instagram)",
+        "1200x1200 Square",
         "628x1200 Portrait",
+        "800x418 Landscape",
         /* "1920x1080 [Desktop] Landscape",
                     "1080x1920 [Desktop] Portrait", */
       ];
@@ -1231,10 +1276,12 @@
       // Functions
       function create_canvas() {
         // Check password
+        /*
         if (username == "") {
           alert("Please provide a username");
           return;
         }
+        */
         let width, height;
 
         // If there is no width available go to the saved data
@@ -1585,12 +1632,6 @@
           return;
         }
 
-        addAccordion(
-          "Portals",
-          "Can upload up to two images to be visible on the canvas. \nThe blue dot over the image represents the focal point. The canvas will try to automatically center the image around the focal point. \nMargins can be added to single portal images in the Layout Panel. \nImages may take a while to load, while they are processing a blue progress loading bar can be seen at the top of the application.",
-          false
-        );
-
         // Brand Image Library
         const brandImagesButton = document.createElement("button");
         brandImagesButton.style.marginTop = "8px";
@@ -1602,7 +1643,15 @@
             "_blank"
           );
         });
-        container.appendChild(brandImagesButton);
+        //container.appendChild(brandImagesButton);
+
+        addAccordion(
+          "Portals",
+          "Can upload up to two images to be visible on the canvas. \nThe blue dot over the image represents the focal point. The canvas will try to automatically center the image around the focal point. \nMargins can be added to single portal images in the Layout Panel. \nImages may take a while to load, while they are processing a blue progress loading bar can be seen at the top of the application. \nFind on brand images:",
+          false,
+          "0px",
+          brandImagesButton
+        );
 
         add_label_to_inside_tools_container("Add Image");
 
@@ -1845,12 +1894,19 @@
       }
 
       // Add buttons
-      function add_button_to_inside_tools_container(label_string, name = "") {
+      function add_button_to_inside_tools_container(
+        label_string,
+        name = "",
+        inline_fixed_width = false
+      ) {
         const insideToolsContainer = document.querySelector(
           ".inside_tools_container"
         );
         const button = document.createElement("button");
         button.className = "toolbox_expanded_button";
+        if (inline_fixed_width) {
+          button.classList.add("toolbox_fixed_width_button");
+        }
         button.textContent = label_string;
         button.name = name;
         console.log(button.textContent);
@@ -1865,7 +1921,8 @@
         closedStateCopy,
         openStateCopy,
         isOpen,
-        setMarginTop = "0px"
+        setMarginTop = "0px",
+        addButton = undefined
       ) {
         // Create a new accordion element
         const accordion = document.createElement("div");
@@ -1910,6 +1967,11 @@
         // Append title and content to the accordion
         accordion.appendChild(title);
         accordion.appendChild(content);
+
+        // Add button
+        if (addButton != undefined) {
+          content.appendChild(addButton);
+        }
 
         // Add the accordion to the side panel
         const sidePanel = document.querySelector(".inside_tools_container");
@@ -1998,27 +2060,52 @@
         let button_label = event.target.name;
 
         if (button_label == "input_headline") {
-          update_character_limit_inputbox(event.target, 65); // Max recommended headline length
+          last_active_textbox = button_label;
+          update_character_limit_inputbox(
+            event.target,
+            headline_character_limit
+          ); // Max recommended headline length
           canvas_content.headline = event.target.value;
           calculate_headline_minimum_container_width();
         }
 
         if (button_label == "input_body") {
-          update_character_limit_inputbox(event.target, 150); // Max recommended body length
+          last_active_textbox = button_label;
+          update_character_limit_inputbox(event.target, body_character_limit); // Max recommended body length
           canvas_content.body = event.target.value;
         }
 
         if (button_label == "input_button") {
+          last_active_textbox = button_label;
           // Remove newline and return line special characters
           const cleanedValue = event.target.value.replace(/(\r\n|\n|\r)/g, "");
           event.target.value = cleanedValue;
           // Update box
-          update_character_limit_inputbox(event.target, 20); // Max recommended button length
+          update_character_limit_inputbox(event.target, button_character_limit); // Max recommended button length
           canvas_content.button = event.target.value;
         }
 
         if (button_label == "input_project") {
           canvas_content.project_name = event.target.value;
+        }
+
+        // Update Event Text
+        if (button_label == "input_event_name") {
+          let event_name_character_limit = 32;
+          update_character_limit_inputbox(
+            event.target,
+            event_name_character_limit
+          );
+          event.target.value = event.target.value.toUpperCase();
+          canvas_content.event_name = event.target.value;
+        }
+
+        // Update Speaker Text
+        if (button_label == "input_speaker_name") {
+          canvas_content.speaker_name = event.target.value;
+        }
+        if (button_label == "input_speaker_title") {
+          canvas_content.speaker_title = event.target.value;
         }
 
         update_canvas();
@@ -2119,6 +2206,48 @@
             document.getElementsByName("input_button")[0].value =
               canvas_content.button;
           }
+          if (
+            button_label == "TM" ||
+            button_label == "®" ||
+            button_label == "©"
+          ) {
+            console.log(button_label);
+            console.log(last_active_textbox);
+            var special_character = button_label;
+            if (button_label == "TM") {
+              special_character = "™";
+            }
+            if (last_active_textbox == "input_headline") {
+              canvas_content.headline += special_character;
+              var headline_textbox = document.getElementById("input_headline");
+              headline_textbox.value = canvas_content.headline;
+              update_character_limit_inputbox(
+                headline_textbox,
+                headline_character_limit
+              );
+              headline_textbox.focus();
+            }
+            if (last_active_textbox == "input_body") {
+              canvas_content.body += special_character;
+              var body_textbox = document.getElementById("input_body");
+              body_textbox.value = canvas_content.body;
+              update_character_limit_inputbox(
+                body_textbox,
+                body_character_limit
+              );
+              body_textbox.focus();
+            }
+            if (last_active_textbox == "input_button") {
+              canvas_content.button += special_character;
+              var button_textbox = document.getElementById("input_button");
+              button_textbox.value = canvas_content.button;
+              update_character_limit_inputbox(
+                button_textbox,
+                button_character_limit
+              );
+              button_textbox.focus();
+            }
+          }
         }
 
         // Logo type
@@ -2130,10 +2259,7 @@
 
         // Layout
         if (current_panel_open == "Layout") {
-          // Resize Canvas
-          if (button_label.includes("Submit")) {
-            create_canvas();
-          }
+          //
         }
 
         // Image
@@ -2293,6 +2419,7 @@
         inputBox.id = "input_" + input_box_name;
         inputBox.addEventListener("input", inputbox_event_listener);
         inputBox.addEventListener("paste", inputbox_event_listener);
+        inputBox.addEventListener("focus", inputbox_event_listener);
         inputBox.setAttribute("spellcheck", "true");
 
         div.appendChild(inputBox);
@@ -2367,6 +2494,7 @@
         if (canvas == undefined) {
           alert("Please login to start");
           return;
+          //create_canvas();
         }
 
         current_panel_open = "None";
@@ -2566,6 +2694,19 @@
             canvas_content.font_size.small
           );
 
+          add_label_to_inside_tools_container("INSERT CHARACTER");
+          add_button_to_inside_tools_container(
+            "TM",
+            (name = "Trademark"),
+            true
+          );
+          add_button_to_inside_tools_container(
+            "®",
+            (name = "Registered"),
+            true
+          );
+          add_button_to_inside_tools_container("©", (name = "Copyright"), true);
+
           add_label_to_inside_tools_container("COPYWRITING");
 
           // Headline
@@ -2626,6 +2767,9 @@
 
           // Update labels
           update_font_size_label();
+        } else {
+          // If it's not the TEXT button, revert back
+          last_active_textbox = "input_headline";
         }
 
         if (buttonName === "layout_button") {
@@ -2729,6 +2873,59 @@
               add_toggle_switch_with_label(
                 "Full image color overlay",
                 canvas_content.portal_color_overlay
+              );
+            }
+          }
+        }
+        if (buttonName === "event_button") {
+          // FAQ
+          addAccordion("Event", "Add Speaker Names or Event Titles", false);
+          // Event Title
+          add_label_to_inside_tools_container("Event name");
+
+          if (canvas_content.text_bottom_aligned == false) {
+            let event_name = add_input_box_to_inside_tools_container(
+              "event_name",
+              canvas_content.event_name
+            );
+            event_name.style.height = "40px";
+          } else {
+            addAccordion(
+              "Event title: Hidden*",
+              "Change Logo Alignement to Bottom under the Layout Panel.",
+              true
+            );
+          }
+
+          if (canvas_content.portal_count == 1) {
+            // Speaker Name
+            add_label_to_inside_tools_container("Speaker name");
+            let speaker_name = add_input_box_to_inside_tools_container(
+              "speaker_name",
+              canvas_content.speaker_name
+            );
+            speaker_name.style.height = "40px";
+            // Speaker Title
+            add_label_to_inside_tools_container("Speaker title");
+            let speaker_title = add_input_box_to_inside_tools_container(
+              "speaker_title",
+              canvas_content.speaker_title
+            );
+            speaker_title.style.height = "40px";
+          } else {
+            add_label_to_inside_tools_container("Speaker");
+            if (canvas_content.portal_count == 0) {
+              addAccordion(
+                "Speaker: Hidden*",
+                "Upload an image under the Image Panel",
+                true
+              );
+            }
+            if (canvas_content.portal_count == 2) {
+              addAccordion(
+                "Speaker: Hidden*",
+                "Reduce to one image under the Image Panel",
+                true
               );
             }
           }
@@ -3159,20 +3356,43 @@
             );
           }
 
+          // Render the text for the Speaker
+          render_speaker_text(maskRectWidth, maskRectHeight);
+
           // Render text over image if there is one full screen image
-          if (is_fullscreen_image()) {
-            // Render transparent overlay
-            if (canvas_content.portal_color_overlay && is_fullscreen_image()) {
-              let color =
-                canvas_content.color_font != spglobal_colors.black
-                  ? "#000000"
-                  : "#ffffff";
-              render_background(color, 0.4);
-            }
-            // Render text overlay
-            render_text();
-          }
+          //render_text_over_image();
         };
+      }
+
+      function render_text_over_image() {
+        // Render text over image if there is one full screen image
+        if (is_fullscreen_image()) {
+          // Render transparent overlay
+          if (canvas_content.portal_color_overlay && is_fullscreen_image()) {
+            let color =
+              canvas_content.color_font != spglobal_colors.black
+                ? "#000000"
+                : "#ffffff";
+            render_background(color, 0.4);
+          }
+          // Render text overlay
+          render_text();
+        }
+      }
+
+      function render_speaker_text(portal_width, portal_height) {
+        // If there is only one image
+        if (canvas_content.portal_count == 1) {
+          // If there is any text
+          if (
+            canvas_content.speaker_name != "" ||
+            canvas_content.speaker_title != ""
+          ) {
+            // Render the text
+            console.log("Speaker: " + canvas_content.speaker_name);
+            console.log("Title: " + canvas_content.speaker_title);
+          }
+        }
       }
 
       function flip_image_horizontally(img, flip) {
@@ -3287,7 +3507,11 @@
         // Logo scale
         let rescaled = false;
         // Default is based on the margins. Scale is 1 if the margins are 40px
-        let logo_scale = Math.max(0.65, canvas_content.margin / 40); // 1
+        let logo_scale = Math.max(0.65, canvas_content.margin / 40);
+        // Rescale if the canvas height is small
+        if (canvas_content.canvas_height < 628) {
+          logo_scale = logo_scale * 0.8;
+        }
 
         // Then we have to check if the logo will fit in the space provided which is the margins
         if (reference.width * logo_scale > canvas_content.marginWidth) {
@@ -3708,6 +3932,33 @@
           canvas.height
         );
 
+        // Event name
+        let event_name_height = 0;
+        if (canvas_content.text_bottom_aligned == false) {
+          let event_name_font_size = 16; // 16 is the minimum font size for all content using add_text_to_canvas
+
+          var event_name_properties = add_text_to_canvas(
+            canvas_content.event_name,
+            position.x,
+            position.y,
+            text_area.width,
+            text_area.height,
+            event_name_font_size,
+            canvas_content.color_font,
+            0,
+            1.05,
+            700,
+            true
+          );
+
+          event_name_height =
+            canvas_content.event_name == ""
+              ? 0
+              : event_name_properties.height + event_name_font_size;
+          position.y = canvas_content.marginTop + event_name_height;
+          text_area.height = text_area.height - event_name_height;
+        }
+
         // Headline
         let headline_unformatted = remove_new_lines_and_return_lines(
           canvas_content.headline,
@@ -3740,7 +3991,7 @@
         font_size = estimate_headline_size;
 
         // Calculate the position
-        var headline_position_y = position.y;
+        var headline_position_y = position.y + event_name_height;
 
         // Remove line breaks if user has turned off formating
         let headline_text = canvas_content.headline_visibility
@@ -3941,7 +4192,7 @@
         // Determine the starting location of the container
         let text_initial_position_y = canvas_content.text_bottom_aligned
           ? canvas_content.marginBottom - total_content_height
-          : canvas_content.marginTop;
+          : canvas_content.marginTop + event_name_height; // Sets the headline position
 
         // Recalculate y positions
         headline_position_y = text_initial_position_y;
@@ -4051,7 +4302,8 @@
           canvas_content.portal_size_percent > min_percent &&
           canvas_content.text_bottom_aligned == false &&
           (canvas_content.portal_side == "top" ||
-            canvas_content.portal_side == "bottom");
+            canvas_content.portal_side == "bottom") &&
+          canvas_content.portal_count > 0;
 
         // Check if button is out of bounds
         var button_overlapping_logo = false;
@@ -4079,7 +4331,7 @@
         headline_properties = add_text_to_canvas(
           headline_text,
           position.x,
-          headline_position_y,
+          headline_position_y, // This one effects the position
           text_area.width,
           headline_properties.height + 1,
           headline_properties.font_size,
@@ -4256,10 +4508,12 @@
         //log_dictionary_keys_and_values(canvas_content.error);
 
         let show_boundingboxes = false;
+        let show_text_safe_area = false;
         if (
           canvas_content.error.text_outside_bounds > 0 ||
           canvas_content.error.button_overlapping_logo ||
-          show_boundingboxes
+          show_boundingboxes ||
+          show_text_safe_area
         ) {
           const delayInSeconds = 0.2; // Replace x with the number of seconds you want to delay
           setTimeout(() => {
@@ -4269,7 +4523,8 @@
               headline_properties,
               body_properties,
               button_properties,
-              show_boundingboxes // show all
+              show_boundingboxes, // show all
+              show_text_safe_area
             );
           }, delayInSeconds * 1000); // Convert seconds to milliseconds
         }
@@ -4280,10 +4535,14 @@
           headline_properties,
           body_properties,
           button_properties,
-          show_boundingboxes
+          show_boundingboxes,
+          show_text_safe_area
         ) {
           // Draw guides around total available text area
-          if (canvas_content.error.text_outside_bounds > 0) {
+          if (
+            canvas_content.error.text_outside_bounds > 0 ||
+            show_text_safe_area
+          ) {
             ctx.strokeStyle = "blue"; // Set stroke color to blue
             ctx.lineWidth = 1;
             ctx.setLineDash([4, 4]); // Set the line to be dashed with a pattern of 5 pixels on and 5 pixels off
