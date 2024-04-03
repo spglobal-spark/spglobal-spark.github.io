@@ -981,8 +981,9 @@
           } else {
           // User is signed out
           // Sign in through OKTA
-          const provider = new SAMLAuthProvider("saml.spglobal");
-          signInWithRedirect(auth, provider);
+          console.log("DO NOTHING not logged in")
+          //const provider = new SAMLAuthProvider("saml.spglobal");
+          //signInWithRedirect(auth, provider);
           }
         });
       //
