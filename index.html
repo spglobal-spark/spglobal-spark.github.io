@@ -877,19 +877,7 @@
     <div class="right-panel">
       <div class="container">
         <!-- Change to a login -->
-        <!--
-        <label class="toolbox_expanded_label" for="usernameInput"
-          >Username</label
-        >
-        <input
-          type="text"
-          id="usernameInput"
-          value=""
-          onkeydown="handleKeyPress(event)"
-          autocomplete="username"
-        />
-        <button onclick="login()">Login</button>
-        -->
+        <button id="sso_login">SSO Login</button>
       </div>
     </div>
 
@@ -969,8 +957,8 @@
       // SAML
       const auth = getAuth(app);
       
-
       // Redirect to login page
+      /*
       onAuthStateChanged(auth, (user) => {
         if (user) {
           // User is signed in, see docs for a list of available properties
@@ -983,16 +971,9 @@
           // User is signed out
           // Sign in through OKTA
           console.log("Login  (Not logged in)");
-
-          setTimeout(() => {
-            const provider = new SAMLAuthProvider("saml.spglobal");
-            signInWithRedirect(auth, provider);
-            }, 8000);
-            }
           });
-      //
-
-      /*
+*/
+      
       // Login result
       getRedirectResult(auth)
         .then((result) => {
@@ -1006,7 +987,13 @@
           console.log(error)
           // Handle error.
         });
-        */
+
+        // Login
+        // Function to handle the "Enter" key press
+      var sso_button = document.getElementById("sso_login").onclick = function() {
+          const provider = new SAMLAuthProvider("saml.spglobal");
+          signInWithRedirect(auth, provider);
+    }
     </script>
 
     <!-- Application Scripts -->
@@ -1024,9 +1011,9 @@
       var canvas, ctx;
 
       // Login
-      setTimeout(function () {
-        login();
-      }, 100);
+      // setTimeout(function () {
+      //  login();
+      //}, 100);
 
       create_footer_text();
 
@@ -1362,12 +1349,14 @@
         document.getElementsByName("help_button")[0].click();
       }
 
+     /*
       // Function to handle the "Enter" key press
       function handleKeyPress(event) {
         if (event.key === "Enter") {
           login();
         }
       }
+      */
 
       // Functions
       function create_canvas() {
