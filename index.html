@@ -976,18 +976,20 @@
           // User is signed in, see docs for a list of available properties
           // https://firebase.google.com/docs/reference/js/auth.user
           const uid = user.uid;
+          console.log("Logged in!");
           console.log(uid);
           // ...
           } else {
           // User is signed out
           // Sign in through OKTA
-          console.log("DO NOTHING not logged in")
+          console.log("Login  (Not logged in)");
 
           setTimeout(() => {
             const provider = new SAMLAuthProvider("saml.spglobal");
             signInWithRedirect(auth, provider);
             }, 8000);
-            });
+            }
+          });
       //
 
       /*
