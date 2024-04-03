@@ -956,36 +956,35 @@
 
       // SAML
       const auth = getAuth(app);
-      
-      // Redirect to login page
+      const user = auth.currentUser;
+      if (user) {
+        // The user object has basic properties such as display name, email, etc.
+        const displayName = user.displayName;
+        const email = user.email;
+        const photoURL = user.photoURL;
+        const emailVerified = user.emailVerified;
+
+        console.log(displayName);
+
+        // The user's ID, unique to the Firebase project. Do NOT use
+        // this value to authenticate with your backend server, if
+        // you have one. Use User.getToken() instead.
+        const uid = user.uid;
+} else {
+  console.log("No one is logged in");
+  // No user is signed in.
+}
       
       onAuthStateChanged(auth, (user) => {
         if (user) {
-          // User is signed in, see docs for a list of available properties
-          // https://firebase.google.com/docs/reference/js/auth.user
-          const uid = user.uid;
-          console.log("Logged in!");
-          console.log(uid);
-          // ...
+          console.log("Logged in")
           } else {
           // User is signed out
           // Sign in through OKTA
-          console.log("Login  (Not logged in)");
+          console.log("Not logged in");
           }});
       
-      // Login result
-      getRedirectResult(auth)
-        .then((result) => {
-          console.log(result);
-          // User is signed in.
-          // Provider data available using getAdditionalUserInfo()
-          getAdditionalUserInfo()
-        })
-        .catch((error) => {
-          console.log("Error");
-          console.log(error)
-          // Handle error.
-        });
+
 
         // Login
         // Function to handle the "Enter" key press
