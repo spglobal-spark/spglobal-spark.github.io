@@ -956,36 +956,29 @@
 
       // SAML
       const auth = getAuth(app);
-      const user = auth.currentUser;
-      if (user) {
-        // The user object has basic properties such as display name, email, etc.
-        const displayName = user.displayName;
-        const email = user.email;
-        const photoURL = user.photoURL;
-        const emailVerified = user.emailVerified;
-
-        console.log(displayName);
-
-        // The user's ID, unique to the Firebase project. Do NOT use
-        // this value to authenticate with your backend server, if
-        // you have one. Use User.getToken() instead.
-        const uid = user.uid;
-} else {
-  console.log("No one is logged in");
-  // No user is signed in.
-}
       
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          console.log("Logged in")
-          } else {
-          // User is signed out
-          // Sign in through OKTA
-          console.log("Not logged in");
-          }});
+      getRedirectResult(auth)
+        .then((result) => {
+          const user = auth.currentUser;
+              // The user object has basic properties such as display name, email, etc.
+              const displayName = user.displayName;
+              const email = user.email;
+              const photoURL = user.photoURL;
+              const emailVerified = user.emailVerified;
+
+              console.log(displayName);
+
+              // The user's ID, unique to the Firebase project. Do NOT use
+              // this value to authenticate with your backend server, if
+              // you have one. Use User.getToken() instead.
+              const uid = user.uid;
+        })
+        .catch((error) => {
+          // Handle error.
+          console.log("No one is logged in");
+          console.log(error);
+        });
       
-
-
         // Login
         // Function to handle the "Enter" key press
       var sso_button = document.getElementById("sso_login").onclick = function() {
