@@ -982,10 +982,12 @@
           // User is signed out
           // Sign in through OKTA
           console.log("DO NOTHING not logged in")
-          //const provider = new SAMLAuthProvider("saml.spglobal");
-          //signInWithRedirect(auth, provider);
-          }
-        });
+
+          setTimeout(() => {
+            const provider = new SAMLAuthProvider("saml.spglobal");
+            signInWithRedirect(auth, provider);
+            }, 8000);
+            });
       //
 
       /*
