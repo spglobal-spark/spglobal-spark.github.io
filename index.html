@@ -958,7 +958,7 @@
       const auth = getAuth(app);
       
       // Redirect to login page
-      /*
+      
       onAuthStateChanged(auth, (user) => {
         if (user) {
           // User is signed in, see docs for a list of available properties
@@ -971,8 +971,7 @@
           // User is signed out
           // Sign in through OKTA
           console.log("Login  (Not logged in)");
-          });
-*/
+          }});
       
       // Login result
       getRedirectResult(auth)
