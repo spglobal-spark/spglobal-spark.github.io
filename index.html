@@ -4031,6 +4031,8 @@
         );
 
         // Downscale the font if the user picks a smaller font
+        let headline_properties;
+        console.log("Headline variable fixed")
         if (canvas_content.font_size.small) {
           // Precalculate the size of the text then downscale
           headline_properties = add_text_to_canvas(
@@ -4053,7 +4055,6 @@
         }
 
         // Initial guess at largest font size
-        console.log("Font size updated");
         let font_size = estimate_headline_size;
 
         // Calculate the position
