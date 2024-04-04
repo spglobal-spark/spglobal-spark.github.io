@@ -907,7 +907,6 @@
             const uid = user.uid;
 
             username = email;
-            login();
 
             // Add toolbox button handlers
             assignClickHandlers();
@@ -926,6 +925,10 @@
                 };
               }
             }
+            // Create the canvas
+            create_canvas();
+            // Open help panel
+            document.getElementsByName("help_button")[0].click();
           }
         })
         .catch((error) => {
@@ -1281,12 +1284,6 @@
             return key.charAt(check);
           })
           .join("");
-      }
-
-      function login() {
-        create_canvas();
-        // Open help panel
-        document.getElementsByName("help_button")[0].click();
       }
 
       // Functions
