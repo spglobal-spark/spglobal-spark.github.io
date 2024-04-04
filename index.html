@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- <link
+   <link
       rel="icon"
       href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAABNVBMVEX////XACoAAAADAwP9/f3+/v7//v7++Pn//P1AQEDVAB7WACXbGT/jT2w8PDzXASvXAy3+/Pz//f3XASrwoK/VAB/XACjXAyzYCTH63eP8/PwBAQECAgIJCQm3t7fd3d3+/P0EBAQFBQUGBgYMDAw9PT22tra4uLjb29ve3t763uP//v/+//81NTU5OTk7Ozs+Pj4/Pz9BQUHTABNCQkLUABrUABxDQ0PVACDVACLVAR/WACPWASXXACnVAyHWAyfXAivXAixHR0fYAy3WBibYBC3YBC7YBi/XCCzZCjLZDDTZDTXaFzzbGT7bG0DcIUXiRmTjTWrkUG3kUW7kVXHvnavwnq3wobDyqbbIyMjJycn1vcj52+Hl5eX63OLm5ub64eb86Ov++Pj//Pz//f7//v3///7rC/PdAAABY0lEQVR42u3bRXbDQBBF0YojK+SA7aAdUMBhZmZmZqb9LyErkDL8LZ93pz16pwZdkzIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAiIlkDFjx8uxxdLrCbZMTm28WNoSc9SZaE27LJ7r7zQsN6Et0lbqtM98zEBHQHoMJtHUQoESAGgFqxR4Q+48s5quEZw8j44UapxXG5l6siDfqZM5znwEAEF9DUY/DP0G544IgiEr4tVjL2NP5VbXbLi+uP8wPCUjbzdRqpdsWZ7efLRMacLewt1XntJ3s4WBEQH1DU4nbso3NLQQoEaBGgBoBagSoEaBGgBoBagSoEaBGgBoBagSoEaBGgBoBagSoEaBGgBoBagSoEaBGgBoBagSoEaBGgBoBagSoEaBGgNp/AfO767VO21g5iLofuJ1Zq3Lb8tL+a2jAl90fnaacdpI6Pnu3bwuT/ixznx9xR2ax57su6fsGAACc8Qeld9NchmI1GwAAAABJRU5ErkJggg=="
-    /> -->
+    />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>S&P Global App | Developed by The 199</title>
@@ -899,15 +899,16 @@
             // you have one. Use User.getToken() instead.
             const uid = user.uid;
 
+            // Show dashboard
+            const left_panel = document.querySelector(".left-panel");
+            left_panel.classList.remove("left-hidden");
+
+            const right_panel = document.querySelector(".right-panel");
+            right_panel.classList.remove("left-hidden");
+
             // Add toolbox button handlers
             assignClickHandlers();
             function assignClickHandlers() {
-              const left_panel = document.querySelector(".left-panel");
-              left_panel.classList.remove("left-hidden");
-
-              const right_panel = document.querySelector(".right-panel");
-              right_panel.classList.remove("left-hidden");
-
               // Get all button elements with the classname "toolbox_button"
               const buttons = document.getElementsByClassName("toolbox_button");
 
@@ -928,6 +929,10 @@
           // Handle error
           console.log(error);
           login_attempt = false;
+          var login_button = document.getElementById("sso_login");
+          if (login_button) {
+            login_button.innerText = "Login (SSO)";
+          }
         });
 
       // Login
@@ -939,7 +944,7 @@
             signInWithRedirect(auth, provider);
             login_attempt = true;
           }
-          document.getElementById("sso_login").innerText = "Loading...";
+          this.innerText = "Loading...";
         });
 
       //<!-- Application Scripts -->
