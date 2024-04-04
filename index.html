@@ -4032,7 +4032,6 @@
 
         // Downscale the font if the user picks a smaller font
         let headline_properties;
-        console.log("Headline variable fixed")
         if (canvas_content.font_size.small) {
           // Precalculate the size of the text then downscale
           headline_properties = add_text_to_canvas(
@@ -4110,7 +4109,7 @@
           headline_properties.font_size == 16
             ? 4
             : Math.max(headline_fixed_font_size * 0.5, minimum_margin);
-        headline_margin = show_body || show_button ? content_margin : 0; // Collapse margin if there is no content below the headline
+        let headline_margin = show_body || show_button ? content_margin : 0; // Collapse margin if there is no content below the headline
         headline_margin = headline_text == "" ? 0 : headline_margin; // Collapse headline margin if there is no text
 
         // Precalculate BUTTON size so that it can removed from the available space
