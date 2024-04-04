@@ -5448,7 +5448,7 @@
             minLineHeight;
 
           // enforce the minimum and maximum line height values
-          var lineHeight = Math.max(minLineHeight, lineHeight);
+          lineHeight = Math.max(minLineHeight, lineHeight);
           lineHeight = Math.min(maxLineHeight, lineHeight);
 
           // return the line height with two decimal places
@@ -5462,7 +5462,7 @@
           let words = text.split(/( |\n|\r)/);
           words = merge_spglobal_and_dow_strings(text.split(/( |\n|\r)/)); // Merges "S&P Global" into one word when found in text
 
-          var lineHeight = calculate_line_height(fontSize);
+          let lineHeight = calculate_line_height(fontSize);
 
           // If ONE word is wider than the container (with custom string) shrink the font size until it fits
           while (check_if_any_word_exceeds_rect_width(words, customString)) {
