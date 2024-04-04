@@ -1256,12 +1256,6 @@
 
       // Functions
       function create_canvas() {
-        // Check password
-        const user = auth.currentUser;
-        if (user) {
-          alert("Not logged in");
-          return;
-        }
         let width, height;
 
         // If there is no width available go to the saved data
@@ -2476,13 +2470,6 @@
 
       // Side panel buttons default click behavior
       function pressed_toolbox_button(buttonName) {
-        // Buttons do not work if there is no canvas
-        if (canvas == undefined) {
-          alert("Please login to start");
-          return;
-          //create_canvas();
-        }
-
         current_panel_open = "None";
         clear_inside_tools_container();
 
