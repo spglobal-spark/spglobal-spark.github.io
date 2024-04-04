@@ -966,6 +966,7 @@
               const photoURL = user.photoURL;
               const emailVerified = user.emailVerified;
 
+              console.log("User is logged in");
               console.log(displayName);
 
               // The user's ID, unique to the Firebase project. Do NOT use
@@ -975,7 +976,7 @@
         })
         .catch((error) => {
           // Handle error.
-          console.log("No one is logged in");
+          console.log("Redirect error: No one is logged in");
           console.log(error);
         });
       
