@@ -5442,17 +5442,17 @@
           const maxLineHeight = defaultLineHeight * 1.095;
 
           // calculate the line height using linear interpolation
-          let lineHeight =
+          let calculatedLineHeight =
             ((maxLineHeight - minLineHeight) * (maxFontSize - fontSize)) /
               (maxFontSize - minFontSize) +
             minLineHeight;
 
           // enforce the minimum and maximum line height values
-          lineHeight = Math.max(minLineHeight, lineHeight);
-          lineHeight = Math.min(maxLineHeight, lineHeight);
+          calculatedLineHeight = Math.max(minLineHeight, calculatedLineHeight);
+          calculatedLineHeight = Math.min(maxLineHeight, calculatedLineHeight);
 
           // return the line height with two decimal places
-          return lineHeight; //.toFixed(2);
+          return calculatedLineHeight; //.toFixed(2);
         }
 
         function fit_text(customString = "") {
@@ -5462,7 +5462,7 @@
           let words = text.split(/( |\n|\r)/);
           words = merge_spglobal_and_dow_strings(text.split(/( |\n|\r)/)); // Merges "S&P Global" into one word when found in text
 
-          let lineHeight = calculate_line_height(fontSize);
+          lineHeight = calculate_line_height(fontSize);
 
           // If ONE word is wider than the container (with custom string) shrink the font size until it fits
           while (check_if_any_word_exceeds_rect_width(words, customString)) {
@@ -5493,7 +5493,6 @@
               }
             }
           }
-
           // Create an array where the lines are sorted by whether they fit horizontally in the available space. Text wrap.
           lines.push(currentLine);
           // Check if the resulting lines fit in the container vertically, if not make the font smaller and recursively start the process again.
@@ -5540,6 +5539,7 @@
         text = replace_footnotes_and_quotations(text); // Fix footnotes and quotations
 
         // Fit text in the available text space
+        var lineHeight = 0;
         let fit_textInArea = fit_text(
           canvas_content.text_container_minimum_character_width
         );
