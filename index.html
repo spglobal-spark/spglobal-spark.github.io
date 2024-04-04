@@ -4053,7 +4053,8 @@
         }
 
         // Initial guess at largest font size
-        font_size = estimate_headline_size;
+        console.log("Font size updated");
+        let font_size = estimate_headline_size;
 
         // Calculate the position
         var headline_position_y = position.y + event_name_height;
@@ -5575,7 +5576,6 @@
         }
         let textWidth = text_width_max;
         // Render nothing if there is no text
-        console.log("Line Height Updated");
         let lineHeight = calculate_line_height(fontSize);
         let textHeight =
           text == "" ? 0 : textForRendering.length * fontSize * lineHeight;
