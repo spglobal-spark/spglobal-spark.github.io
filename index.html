@@ -598,7 +598,6 @@
         height: auto; /* Make the SVG fill the height of its container */
         width: 80%;
       }
-
     </style>
   </head>
   <body>
@@ -824,8 +823,6 @@
 
     <!-- Initialize Firebase -->
     <script type="module">
-      var username = "";
-
       // Import the functions you need from the SDKs you need
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
       import {
@@ -878,8 +875,6 @@
             // this value to authenticate with your backend server, if
             // you have one. Use User.getToken() instead.
             const uid = user.uid;
-
-            username = email;
 
             // Add toolbox button handlers
             assignClickHandlers();
@@ -1262,7 +1257,8 @@
       // Functions
       function create_canvas() {
         // Check password
-        if (username == "") {
+        const user = auth.currentUser;
+        if (user) {
           alert("Not logged in");
           return;
         }
@@ -1429,7 +1425,6 @@
 
         // Your data object
         var data_object = {
-          username: username,
           download: "PNG",
           timestamp: new Date().toString(),
           project_name: my_project_name,
@@ -1447,15 +1442,16 @@
 
         // Click the send data button
         const user = auth.currentUser;
-          if (user) {
-            // Data being sent
-            console.log(data_object);
-            // Create a reference to the Collection and Document
-            const docRef = addDoc(
-              collection(db, "Download-" + data_object.download),
-              data_object
-            );
-          }
+        if (user) {
+          // Data being sent
+          const email = user.email.split("@")[0];
+          data_object.username = email;
+          // Create a reference to the Collection and Document
+          const docRef = addDoc(
+            collection(db, email + "-" + data_object.download),
+            data_object
+          );
+        }
       }
 
       // Expand the left side toolbox
@@ -2144,7 +2140,6 @@
 
               // Your data object
               var data_object = {
-                username: username,
                 download: "JSON",
                 timestamp: new Date().toString(),
                 project_name: filename,
@@ -2160,17 +2155,18 @@
                 canvas_height: canvas_content.canvas_height,
               };
 
-        // Click the send data button
-        const user = auth.currentUser;
-          if (user) {
-            // Data being sent
-            console.log(data_object);
-            // Create a reference to the Collection and Document
-            const docRef = addDoc(
-              collection(db, "Download-" + data_object.download),
-              data_object
-            );
-          }
+              // Click the send data button
+              const user = auth.currentUser;
+              if (user) {
+                // Data being sent
+                const email = user.email.split("@")[0];
+                data_object.username = email;
+                // Create a reference to the Collection and Document
+                const docRef = addDoc(
+                  collection(db, email + "-" + data_object.download),
+                  data_object
+                );
+              }
             }
           }
         }
