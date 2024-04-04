@@ -903,6 +903,8 @@
 
     <!-- Initialize Firebase -->
     <script type="module">
+      var username = "";
+
       // Import the functions you need from the SDKs you need
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
       import {
@@ -956,39 +958,42 @@
 
       // SAML
       const auth = getAuth(app);
-      
+
       getRedirectResult(auth)
         .then((result) => {
           const user = auth.currentUser;
-              // The user object has basic properties such as display name, email, etc.
-              const displayName = user.displayName;
-              const email = user.email;
-              const photoURL = user.photoURL;
-              const emailVerified = user.emailVerified;
+          // The user object has basic properties such as display name, email, etc.
+          const displayName = user.displayName;
+          const email = user.email;
+          const photoURL = user.photoURL;
+          const emailVerified = user.emailVerified;
 
-              console.log("User is logged in");
-              console.log(user);
+          console.log("User is logged in");
+          console.log(email);
 
-              // The user's ID, unique to the Firebase project. Do NOT use
-              // this value to authenticate with your backend server, if
-              // you have one. Use User.getToken() instead.
-              const uid = user.uid;
+          // The user's ID, unique to the Firebase project. Do NOT use
+          // this value to authenticate with your backend server, if
+          // you have one. Use User.getToken() instead.
+          const uid = user.uid;
+
+          username = email;
+          login();
         })
         .catch((error) => {
           // Handle error.
           console.log("Error: Not logged in");
           console.log(error);
         });
-      
-        // Login
-        // Function to handle the "Enter" key press
-      var sso_button = document.getElementById("sso_login").onclick = function() {
+
+      // Login
+      // Function to handle the "Enter" key press
+      var sso_button = (document.getElementById("sso_login").onclick =
+        function () {
           const provider = new SAMLAuthProvider("saml.spglobal");
           signInWithRedirect(auth, provider);
-    }
+        });
 
-
-    //<!-- Application Scripts -->
+      //<!-- Application Scripts -->
 
       if (window !== window.top) {
         // If the page is inside an iframe
@@ -1002,11 +1007,6 @@
       /* Application starts */
       var canvas, ctx;
 
-      // Login
-      // setTimeout(function () {
-      //  login();
-      //}, 100);
-
       create_footer_text();
 
       // enums
@@ -1018,8 +1018,6 @@
         blue: "#C7DAE0",
       };
 
-      var username = "";
-      var password = "";
       // Image loading animation
       let image_stop_loading_animation;
 
@@ -1335,30 +1333,18 @@
       }
 
       function login() {
-        username = "annoymous"; //document.getElementById("usernameInput").value;
         create_canvas();
         // Open help panel
         document.getElementsByName("help_button")[0].click();
       }
 
-     /*
-      // Function to handle the "Enter" key press
-      function handleKeyPress(event) {
-        if (event.key === "Enter") {
-          login();
-        }
-      }
-      */
-
       // Functions
       function create_canvas() {
         // Check password
-        /*
         if (username == "") {
-          alert("Please provide a username");
+          alert("Not logged in");
           return;
         }
-        */
         let width, height;
 
         // If there is no width available go to the saved data
