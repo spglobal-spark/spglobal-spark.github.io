@@ -5842,7 +5842,7 @@
 
             // Handling alpha
 
-            sA = sBuffer[sIndex + 3];
+            let sA = sBuffer[sIndex + 3];
             if (!sA) continue;
             if (sA != 0xff) {
               sR = (sR * sA) >> 8; // or use /256 instead ??
