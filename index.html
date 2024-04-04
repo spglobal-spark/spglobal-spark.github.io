@@ -104,6 +104,7 @@
       }
 
       .left-panel {
+        display: block;
         width: 48px;
         background-color: #f7f7f7;
         border-right: 2px solid #e4e4e4;
@@ -116,6 +117,10 @@
         width: 300px;
         overflow-y: auto;
         overflow-x: clip;
+      }
+
+      .left-panel.left-hidden {
+        display: none;
       }
 
       .right-panel {
@@ -611,7 +616,7 @@
     </style>
   </head>
   <body>
-    <div class="left-panel">
+    <div class="left-panel left-hidden">
       <!-- File -->
       <button class="toolbox_button" name="file_button">
         <svg
@@ -806,7 +811,7 @@
         </div>
       </div>
     </div>
-    <div class="right-panel">
+    <div class="right-panel left-hidden">
       <div class="container">
         <!-- Change to a login -->
         <button id="sso_login" style="padding: 16px; font-size: 16px;">Login (SSO)</button>
@@ -891,7 +896,7 @@
             function assignClickHandlers() {
               const left_panel =
               document.querySelector(".left-panel");
-              left_panel.style.display = "block";
+              left_panel.classList.remove("left-hidden");
 
               const right_panel = document.querySelector(".right-panel");
               right_panel.classList.remove("left-hidden");
@@ -926,12 +931,6 @@
         });
 
       //<!-- Application Scripts -->
-      // Hide left panel on load
-      const left_panel = document.querySelector(".left-panel");
-      left_panel.style.display = "none";
-      const right_panel = document.querySelector(".right-panel");
-      right_panel.classList.add("left-hidden");
-
       if (window !== window.top) {
         // If the page is inside an iframe
         //console.log("On the Brand Center");
