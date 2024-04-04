@@ -599,13 +599,6 @@
         width: 80%;
       }
 
-      #data-container {
-        display: none;
-      }
-
-      #firebase-data-button {
-        display: none;
-      }
     </style>
   </head>
   <body>
@@ -812,8 +805,6 @@
     </div>
 
     <!-- Data container -->
-    <div id="data-container"></div>
-    <button id="firebase-data-button"></button>
 
     <!-- ---------------------- SCRIPTS ---------------------- -->
     <!-- Google tag (gtag.js) -->
@@ -867,24 +858,6 @@
       // Initialize Firebase
       const app = initializeApp(config);
       const db = getFirestore(app);
-
-      // Add an event listener to the button
-      document
-        .getElementById("firebase-data-button")
-        .addEventListener("click", function () {
-          // Convert JSON string back to object
-          var retrievedDataString =
-            document.getElementById("data-container").innerHTML;
-          var retrievedDataObject = JSON.parse(retrievedDataString);
-          // Data being sent
-          console.log(retrievedDataObject);
-          // Create a reference to the Collection and Document
-          //const docRef = db.collection("Download-Data").doc("Download-Data-ID");
-          const docRef = addDoc(
-            collection(db, "Download-" + retrievedDataObject.download),
-            retrievedDataObject
-          );
-        });
 
       // SAML
       const auth = getAuth(app);
@@ -1472,14 +1445,17 @@
           canvas_height: canvas_content.canvas_height,
         };
 
-        // Convert object to JSON string
-        var jsonString = JSON.stringify(data_object);
-
-        // Update the HTML content of the "data-container" div
-        document.getElementById("data-container").innerHTML = jsonString;
-
         // Click the send data button
-        document.getElementById("firebase-data-button").click();
+        const user = auth.currentUser;
+          if (user) {
+            // Data being sent
+            console.log(data_object);
+            // Create a reference to the Collection and Document
+            const docRef = addDoc(
+              collection(db, "Download-" + data_object.download),
+              data_object
+            );
+          }
       }
 
       // Expand the left side toolbox
@@ -2184,14 +2160,17 @@
                 canvas_height: canvas_content.canvas_height,
               };
 
-              // Convert object to JSON string
-              var jsonString = JSON.stringify(data_object);
-
-              // Update the HTML content of the "data-container" div
-              document.getElementById("data-container").innerHTML = jsonString;
-
-              // Click the send data button
-              document.getElementById("firebase-data-button").click();
+        // Click the send data button
+        const user = auth.currentUser;
+          if (user) {
+            // Data being sent
+            console.log(data_object);
+            // Create a reference to the Collection and Document
+            const docRef = addDoc(
+              collection(db, "Download-" + data_object.download),
+              data_object
+            );
+          }
             }
           }
         }
