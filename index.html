@@ -614,7 +614,7 @@
       <button
         class="toolbox_button"
         name="minimize_button"
-        onclick="pressed_toolbox_button(this.name)"
+        
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -649,11 +649,7 @@
       </button>
       -->
       <!-- File -->
-      <button
-        class="toolbox_button"
-        name="file_button"
-        onclick="pressed_toolbox_button(this.name)"
-      >
+      <button class="toolbox_button" name="file_button">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="20"
@@ -671,11 +667,7 @@
         <span class="tooltiptext">File</span>
       </button>
       <!-- Color -->
-      <button
-        class="toolbox_button"
-        name="color_button"
-        onclick="pressed_toolbox_button(this.name)"
-      >
+      <button class="toolbox_button" name="color_button">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="20"
@@ -693,11 +685,7 @@
         <span class="tooltiptext">Color</span>
       </button>
       <!-- Typography -->
-      <button
-        class="toolbox_button"
-        name="text_button"
-        onclick="pressed_toolbox_button(this.name)"
-      >
+      <button class="toolbox_button" name="text_button">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="25"
@@ -715,11 +703,7 @@
         <span class="tooltiptext">Text</span>
       </button>
       <!-- Images -->
-      <button
-        class="toolbox_button"
-        name="image_button"
-        onclick="pressed_toolbox_button(this.name)"
-      >
+      <button class="toolbox_button" name="image_button">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="20"
@@ -737,11 +721,7 @@
         <span class="tooltiptext">Images</span>
       </button>
       <!-- Layout -->
-      <button
-        class="toolbox_button"
-        name="layout_button"
-        onclick="pressed_toolbox_button(this.name)"
-      >
+      <button class="toolbox_button" name="layout_button">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="20"
@@ -759,11 +739,7 @@
         <span class="tooltiptext">Layout</span>
       </button>
       <!-- Logo -->
-      <button
-        class="toolbox_button"
-        name="logo_button"
-        onclick="pressed_toolbox_button(this.name)"
-      >
+      <button class="toolbox_button" name="logo_button">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -819,11 +795,7 @@
       </button>
       <!-- Speaker -->
 
-      <button
-        class="toolbox_button"
-        name="event_button"
-        onclick="pressed_toolbox_button(this.name)"
-      >
+      <button class="toolbox_button" name="event_button">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="25"
@@ -843,11 +815,7 @@
       </button>
 
       <!-- Help -->
-      <button
-        class="toolbox_button"
-        name="help_button"
-        onclick="pressed_toolbox_button(this.name)"
-      >
+      <button class="toolbox_button" name="help_button">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="23"
@@ -978,6 +946,21 @@
 
           username = email;
           login();
+
+          // Add toolbox button handlers
+          console.log("Button handlers");
+          assignClickHandlers();
+          function assignClickHandlers() {
+            // Get all button elements with the classname "toolbox_button"
+            const buttons = document.getElementsByClassName("toolbox_button");
+
+            // Assign the onclick function to each button
+            for (const button of buttons) {
+              button.onclick = function () {
+                pressed_toolbox_button(this.name);
+              };
+            }
+          }
         })
         .catch((error) => {
           // Handle error
