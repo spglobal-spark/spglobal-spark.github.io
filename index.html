@@ -967,7 +967,7 @@
               const emailVerified = user.emailVerified;
 
               console.log("User is logged in");
-              console.log(displayName);
+              console.log(user);
 
               // The user's ID, unique to the Firebase project. Do NOT use
               // this value to authenticate with your backend server, if
@@ -976,7 +976,7 @@
         })
         .catch((error) => {
           // Handle error.
-          console.log("Redirect error: No one is logged in");
+          console.log("Error: Not logged in");
           console.log(error);
         });
       
@@ -986,10 +986,10 @@
           const provider = new SAMLAuthProvider("saml.spglobal");
           signInWithRedirect(auth, provider);
     }
-    </script>
 
-    <!-- Application Scripts -->
-    <script>
+
+    //<!-- Application Scripts -->
+
       if (window !== window.top) {
         // If the page is inside an iframe
         //console.log("On the Brand Center");
@@ -1089,8 +1089,8 @@
       canvas_content.speaker_title = "";
 
       // Downscaled images
-      temp_portal_downscaled_image = [null, null];
-      temp_portal_image = [];
+      var temp_portal_downscaled_image = [null, null];
+      var temp_portal_image = [];
 
       // Portal content
       canvas_content.portal_color_overlay = false;
