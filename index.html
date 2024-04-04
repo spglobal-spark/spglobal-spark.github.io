@@ -592,6 +592,10 @@
         display: flex;
         align-items: left;
         margin-bottom: 8px;
+
+        color: #777;
+        font-size: 24px;
+        font-weight: normal;
       }
 
       #app-logo-container svg {
@@ -927,6 +931,7 @@
       }
 
       /* Application starts */
+      const app_logo_title = "Essential Canvas";
       var canvas, ctx;
 
       create_footer_text();
@@ -1815,7 +1820,7 @@
 
         // set the text and styles for the footer text
         footerText.innerHTML =
-          '<span style="font-weight: bold;">S&P Global</span> | EssentialCanvas';
+          '<span style="font-weight: bold;">S&P Global</span> | ' + app_logo_title;
         footerText.style.position = "fixed";
         footerText.style.bottom = "16px";
         footerText.style.right = "16px";
@@ -2487,9 +2492,12 @@
         insideToolsContainer.appendChild(appLogoContainer);
 
         // Clone the appLogo and append the clone to the appLogoContainer
-        const appLogoClone = appLogo.cloneNode(true);
-        appLogoClone.id = "cloned-app-logo";
-        appLogoContainer.appendChild(appLogoClone);
+        //const appLogoClone = appLogo.cloneNode(true);
+        //appLogoClone.id = "cloned-app-logo";
+        //appLogoContainer.appendChild(appLogoClone);
+        
+        // Add the App Name
+        appLogoContainer.innerText = app_logo_title;
 
         // Remove the 'active' class from all buttons
         const buttons = document.querySelectorAll(".toolbox_button");
