@@ -936,6 +936,15 @@
         });
 
       // Login
+      const user = auth.currentUser;
+      if (user) {
+        let login_button = document.getElementById("sso_login");
+        if (login_button) {
+          login_button.innerText = "Loading...";
+          login_button.disabled = true;
+        }
+      }
+
       // Function to handle the "Enter" key press
       var sso_button = (document.getElementById("sso_login").onclick =
         function () {
