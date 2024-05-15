@@ -3001,7 +3001,8 @@
         const feedback_button = document.createElement("button");
         feedback_button.style.marginTop = "8px";
         feedback_button.textContent = "Send feedback";
-        // Open the hyperlink in a new tab "https://mediaportal.spglobal.com/search/images"
+        insideToolsContainer.appendChild(feedback_button);
+        
         feedback_button.addEventListener("click", function () {
 
           // Click the send data button
@@ -3024,27 +3025,28 @@
                 );
               }
         });
+        
 
 
           // Panels
           addAccordion(
             "File",
             "Download images, save and import designs.",
-            true
+            false
           );
-          addAccordion("Color", "Change background and font color", true);
-          addAccordion("Text", "Modify copy and change the font size", true);
+          addAccordion("Color", "Change background and font color", false);
+          addAccordion("Text", "Modify copy and change the font size", false);
           addAccordion(
             "Image",
             "Create image portals, set the focal point, flip images horizontally and zoom.",
-            true
+            false
           );
           addAccordion(
             "Layout",
             "Change the canvas size, canvas orientation, move the logo and change the portal size",
-            true
+            false
           );
-          addAccordion("Logo", "Switch between divisional logos", true);
+          addAccordion("Logo", "Switch between divisional logos", false);
         }
 
         // IMAGES
