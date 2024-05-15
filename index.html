@@ -2178,14 +2178,15 @@
             console.log("Save JSON file");
             // Download JSON file
             var filename = prompt("Enter the filename");
-            if (filename) {
-              downloadAsJson(filename);
+            var filled_filename = (filename == "") ? canvas_content.project_name + `-${formattedDate}.png` : filename;
+            if (filled_filename) {
+              downloadAsJson(filled_filename);
 
               // Your data object
               var data_object = {
                 download: "JSON",
                 timestamp: new Date().toString(),
-                project_name: filename,
+                project_name: filled_filename,
                 headline: canvas_content.headline,
                 description: canvas_content.body,
                 cta: canvas_content.button,
@@ -2683,13 +2684,18 @@
             download_button.style.border = "1px solid red";
           }
 
-          add_label_to_inside_tools_container("SAVE YOUR DESIGN");
+          add_label_to_inside_tools_container("SAVE EDITABLE FILE");
+          addAccordion(
+            "What does this do?",
+            "Your design will be converted to a Web friendly format called JSON and saved to your Downloads folder. You can open the file at a later date and continue editing where you left off.",
+            false
+          );
           add_button_to_inside_tools_container(
-            "Save Editable File (.JSON)",
+            "Save File (.JSON)",
             "save_template"
           );
           add_button_to_inside_tools_container(
-            "Open Editable File (.JSON)",
+            "Open File (.JSON)",
             "import_template"
           );
         }
@@ -2813,10 +2819,16 @@
           );
           // Templates
           add_label_to_inside_tools_container("Template (Size)");
+         
           let select_template = create_dropdown_menu(
             template_sizes,
             "canvas_size",
             canvas_content.template_size
+          );
+          addAccordion(
+            "Size guide:",
+            "1200x628 is the most compatible option. \n1200x628: LinkedIn, Facebook, X, Threads, Instagram. \n1200x1200 Instagram. \n628x1200 Instagram Stories, Facebook Stories.",
+            true
           );
 
           // Update logo position
@@ -2974,6 +2986,46 @@
             "Weclome to S&P Global Social Media content creation tool developed by The199. \nClick the icons on the left side panel to edit the document.",
             true
           );
+
+          let feedback_label =
+              add_label_to_inside_tools_container("Provide Feedback");
+              feedback_label.id = "feedback_label";
+
+            let feedback_inputbox = add_input_box_to_inside_tools_container(
+              "feedback",
+              ""
+            );
+            feedback_inputbox.style.height = "128px";
+
+            // Brand Image Library
+        const feedback_button = document.createElement("button");
+        feedback_button.style.marginTop = "8px";
+        feedback_button.textContent = "Send feedback";
+        // Open the hyperlink in a new tab "https://mediaportal.spglobal.com/search/images"
+        feedback_button.addEventListener("click", function () {
+
+          // Click the send data button
+          const user = auth.currentUser;
+              if (user) {
+                // Data being sent
+                const email = user.email.split("@")[0];
+                data_object.username = email;
+                // Get data
+                var data_object = {
+                  user: email,
+                  feedback: feedback_inputbox.innerText,
+                  timestamp: new Date().toString(),
+                }
+
+                // Create a reference to the Collection and Document
+                const docRef = addDoc(
+                  collection(db, "Feedback"),
+                  data_object
+                );
+              }
+        });
+
+
           // Panels
           addAccordion(
             "File",
