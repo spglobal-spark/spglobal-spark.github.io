@@ -2687,7 +2687,7 @@
           add_label_to_inside_tools_container("SAVE EDITABLE FILE");
           addAccordion(
             "What does this do?",
-            "Your design will be converted to a Web friendly format called JSON and saved to your Downloads folder. You can open the file at a later date and continue editing where you left off.",
+            "Your design will be converted to a Web friendly format called JSON and saved to your Downloads folder. \nYou can open the file at a later date and continue editing where you left off.",
             false
           );
           add_button_to_inside_tools_container(
@@ -2995,11 +2995,13 @@
               "feedback",
               ""
             );
+            feedback_inputbox.placeholder = "Type here to send your feedback to The 199.";
             feedback_inputbox.style.height = "128px";
 
             // Brand Image Library
         const feedback_button = document.createElement("button");
         feedback_button.style.marginTop = "8px";
+        feedback_button.style.marginBottom = "16px";
         feedback_button.textContent = "Send feedback";
         insideToolsContainer.appendChild(feedback_button);
         
@@ -3010,11 +3012,10 @@
               if (user) {
                 // Data being sent
                 const email = user.email.split("@")[0];
-                data_object.username = email;
                 // Get data
                 var data_object = {
                   user: email,
-                  feedback: feedback_inputbox.innerText,
+                  feedback: feedback_inputbox.value,
                   timestamp: new Date().toString(),
                 }
 
@@ -3023,6 +3024,9 @@
                   collection(db, "Feedback"),
                   data_object
                 );
+                // Update button
+                feedback_button.textContent = "Sent!"
+                feedback_button.disabled = true
               }
         });
         
