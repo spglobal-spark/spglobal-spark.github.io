@@ -3025,8 +3025,16 @@
                   data_object
                 );
                 // Update button
-                feedback_button.textContent = "Sent!"
-                feedback_button.disabled = true
+                feedback_button.textContent = "Sent!";
+                feedback_button.style.backgroundColor = "#000000";
+                feedback_button.disabled = true;
+
+                // Set a timeout to switch back after 5 seconds
+                setTimeout(() => {
+                    feedback_button.textContent = "Send feedback"; // Revert to original text
+                    feedback_button.style.backgroundColor = "#d6002a"; // Revert to original background color
+                    feedback_button.disabled = false; // Re-enable the button
+                }, 5000); // 5000 milliseconds (5 seconds)
               }
         });
         
