@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-   <link
+    <link
       rel="icon"
       href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAABNVBMVEX////XACoAAAADAwP9/f3+/v7//v7++Pn//P1AQEDVAB7WACXbGT/jT2w8PDzXASvXAy3+/Pz//f3XASrwoK/VAB/XACjXAyzYCTH63eP8/PwBAQECAgIJCQm3t7fd3d3+/P0EBAQFBQUGBgYMDAw9PT22tra4uLjb29ve3t763uP//v/+//81NTU5OTk7Ozs+Pj4/Pz9BQUHTABNCQkLUABrUABxDQ0PVACDVACLVAR/WACPWASXXACnVAyHWAyfXAivXAixHR0fYAy3WBibYBC3YBC7YBi/XCCzZCjLZDDTZDTXaFzzbGT7bG0DcIUXiRmTjTWrkUG3kUW7kVXHvnavwnq3wobDyqbbIyMjJycn1vcj52+Hl5eX63OLm5ub64eb86Ov++Pj//Pz//f7//v3///7rC/PdAAABY0lEQVR42u3bRXbDQBBF0YojK+SA7aAdUMBhZmZmZqb9LyErkDL8LZ93pz16pwZdkzIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAiIlkDFjx8uxxdLrCbZMTm28WNoSc9SZaE27LJ7r7zQsN6Et0lbqtM98zEBHQHoMJtHUQoESAGgFqxR4Q+48s5quEZw8j44UapxXG5l6siDfqZM5znwEAEF9DUY/DP0G544IgiEr4tVjL2NP5VbXbLi+uP8wPCUjbzdRqpdsWZ7efLRMacLewt1XntJ3s4WBEQH1DU4nbso3NLQQoEaBGgBoBagSoEaBGgBoBagSoEaBGgBoBagSoEaBGgBoBagSoEaBGgBoBagSoEaBGgBoBagSoEaBGgBoBagSoEaBGgNp/AfO767VO21g5iLofuJ1Zq3Lb8tL+a2jAl90fnaacdpI6Pnu3bwuT/ixznx9xR2ax57su6fsGAACc8Qeld9NchmI1GwAAAABJRU5ErkJggg=="
     />
@@ -881,6 +881,32 @@
       // SAML
       const auth = getAuth(app);
 
+      function launch_canvas() {
+        // Show dashboard
+        const left_panel = document.querySelector(".left-panel");
+        left_panel.classList.remove("left-hidden");
+
+        const right_panel = document.querySelector(".right-panel");
+        right_panel.classList.remove("left-hidden");
+
+        // Add toolbox button handlers
+        assignClickHandlers();
+        function assignClickHandlers() {
+          // Get all button elements with the classname "toolbox_button"
+          const buttons = document.getElementsByClassName("toolbox_button");
+          // Assign the onclick function to each button
+          for (const button of buttons) {
+            button.onclick = function () {
+              pressed_toolbox_button(this.name);
+            };
+          }
+        }
+        // Create the canvas
+        create_canvas();
+        // Open help panel
+        document.getElementsByName("help_button")[0].click();
+      }
+
       getRedirectResult(auth)
         .then((result) => {
           const user = auth.currentUser;
@@ -900,29 +926,7 @@
             const uid = user.uid;
 
             // Show dashboard
-            const left_panel = document.querySelector(".left-panel");
-            left_panel.classList.remove("left-hidden");
-
-            const right_panel = document.querySelector(".right-panel");
-            right_panel.classList.remove("left-hidden");
-
-            // Add toolbox button handlers
-            assignClickHandlers();
-            function assignClickHandlers() {
-              // Get all button elements with the classname "toolbox_button"
-              const buttons = document.getElementsByClassName("toolbox_button");
-
-              // Assign the onclick function to each button
-              for (const button of buttons) {
-                button.onclick = function () {
-                  pressed_toolbox_button(this.name);
-                };
-              }
-            }
-            // Create the canvas
-            create_canvas();
-            // Open help panel
-            document.getElementsByName("help_button")[0].click();
+            launch_canvas();
           }
         })
         .catch((error) => {
@@ -957,15 +961,6 @@
         });
 
       //<!-- Application Scripts -->
-      if (window !== window.top) {
-        // If the page is inside an iframe
-        //console.log("On the Brand Center");
-      } else {
-        // Redirect them to the brand center if is not in an iframe
-        //console.log("Redirecting to the Brand Center");
-        //window.location.href ="https://brandcenter.spglobal.com/content/essentialcanvas";
-      }
-
       /* Application starts */
       const app_logo_title = "Essential Canvas";
       const app_credit = "Developed by The 199";
@@ -1083,9 +1078,9 @@
         "1200x628 Landscape",
         "1200x1200 Square",
         "628x1200 Portrait",
-        "800x418 Landscape",
-        /* "1920x1080 [Desktop] Landscape",
-                    "1080x1920 [Desktop] Portrait", */
+        /*"800x418 Landscape"
+        "1920x1080 Landscape",
+        "1080x1920 Portrait", */
       ];
       canvas_content.template_size = template_sizes[0];
 
@@ -2178,7 +2173,10 @@
             console.log("Save JSON file");
             // Download JSON file
             var filename = prompt("Enter the filename");
-            var filled_filename = (filename == "") ? canvas_content.project_name + `-${formattedDate}.png` : filename;
+            var filled_filename =
+              filename == ""
+                ? canvas_content.project_name + `-${formattedDate}.png`
+                : filename;
             if (filled_filename) {
               downloadAsJson(filled_filename);
 
@@ -2819,7 +2817,7 @@
           );
           // Templates
           add_label_to_inside_tools_container("Template (Size)");
-         
+
           let select_template = create_dropdown_menu(
             template_sizes,
             "canvas_size",
@@ -2938,7 +2936,7 @@
               true
             );
           }
-          /* -- Hide speaker
+           //-- Hide speaker
           if (canvas_content.portal_count == 1) {
             // Speaker Name
             add_label_to_inside_tools_container("Speaker name");
@@ -2971,7 +2969,7 @@
               );
             }
           }
-          */
+          
         }
 
         // HELP
@@ -2988,57 +2986,51 @@
           );
 
           let feedback_label =
-              add_label_to_inside_tools_container("Provide Feedback");
-              feedback_label.id = "feedback_label";
+            add_label_to_inside_tools_container("Provide Feedback");
+          feedback_label.id = "feedback_label";
 
-            let feedback_inputbox = add_input_box_to_inside_tools_container(
-              "feedback",
-              ""
-            );
-            feedback_inputbox.placeholder = "Type your feedback here ...";
-            feedback_inputbox.style.height = "128px";
+          let feedback_inputbox = add_input_box_to_inside_tools_container(
+            "feedback",
+            ""
+          );
+          feedback_inputbox.placeholder = "Type your feedback here ...";
+          feedback_inputbox.style.height = "128px";
 
-            // Brand Image Library
-        const feedback_button = document.createElement("button");
-        feedback_button.style.marginTop = "8px";
-        feedback_button.style.marginBottom = "16px";
-        feedback_button.textContent = "Send feedback";
-        insideToolsContainer.appendChild(feedback_button);
-        
-        feedback_button.addEventListener("click", function () {
+          // Brand Image Library
+          const feedback_button = document.createElement("button");
+          feedback_button.style.marginTop = "8px";
+          feedback_button.style.marginBottom = "16px";
+          feedback_button.textContent = "Send feedback";
+          insideToolsContainer.appendChild(feedback_button);
 
-          // Click the send data button
-          const user = auth.currentUser;
-              if (user) {
-                // Data being sent
-                const email = user.email.split("@")[0];
-                // Get data
-                var data_object = {
-                  user: email,
-                  feedback: feedback_inputbox.value,
-                  timestamp: new Date().toString(),
-                }
+          feedback_button.addEventListener("click", function () {
+            // Click the send data button
+            const user = auth.currentUser;
+            if (user) {
+              // Data being sent
+              const email = user.email.split("@")[0];
+              // Get data
+              var data_object = {
+                user: email,
+                feedback: feedback_inputbox.value,
+                timestamp: new Date().toString(),
+              };
 
-                // Create a reference to the Collection and Document
-                const docRef = addDoc(
-                  collection(db, "Feedback"),
-                  data_object
-                );
-                // Update button
-                feedback_button.textContent = "Sent!";
-                feedback_button.style.backgroundColor = "#000000";
-                feedback_button.disabled = true;
+              // Create a reference to the Collection and Document
+              const docRef = addDoc(collection(db, "Feedback"), data_object);
+              // Update button
+              feedback_button.textContent = "Sent!";
+              feedback_button.style.backgroundColor = "#000000";
+              feedback_button.disabled = true;
 
-                // Set a timeout to switch back after 5 seconds
-                setTimeout(() => {
-                    feedback_button.textContent = "Send feedback"; // Revert to original text
-                    feedback_button.style.backgroundColor = "#d6002a"; // Revert to original background color
-                    feedback_button.disabled = false; // Re-enable the button
-                }, 5000); // 5000 milliseconds (5 seconds)
-              }
-        });
-        
-
+              // Set a timeout to switch back after 5 seconds
+              setTimeout(() => {
+                feedback_button.textContent = "Send feedback"; // Revert to original text
+                feedback_button.style.backgroundColor = "#d6002a"; // Revert to original background color
+                feedback_button.disabled = false; // Re-enable the button
+              }, 5000); // 5000 milliseconds (5 seconds)
+            }
+          });
 
           add_label_to_inside_tools_container("Overview");
           // Panels
@@ -3454,43 +3446,105 @@
             );
           }
 
-          // Render the text for the Speaker
-          render_speaker_text(maskRectWidth, maskRectHeight);
-
           // Render text over image if there is one full screen image
-          //render_text_over_image();
+          if (canvas_content.speaker_name != "") {
+            render_text_over_image(pos_x, pos_y, maskRectWidth, maskRectHeight);
+            }
+
+          // Render text overlay
+          render_text();
         };
       }
 
-      function render_text_over_image() {
+      function render_text_over_image(pos_x, pos_y, image_width, image_height) {
         // Render text over image if there is one full screen image
-        if (is_fullscreen_image()) {
           // Render transparent overlay
-          if (canvas_content.portal_color_overlay && is_fullscreen_image()) {
-            let color =
-              canvas_content.color_font != spglobal_colors.black
-                ? "#000000"
-                : "#ffffff";
-            render_background(color, 0.4);
-          }
-          // Render text overlay
-          render_text();
-        }
-      }
-
-      function render_speaker_text(portal_width, portal_height) {
-        // If there is only one image
-        if (canvas_content.portal_count == 1) {
-          // If there is any text
-          if (
-            canvas_content.speaker_name != "" ||
-            canvas_content.speaker_title != ""
-          ) {
             // Render the text
-            console.log("Speaker: " + canvas_content.speaker_name);
-            console.log("Title: " + canvas_content.speaker_title);
-          }
-        }
+            //canvas_content.speaker_name = "Priscilla Brown";
+            //canvas_content.speaker_title = "President, S&P Global Market Intelligence";
+
+            var padding = canvas_content.marginLeft * 2
+            //let estimate_headline_size = estimate_typescale(canvas.width, canvas.height);
+            //console.log(estimate_headline_size)
+            var font_size = 16;
+            var margin_between_text = 10;
+
+            // Get the sizes
+            var speaker_name_properties = add_text_to_canvas(
+              canvas_content.speaker_name,
+              0,
+              0,
+              image_width - padding,
+              image_height,
+              font_size,
+              "#ffffff",
+              0,
+              1.05,
+              700,
+              false
+            );
+
+            var speaker_title_properties = add_text_to_canvas(
+              canvas_content.speaker_title,
+              0,
+              0,
+              image_width - padding,
+              image_height,
+              font_size,
+              "#ffffff",
+              0,
+              1.05,
+              700,
+              false
+            );
+
+            if (canvas_content.speaker_title == "") {
+              speaker_title_properties.height = 0;
+              margin_between_text = 0;
+            }
+            
+            var text_height = speaker_name_properties.height + speaker_title_properties.height + margin_between_text
+            var text_and_margin = text_height + padding
+            var rect_pos_y = pos_y + image_height - text_and_margin
+
+            //console.log(pos_y + image_height)
+
+            // Draw the rectangle
+            ctx.globalAlpha = 0.4;
+            ctx.fillStyle = "#000000";
+            ctx.fillRect(pos_x, rect_pos_y, pos_x + image_width, text_and_margin);
+            ctx.globalAlpha = 1; // Reset the globalAlpha to 1 after drawing
+
+            // Render text
+            var speaker_name_properties = add_text_to_canvas(
+              canvas_content.speaker_name,
+              pos_x + canvas_content.marginLeft,
+              rect_pos_y + canvas_content.marginLeft,
+              image_width - padding,
+              image_height,
+              font_size,
+              "#ffffff",
+              0,
+              1.05,
+              700,
+              true
+            );
+
+            if (canvas_content.speaker_title != "") {
+              var speaker_title_properties = add_text_to_canvas(
+                canvas_content.speaker_title,
+                pos_x + canvas_content.marginLeft,
+                rect_pos_y + canvas_content.marginLeft + speaker_name_properties.height + margin_between_text,
+                image_width - padding,
+                image_height,
+                font_size,
+                "#ffffff",
+                0,
+                1.05,
+                400,
+                true
+              );
+            }
       }
 
       function flip_image_horizontally(img, flip) {
@@ -6129,6 +6183,17 @@
         messageContainer.appendChild(message);
         document.body.innerHTML = "";
         document.body.appendChild(messageContainer);
+      }
+
+      // Launch debug mode
+      const isOnSpecifiedUrl = checkUrl();
+      function checkUrl() {
+        if (
+          window.location.href.includes("spglobal-spark.github.io") == false
+        ) {
+          console.log("Debug launch app");
+          launch_canvas();
+        }
       }
     </script>
 
