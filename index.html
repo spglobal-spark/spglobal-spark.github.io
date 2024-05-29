@@ -2993,7 +2993,7 @@
           insideToolsContainer.appendChild(watch_button);
 
           watch_button.addEventListener("click", function () {
-            window.open("https://spgl-my.sharepoint.com/:v:/r/personal/lyndon_nadel_spglobal_com/Documents/Essential%20Canvas%20Walkthrough.mp4?csf=1&web=1&e=8aoKV9&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifSwicGxheWJhY2tPcHRpb25zIjp7fX0%3D", "_blank");
+            window.open("https://spgl.sharepoint.com/:v:/r/sites/team_nam_corp_ProjectGold_m/Shared%20Documents/General/03%20WEB%20AND%20DAM/Social%20Media/Essential%20Canvas%20Walkthrough.mp4?csf=1&web=1&e=PgD02t&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D", "_blank");
           });
 
           let feedback_label =
@@ -3424,6 +3424,7 @@
             } else {
               console.log("Expensive downscale of the high res image");
               // Expensive high resolution downscale
+              /* ALTERNATIVE DOWNSCALER https://github.com/nodeca/pica */
               downscaled_image = high_resolution_image_downscale(
                 image,
                 1 / scaleFactor,
