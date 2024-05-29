@@ -1050,7 +1050,11 @@
       var temp_portal_image = [];
 
       // Portal content
-      canvas_content.portal_color_overlay = false;
+      canvas_content.portal_color_overlay = true; // Default to ON
+      canvas_content.portal_overlay_value = 0.4;
+      canvas_content.portal_overlay_opacity = [0.3, 0.4, 0.5, 0.6, 0.7, 0.8]; // Default to ON
+      canvas_content.portal_overlay_slider = 3;
+
       canvas_content.portal_image_flip = [false, false];
       canvas_content.portal_size_percent = 50;
       canvas_content.portal_size_values = [0, 30, 50, 70, 100];
@@ -2396,7 +2400,7 @@
         }
 
         if (current_panel_open == "Layout") {
-          if (button_label.includes("Full image color overlay")) {
+          if (button_label.includes("Show Overlay")) {
             canvas_content.portal_color_overlay =
               !canvas_content.portal_color_overlay;
           }
@@ -2778,6 +2782,12 @@
             body_button.style.height = "128px";
           }
           // Button
+          addAccordion(
+            "Important",
+            "Social media does not support buttons. Use ONLY in PAID ADs and LINKED PREVIEWS.",
+            true
+          );
+
           add_toggle_switch_with_label(
             "Show button",
             canvas_content.button_visibility
@@ -2861,7 +2871,7 @@
               canvas_content.portal_side
             );
 
-            let slider_range = canvas_content.portal_size_values.length - 1; // Cap at 70%
+            let slider_range = canvas_content.portal_size_values.length;// - 1; // Cap at 70%
             let portal_slider_label_name = "Portal size: ";
             let portal_slider_label = add_label_to_inside_tools_container(
               portal_slider_label_name +
@@ -2911,9 +2921,17 @@
             // Overlay
             if (is_fullscreen_image()) {
               add_toggle_switch_with_label(
-                "Full image color overlay",
+                "Show Overlay",
                 canvas_content.portal_color_overlay
               );
+
+              if (canvas_content.portal_color_overlay) {
+              create_range_slider(
+              canvas_content.portal_overlay_opacity.length,
+              canvas_content.portal_overlay_slider,
+              "portal_opacity_slider"
+            );
+          }
             }
           }
         }
@@ -3449,6 +3467,20 @@
           );
           ctx.restore();
 
+          // Render overlay
+          if (canvas_content.portal_size_percent >= 100 && canvas_content.portal_color_overlay) {
+            // Inverse color
+            let overlayColor =
+                canvas_content.color_font == spglobal_colors.black
+                  ? spglobal_colors.white
+                  : spglobal_colors.black;
+            // Draw the rectangle
+            ctx.globalAlpha = canvas_content.portal_overlay_value;
+            ctx.fillStyle = overlayColor;
+            ctx.fillRect(0, 0, canvas_content.canvas_width, canvas_content.canvas_height);
+            ctx.globalAlpha = 1; // Reset the globalAlpha to 1 after drawing
+            }
+
           // Draw portal divider line
           if (canvas_content.portal_count > 1) {
             draw_divider(
@@ -3458,8 +3490,8 @@
             );
           }
 
-          // Render text over image if there is one full screen image
-          if (canvas_content.speaker_name != "") {
+          // Render text over image if there is one full screen image && Portal size is not 100%
+          if (canvas_content.speaker_name != "" && canvas_content.portal_size_percent != 100) {
             render_text_over_image(pos_x, pos_y, maskRectWidth, maskRectHeight);
             }
 
@@ -5907,6 +5939,13 @@
           canvas_content.portal_size_slider = incrementPosition;
           // Clear portal downscaled image
           temp_portal_downscaled_image = [null, null];
+          update_toolbox_panel("layout_button");
+        }
+
+        if (slider.name.includes("portal_opacity_slider")) {
+          canvas_content.portal_overlay_value =
+            canvas_content.portal_overlay_opacity[incrementPosition];
+          canvas_content.portal_overlay_slider = incrementPosition;
           update_toolbox_panel("layout_button");
         }
 
