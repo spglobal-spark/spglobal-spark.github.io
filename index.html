@@ -1486,6 +1486,11 @@
             collection(db, email + "-" + data_object.download),
             data_object
           );
+          // Create a reference to the download
+          const recordContent = addDoc(
+            collection(db, "All-Downloads"),
+            { user: data_object.username, time: data_object.timestamp, division: data_object.logo }
+          );
         }
       }
 
