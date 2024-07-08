@@ -2403,6 +2403,7 @@
           if (button_label.includes("Show Overlay")) {
             canvas_content.portal_color_overlay =
               !canvas_content.portal_color_overlay;
+              update_toolbox_panel("layout_button");
           }
           if (button_label.includes("Margins")) {
             canvas_content.portal_override_margins =
@@ -3491,7 +3492,8 @@
           }
 
           // Render text over image if there is one full screen image && Portal size is not 100%
-          if (canvas_content.speaker_name != "" && canvas_content.portal_size_percent != 100) {
+          if (canvas_content.speaker_name != "" && canvas_content.portal_size_percent != 100 && canvas_content.portal_count == 1) {
+            //console.log(pos_x + " | " + pos_y + " | " + maskRectWidth + " | " + maskRectHeight)
             render_text_over_image(pos_x, pos_y, maskRectWidth, maskRectHeight);
             }
 
@@ -3504,11 +3506,8 @@
         // Render text over image if there is one full screen image
           // Render transparent overlay
             // Render the text
-            //canvas_content.speaker_name = "Priscilla Brown";
-            //canvas_content.speaker_title = "President, S&P Global Market Intelligence";
-
             var padding = canvas_content.marginLeft * 2
-            //let estimate_headline_size = estimate_typescale(canvas.width, canvas.height);
+
             //console.log(estimate_headline_size)
             var font_size = 16;
             var margin_between_text = 10;
@@ -3528,7 +3527,9 @@
               false
             );
 
-            var speaker_title_properties = add_text_to_canvas(
+            var speaker_title_properties = { height:0 }
+            if (canvas_content.speaker_title != "") {
+              speaker_title_properties = add_text_to_canvas(
               canvas_content.speaker_title,
               0,
               0,
@@ -3541,6 +3542,7 @@
               700,
               false
             );
+            }
 
             if (canvas_content.speaker_title == "") {
               speaker_title_properties.height = 0;
@@ -3560,7 +3562,7 @@
             ctx.globalAlpha = 1; // Reset the globalAlpha to 1 after drawing
 
             // Render text
-            var speaker_name_properties = add_text_to_canvas(
+            speaker_name_properties = add_text_to_canvas(
               canvas_content.speaker_name,
               pos_x + canvas_content.marginLeft,
               rect_pos_y + canvas_content.marginLeft,
@@ -3575,7 +3577,7 @@
             );
 
             if (canvas_content.speaker_title != "") {
-              var speaker_title_properties = add_text_to_canvas(
+              add_text_to_canvas(
                 canvas_content.speaker_title,
                 pos_x + canvas_content.marginLeft,
                 rect_pos_y + canvas_content.marginLeft + speaker_name_properties.height + margin_between_text,
