@@ -909,11 +909,11 @@
 
       getRedirectResult(auth)
         .then((result) => {
-          console.log("getRedirectResult Complete")
+          console.log("getRedirectResult Complete");
           const user = auth.currentUser;
           console.log(user);
           console.log(auth);
-          console.log("logged in: " + logged_in)
+          console.log("logged in: " + logged_in);
           if (user && !logged_in) {
             logged_in = true;
             // The user object has basic properties such as display name, email, etc.
@@ -953,17 +953,25 @@
         }
       }
 
-      // Function to handle the "Enter" key press
-      var sso_button = (document.getElementById("sso_login").onclick =
-        function () {
+      async function signIn() {
+          // ADDED ASYNC to allow AWAIT to work
           if (!login_attempt) {
             const provider = new SAMLAuthProvider("saml.spglobal");
-            signInWithRedirect(auth, provider);
+            //signInWithRedirect(auth, provider);
             //const userCred = await signInWithPopup(auth, provider);
+            try {
+              const userCred = await signInWithPopup(auth, provider);
+              console.log("User signed in:", userCred);
+            } catch (error) {
+              console.error("Error signing in:", error);
+            }
             login_attempt = true;
           }
           this.innerText = "Loading...";
-        });
+        }
+
+      // Function to handle the "Enter" key press
+      var sso_button = (document.getElementById("sso_login").onclick = function() { signIn() };
 
       //<!-- Application Scripts -->
       /* Application starts */
@@ -1492,10 +1500,11 @@
             data_object
           );
           // Create a reference to the download
-          const recordContent = addDoc(
-            collection(db, "All-Downloads"),
-            { user: data_object.username, time: data_object.timestamp, division: data_object.logo }
-          );
+          const recordContent = addDoc(collection(db, "All-Downloads"), {
+            user: data_object.username,
+            time: data_object.timestamp,
+            division: data_object.logo,
+          });
         }
       }
 
@@ -2413,7 +2422,7 @@
           if (button_label.includes("Show Overlay")) {
             canvas_content.portal_color_overlay =
               !canvas_content.portal_color_overlay;
-              update_toolbox_panel("layout_button");
+            update_toolbox_panel("layout_button");
           }
           if (button_label.includes("Margins")) {
             canvas_content.portal_override_margins =
@@ -2882,7 +2891,7 @@
               canvas_content.portal_side
             );
 
-            let slider_range = canvas_content.portal_size_values.length;// - 1; // Cap at 70%
+            let slider_range = canvas_content.portal_size_values.length; // - 1; // Cap at 70%
             let portal_slider_label_name = "Portal size: ";
             let portal_slider_label = add_label_to_inside_tools_container(
               portal_slider_label_name +
@@ -2937,12 +2946,12 @@
               );
 
               if (canvas_content.portal_color_overlay) {
-              create_range_slider(
-              canvas_content.portal_overlay_opacity.length,
-              canvas_content.portal_overlay_slider,
-              "portal_opacity_slider"
-            );
-          }
+                create_range_slider(
+                  canvas_content.portal_overlay_opacity.length,
+                  canvas_content.portal_overlay_slider,
+                  "portal_opacity_slider"
+                );
+              }
             }
           }
         }
@@ -2965,7 +2974,7 @@
               true
             );
           }
-           //-- Hide speaker
+          //-- Hide speaker
           if (canvas_content.portal_count == 1) {
             // Speaker Name
             add_label_to_inside_tools_container("Speaker name");
@@ -2998,7 +3007,6 @@
               );
             }
           }
-          
         }
 
         // HELP
@@ -3022,7 +3030,10 @@
           insideToolsContainer.appendChild(watch_button);
 
           watch_button.addEventListener("click", function () {
-            window.open("https://spgl.sharepoint.com/:v:/r/sites/team_nam_corp_ProjectGold_m/Shared%20Documents/General/03%20WEB%20AND%20DAM/Social%20Media/Essential%20Canvas%20Walkthrough.mp4?csf=1&web=1&e=PgD02t&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D", "_blank");
+            window.open(
+              "https://spgl.sharepoint.com/:v:/r/sites/team_nam_corp_ProjectGold_m/Shared%20Documents/General/03%20WEB%20AND%20DAM/Social%20Media/Essential%20Canvas%20Walkthrough.mp4?csf=1&web=1&e=PgD02t&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D",
+              "_blank"
+            );
           });
 
           let feedback_label =
@@ -3479,18 +3490,26 @@
           ctx.restore();
 
           // Render overlay
-          if (canvas_content.portal_size_percent >= 100 && canvas_content.portal_color_overlay) {
+          if (
+            canvas_content.portal_size_percent >= 100 &&
+            canvas_content.portal_color_overlay
+          ) {
             // Inverse color
             let overlayColor =
-                canvas_content.color_font == spglobal_colors.black
-                  ? spglobal_colors.white
-                  : spglobal_colors.black;
+              canvas_content.color_font == spglobal_colors.black
+                ? spglobal_colors.white
+                : spglobal_colors.black;
             // Draw the rectangle
             ctx.globalAlpha = canvas_content.portal_overlay_value;
             ctx.fillStyle = overlayColor;
-            ctx.fillRect(0, 0, canvas_content.canvas_width, canvas_content.canvas_height);
+            ctx.fillRect(
+              0,
+              0,
+              canvas_content.canvas_width,
+              canvas_content.canvas_height
+            );
             ctx.globalAlpha = 1; // Reset the globalAlpha to 1 after drawing
-            }
+          }
 
           // Draw portal divider line
           if (canvas_content.portal_count > 1) {
@@ -3502,10 +3521,14 @@
           }
 
           // Render text over image if there is one full screen image && Portal size is not 100%
-          if (canvas_content.speaker_name != "" && canvas_content.portal_size_percent != 100 && canvas_content.portal_count == 1) {
+          if (
+            canvas_content.speaker_name != "" &&
+            canvas_content.portal_size_percent != 100 &&
+            canvas_content.portal_count == 1
+          ) {
             //console.log(pos_x + " | " + pos_y + " | " + maskRectWidth + " | " + maskRectHeight)
             render_text_over_image(pos_x, pos_y, maskRectWidth, maskRectHeight);
-            }
+          }
 
           // Render text overlay
           render_text();
@@ -3514,93 +3537,99 @@
 
       function render_text_over_image(pos_x, pos_y, image_width, image_height) {
         // Render text over image if there is one full screen image
-          // Render transparent overlay
-            // Render the text
-            var padding = canvas_content.marginLeft * 2
+        // Render transparent overlay
+        // Render the text
+        var padding = canvas_content.marginLeft * 2;
 
-            //console.log(estimate_headline_size)
-            var font_size = 16;
-            var margin_between_text = 10;
+        //console.log(estimate_headline_size)
+        var font_size = 16;
+        var margin_between_text = 10;
 
-            // Get the sizes
-            var speaker_name_properties = add_text_to_canvas(
-              canvas_content.speaker_name,
-              0,
-              0,
-              image_width - padding,
-              image_height,
-              font_size,
-              "#ffffff",
-              0,
-              1.05,
-              700,
-              false
-            );
+        // Get the sizes
+        var speaker_name_properties = add_text_to_canvas(
+          canvas_content.speaker_name,
+          0,
+          0,
+          image_width - padding,
+          image_height,
+          font_size,
+          "#ffffff",
+          0,
+          1.05,
+          700,
+          false
+        );
 
-            var speaker_title_properties = { height:0 }
-            if (canvas_content.speaker_title != "") {
-              speaker_title_properties = add_text_to_canvas(
-              canvas_content.speaker_title,
-              0,
-              0,
-              image_width - padding,
-              image_height,
-              font_size,
-              "#ffffff",
-              0,
-              1.05,
-              700,
-              false
-            );
-            }
+        var speaker_title_properties = { height: 0 };
+        if (canvas_content.speaker_title != "") {
+          speaker_title_properties = add_text_to_canvas(
+            canvas_content.speaker_title,
+            0,
+            0,
+            image_width - padding,
+            image_height,
+            font_size,
+            "#ffffff",
+            0,
+            1.05,
+            700,
+            false
+          );
+        }
 
-            if (canvas_content.speaker_title == "") {
-              speaker_title_properties.height = 0;
-              margin_between_text = 0;
-            }
-            
-            var text_height = speaker_name_properties.height + speaker_title_properties.height + margin_between_text
-            var text_and_margin = text_height + padding
-            var rect_pos_y = pos_y + image_height - text_and_margin
+        if (canvas_content.speaker_title == "") {
+          speaker_title_properties.height = 0;
+          margin_between_text = 0;
+        }
 
-            //console.log(pos_y + image_height)
+        var text_height =
+          speaker_name_properties.height +
+          speaker_title_properties.height +
+          margin_between_text;
+        var text_and_margin = text_height + padding;
+        var rect_pos_y = pos_y + image_height - text_and_margin;
 
-            // Draw the rectangle
-            ctx.globalAlpha = 0.4;
-            ctx.fillStyle = "#000000";
-            ctx.fillRect(pos_x, rect_pos_y, pos_x + image_width, text_and_margin);
-            ctx.globalAlpha = 1; // Reset the globalAlpha to 1 after drawing
+        //console.log(pos_y + image_height)
 
-            // Render text
-            speaker_name_properties = add_text_to_canvas(
-              canvas_content.speaker_name,
-              pos_x + canvas_content.marginLeft,
-              rect_pos_y + canvas_content.marginLeft,
-              image_width - padding,
-              image_height,
-              font_size,
-              "#ffffff",
-              0,
-              1.05,
-              700,
-              true
-            );
+        // Draw the rectangle
+        ctx.globalAlpha = 0.4;
+        ctx.fillStyle = "#000000";
+        ctx.fillRect(pos_x, rect_pos_y, pos_x + image_width, text_and_margin);
+        ctx.globalAlpha = 1; // Reset the globalAlpha to 1 after drawing
 
-            if (canvas_content.speaker_title != "") {
-              add_text_to_canvas(
-                canvas_content.speaker_title,
-                pos_x + canvas_content.marginLeft,
-                rect_pos_y + canvas_content.marginLeft + speaker_name_properties.height + margin_between_text,
-                image_width - padding,
-                image_height,
-                font_size,
-                "#ffffff",
-                0,
-                1.05,
-                400,
-                true
-              );
-            }
+        // Render text
+        speaker_name_properties = add_text_to_canvas(
+          canvas_content.speaker_name,
+          pos_x + canvas_content.marginLeft,
+          rect_pos_y + canvas_content.marginLeft,
+          image_width - padding,
+          image_height,
+          font_size,
+          "#ffffff",
+          0,
+          1.05,
+          700,
+          true
+        );
+
+        if (canvas_content.speaker_title != "") {
+          add_text_to_canvas(
+            canvas_content.speaker_title,
+            pos_x + canvas_content.marginLeft,
+            rect_pos_y +
+              canvas_content.marginLeft +
+              speaker_name_properties.height +
+              margin_between_text,
+            image_width - padding,
+            image_height,
+            font_size,
+            "#ffffff",
+            0,
+            1.05,
+            400,
+            true
+          );
+        }
       }
 
       function flip_image_horizontally(img, flip) {
