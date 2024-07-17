@@ -909,6 +909,7 @@
 
       getRedirectResult(auth)
         .then((result) => {
+          console.log("getRedirectResult Complete")
           const user = auth.currentUser;
           if (user && !logged_in) {
             logged_in = true;
