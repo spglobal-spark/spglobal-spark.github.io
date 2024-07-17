@@ -908,42 +908,6 @@
         document.getElementsByName("help_button")[0].click();
       }
 
-      getRedirectResult(auth)
-        .then((result) => {
-          console.log("getRedirectResult Complete");
-          const user = auth.currentUser;
-          console.log(user);
-          console.log(auth);
-          console.log("logged in: " + logged_in);
-          if (user && !logged_in) {
-            logged_in = true;
-            // The user object has basic properties such as display name, email, etc.
-            //const displayName = user.displayName;
-            const email = user.email;
-            //const photoURL = user.photoURL;
-            const emailVerified = user.emailVerified;
-
-            console.log("SSO Login Successful");
-
-            // The user's ID, unique to the Firebase project. Do NOT use
-            // this value to authenticate with your backend server, if
-            // you have one. Use User.getToken() instead.
-            const uid = user.uid;
-
-            // Show dashboard
-            launch_canvas();
-          }
-        })
-        .catch((error) => {
-          // Handle error
-          console.log(error);
-          login_attempt = false;
-          var login_button = document.getElementById("sso_login");
-          if (login_button) {
-            login_button.innerText = "Login (SSO)";
-          }
-        });
-
       // Login
       const user = auth.currentUser;
       if (user) {
@@ -955,24 +919,52 @@
       }
 
       async function signIn() {
-          // ADDED ASYNC to allow AWAIT to work
-          if (!login_attempt) {
-            const provider = new SAMLAuthProvider("saml.spglobal");
-            //signInWithRedirect(auth, provider);
-            //const userCred = await signInWithPopup(auth, provider);
-            try {
-              const userCred = await signInWithPopup(auth, provider);
-              console.log("User signed in:", userCred);
-            } catch (error) {
-              console.error("Error signing in:", error);
+        // ADDED ASYNC to allow AWAIT to work
+        if (!login_attempt) {
+          login_attempt = true;
+          const provider = new SAMLAuthProvider("saml.spglobal");
+          //signInWithRedirect(auth, provider);
+          //const userCred = await signInWithPopup(auth, provider);
+          try {
+            const userCred = await signInWithPopup(auth, provider);
+            console.log("User signed in:", userCred);
+            const user = auth.currentUser;
+            if (user && !logged_in) {
+              logged_in = true;
+              // The user object has basic properties such as display name, email, etc.
+              //const displayName = user.displayName;
+              const email = user.email;
+              //const photoURL = user.photoURL;
+              const emailVerified = user.emailVerified;
+
+              console.log("SSO Login Successful");
+
+              // The user's ID, unique to the Firebase project. Do NOT use
+              // this value to authenticate with your backend server, if
+              // you have one. Use User.getToken() instead.
+              const uid = user.uid;
+
+              // Show dashboard
+              launch_canvas();
             }
-            login_attempt = true;
+          } catch (error) {
+            console.error("Error signing in:", error);
+            // Handle error
+            login_attempt = false;
+            var login_button = document.getElementById("sso_login");
+            if (login_button) {
+              login_button.innerText = "Login (SSO)";
+            }
           }
-          this.innerText = "Loading...";
         }
+        document.getElementById("sso_login").innerText = "Loading...";
+      }
 
       // Function to handle the "Enter" key press
-      var sso_button = (document.getElementById("sso_login").onclick = function() { signIn() });
+      var sso_button = (document.getElementById("sso_login").onclick =
+        function () {
+          signIn();
+        });
 
       //<!-- Application Scripts -->
       /* Application starts */
