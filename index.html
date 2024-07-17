@@ -957,7 +957,10 @@
             }
           }
         }
-        document.getElementById("sso_login").innerText = "Loading...";
+        var login_button = document.getElementById("sso_login");
+        if (login_button) {
+          login_button.innerText = "Loading...";
+        }
       }
 
       // Function to handle the "Enter" key press
