@@ -922,9 +922,13 @@
         // ADDED ASYNC to allow AWAIT to work
         if (!login_attempt) {
           login_attempt = true;
+          // Hide the button clickablity
+          var login_button = document.getElementById("sso_login");
+          if (login_button) {
+            login_button.innerText = "Loading...";
+          }
+          
           const provider = new SAMLAuthProvider("saml.spglobal");
-          //signInWithRedirect(auth, provider);
-          //const userCred = await signInWithPopup(auth, provider);
           try {
             const userCred = await signInWithPopup(auth, provider);
             console.log("User signed in:", userCred);
@@ -956,10 +960,6 @@
               login_button.innerText = "Login (SSO)";
             }
           }
-        }
-        var login_button = document.getElementById("sso_login");
-        if (login_button) {
-          login_button.innerText = "Loading...";
         }
       }
 
