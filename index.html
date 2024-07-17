@@ -958,7 +958,8 @@
         function () {
           if (!login_attempt) {
             const provider = new SAMLAuthProvider("saml.spglobal");
-            signInWithRedirect(auth, provider);
+            // signInWithRedirect(auth, provider);
+            const userCred = await signInWithPopup(auth, provider);
             login_attempt = true;
           }
           this.innerText = "Loading...";
