@@ -911,6 +911,8 @@
         .then((result) => {
           console.log("getRedirectResult Complete")
           const user = auth.currentUser;
+          console.log(user);
+          console.log("logged in: " + logged_in)
           if (user && !logged_in) {
             logged_in = true;
             // The user object has basic properties such as display name, email, etc.
