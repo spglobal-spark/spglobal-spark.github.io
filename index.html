@@ -919,7 +919,9 @@
       }
 
       // Launch canvas without login
-      setTimeout(1000, function () { launch_canvas(); })
+      setTimeout(1000, function () {
+        launch_canvas();
+      });
 
       async function signIn() {
         // ADDED ASYNC to allow AWAIT to work
@@ -930,7 +932,7 @@
           if (login_button) {
             login_button.innerText = "Loading...";
           }
-          
+
           const provider = new SAMLAuthProvider("saml.spglobal");
           try {
             const userCred = await signInWithPopup(auth, provider);
@@ -965,8 +967,6 @@
           }
         }
       }
-
-
 
       // Function to handle the "Enter" key press
       var sso_button = (document.getElementById("sso_login").onclick =
@@ -4201,6 +4201,8 @@
           canvas_content.ignore_line_breaks.headline
         );
 
+        let headline_lineheight =  1.05 + 0.4;
+
         // Downscale the font if the user picks a smaller font
         let headline_properties;
         if (canvas_content.font_size.small) {
@@ -4214,7 +4216,7 @@
             estimate_headline_size,
             canvas_content.color_font,
             0,
-            1.05,
+            headline_lineheight,
             700,
             false
           );
@@ -4264,7 +4266,7 @@
           font_size,
           canvas_content.color_font,
           0,
-          1.05,
+          headline_lineheight,
           700,
           false
         );
@@ -4398,7 +4400,7 @@
           font_size,
           canvas_content.color_font,
           0,
-          1.05,
+          headline_lineheight,
           700,
           false // Render text
         );
@@ -4574,7 +4576,7 @@
           headline_properties.font_size,
           canvas_content.color_font,
           0,
-          1.05,
+          headline_lineheight,
           700,
           true // Render text
         );
@@ -5679,7 +5681,7 @@
           return lines;
         }
 
-        function draw_text_with_superscript(text, x, y, font_size) {
+        function draw_text_with_superscript(text, x, y) {
           const specialChars = ["™", "®", "©"];
           const originalFontSize = parseInt(ctx.font.match(/\d+/)[0]);
           const superscriptFontSize = Math.floor(originalFontSize * 0.6);
@@ -5687,15 +5689,6 @@
           const spacingFactor = 0.6; // Adjust this value to change the spacing after special characters
 
           let currentPositionX = x;
-
-          // Draw the Highlight fill box
-          let text_width = ctx.measureText(text).width;
-          if (text_width != 0) {
-            let highlight_padding = 8;
-            ctx.fillStyle = "#EDF86F"; 
-            ctx.beginPath(); // Start a new path
-            ctx.fillRect(x, y - font_size, ctx.measureText(text).width, font_size);
-            }
 
           // Draw the characters
           ctx.fillStyle = fontColor;
@@ -5714,7 +5707,7 @@
               ctx.fillText(char, currentPositionX, y);
               currentPositionX += ctx.measureText(char).width;
             }
-          } 
+          }
         }
 
         const original_text = text;
@@ -5779,14 +5772,56 @@
         var widow_result = false;
         var isSingleWord = false;
 
+        // Draw highlights
+        let y_position_map = []
         for (let i = 0; i < textForRendering.length; i++) {
           const line = textForRendering[i];
-          let calculated_position_y =
+          // Find the y-position
+          y_position_map.push(
             snap_y +
             position_y +
             i * fontSize * lineHeight +
-            fontSize * offset_y;
+            fontSize * offset_y);
 
+          if (renderText) {
+            // Draw the Highlight fill box
+            let text_width = ctx.measureText(line).width;
+
+            let highlight_padding = fontSize * 0.25;
+
+            // Remove extra spacing from all the special characters
+            let special_character_width = 0;
+            for (let q = 0; q < line.length; q++) {
+              const specialChars = ["™", "®", "©"];
+              let char = line.charAt(q);
+              let isSpecialChar = specialChars.includes(char);
+
+              if (isSpecialChar) {
+                // Draw the characters
+                const spacingFactor = 0.4; // Adjust this value to change the spacing after special characters
+                special_character_width += ctx.measureText(char).width * spacingFactor; // Apply the spacing factor
+                console.log(special_character_width);
+              }
+            }
+
+            if (text_width != 0) {
+              
+              ctx.fillStyle = "#EDF86F";
+              ctx.beginPath(); // Start a new path
+              ctx.fillRect(
+                position_x - highlight_padding,
+                y_position_map[i] - fontSize,
+                ctx.measureText(line).width + highlight_padding * 2 - special_character_width,
+                fontSize + highlight_padding
+              );
+            }
+          }
+
+        }
+
+        // Draw characters
+        for (let i = 0; i < textForRendering.length; i++) {
+          const line = textForRendering[i];
           // Check if the last line is a widow (contains no whitespace)
           if (i === textForRendering.length - 1 && !/\s/.test(line)) {
             widow_result = true;
@@ -5794,7 +5829,8 @@
 
           // Add superscript, trademark and copywriting
           if (renderText) {
-            draw_text_with_superscript(line, position_x, calculated_position_y, fontSize);
+            // Draw characters
+            draw_text_with_superscript(line, position_x, y_position_map[i]);
           }
         }
 
@@ -6304,27 +6340,27 @@
         }
       }
 
-    // Check if the font family has been loaded
-    function fontLoaded(fontName, callback) {
-  document.fonts.ready.then(() => {
-    if (document.fonts.check(`12px ${fontName}`)) {
-      callback();
-    } else {
-      // Font not available, you might want to handle this case
-      console.log(`Font ${fontName} is not available`);
-    }
-  });
-}
+      // Check if the font family has been loaded
+      function fontLoaded(fontName, callback) {
+        document.fonts.ready.then(() => {
+          if (document.fonts.check(`12px ${fontName}`)) {
+            callback();
+          } else {
+            // Font not available, you might want to handle this case
+            console.log(`Font ${fontName} is not available`);
+          }
+        });
+      }
 
-// If the @font-face has been loaded -- Update the canvas
-fontLoaded('Akkurat LL', () => {
-  console.log('Font has been loaded!');
-  let login_button = document.getElementById("sso_login");
-  if (!login_button) {
-  update_canvas();
-  }
-  // Perform actions that depend on the font being loaded
-});
+      // If the @font-face has been loaded -- Update the canvas
+      fontLoaded("Akkurat LL", () => {
+        console.log("Font has been loaded!");
+        let login_button = document.getElementById("sso_login");
+        if (!login_button) {
+          update_canvas();
+        }
+        // Perform actions that depend on the font being loaded
+      });
     </script>
 
     <!-- Baked SVGs -->
