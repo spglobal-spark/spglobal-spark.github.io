@@ -918,6 +918,9 @@
         }
       }
 
+      // Launch canvas without login
+      setTimeout(1000, function () { launch_canvas(); })
+
       async function signIn() {
         // ADDED ASYNC to allow AWAIT to work
         if (!login_attempt) {
@@ -5676,7 +5679,7 @@
           return lines;
         }
 
-        function draw_text_with_superscript(text, x, y) {
+        function draw_text_with_superscript(text, x, y, font_size) {
           const specialChars = ["™", "®", "©"];
           const originalFontSize = parseInt(ctx.font.match(/\d+/)[0]);
           const superscriptFontSize = Math.floor(originalFontSize * 0.6);
@@ -5684,20 +5687,34 @@
           const spacingFactor = 0.6; // Adjust this value to change the spacing after special characters
 
           let currentPositionX = x;
+
+          // Draw the Highlight fill box
+          let text_width = ctx.measureText(text).width;
+          if (text_width != 0) {
+            let highlight_padding = 8;
+            ctx.fillStyle = "#EDF86F"; 
+            ctx.beginPath(); // Start a new path
+            ctx.fillRect(x, y - font_size, ctx.measureText(text).width, font_size);
+            }
+
+          // Draw the characters
+          ctx.fillStyle = fontColor;
           for (let i = 0; i < text.length; i++) {
             let char = text.charAt(i);
             let isSpecialChar = specialChars.includes(char);
 
             if (isSpecialChar) {
+              // Draw the characters
               ctx.font = ctx.font.replace(/\d+/, superscriptFontSize);
               ctx.fillText(char, currentPositionX, y + superscriptYOffset);
               ctx.font = ctx.font.replace(/\d+/, originalFontSize);
               currentPositionX += ctx.measureText(char).width * spacingFactor; // Apply the spacing factor
             } else {
+              // Draw the characters
               ctx.fillText(char, currentPositionX, y);
               currentPositionX += ctx.measureText(char).width;
             }
-          }
+          } 
         }
 
         const original_text = text;
@@ -5777,7 +5794,7 @@
 
           // Add superscript, trademark and copywriting
           if (renderText) {
-            draw_text_with_superscript(line, position_x, calculated_position_y);
+            draw_text_with_superscript(line, position_x, calculated_position_y, fontSize);
           }
         }
 
@@ -6286,6 +6303,28 @@
           launch_canvas();
         }
       }
+
+    // Check if the font family has been loaded
+    function fontLoaded(fontName, callback) {
+  document.fonts.ready.then(() => {
+    if (document.fonts.check(`12px ${fontName}`)) {
+      callback();
+    } else {
+      // Font not available, you might want to handle this case
+      console.log(`Font ${fontName} is not available`);
+    }
+  });
+}
+
+// If the @font-face has been loaded -- Update the canvas
+fontLoaded('Akkurat LL', () => {
+  console.log('Font has been loaded!');
+  let login_button = document.getElementById("sso_login");
+  if (!login_button) {
+  update_canvas();
+  }
+  // Perform actions that depend on the font being loaded
+});
     </script>
 
     <!-- Baked SVGs -->
