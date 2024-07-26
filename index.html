@@ -3480,11 +3480,20 @@
       // Render text over image if there is one full screen image
       // Render transparent overlay
       // Render the text
-      var padding = canvas_content.marginLeft * 2;
+      var padding = canvas_content.margin * 2; //canvas_content.marginLeft * 2;
+
+      // canvas_content.marginLeft = The left side of the text
 
       //console.log(estimate_headline_size)
       var font_size = 16;
       var margin_between_text = 10;
+
+      // Remove any image flipping
+      image_width = Math.abs(image_width);
+      image_height = Math.abs(image_height);
+
+      console.log(image_width);
+      console.log("Content margin left: " + padding);
 
       // Get the sizes
       var speaker_name_properties = add_text_to_canvas(
@@ -3541,8 +3550,8 @@
       // Render text
       speaker_name_properties = add_text_to_canvas(
         canvas_content.speaker_name,
-        pos_x + canvas_content.marginLeft,
-        rect_pos_y + canvas_content.marginLeft,
+        pos_x + canvas_content.margin,
+        rect_pos_y + canvas_content.margin,
         image_width - padding,
         image_height,
         font_size,
@@ -3556,9 +3565,9 @@
       if (canvas_content.speaker_title != "") {
         add_text_to_canvas(
           canvas_content.speaker_title,
-          pos_x + canvas_content.marginLeft,
+          pos_x + canvas_content.margin,
           rect_pos_y +
-          canvas_content.marginLeft +
+          canvas_content.margin +
           speaker_name_properties.height +
           margin_between_text,
           image_width - padding,
@@ -5559,6 +5568,17 @@
       fontWeight,
       renderText
     ) {
+      console.log("Text:", text,
+            "X Position:", position_x,
+            "Y Position:", position_y,
+            "Rectangle Width:", rectWidth,
+            "Rectangle Height:", rectHeight,
+            "Font Size:", fontSize,
+            "Font Color:", fontColor,
+            "Letter Spacing:", letterSpacing,
+            "Default Line Height:", defaultLineHeight,
+            "Font Weight:", fontWeight,
+            "Render Text:", renderText);
       // Get the width of the text
       function get_text_width(text, fontSize, letterSpacing) {
         // Start the width as 0
