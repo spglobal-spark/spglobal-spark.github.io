@@ -6338,6 +6338,7 @@
       }
     }
 
+    /*
     // Check if the font family has been loaded
     function fontLoaded(fontName, callback) {
       document.fonts.ready.then(() => {
@@ -6349,6 +6350,18 @@
         }
       });
     }
+    
+    
+    // If the @font-face has been loaded -- Update the canvas
+        fontLoaded("Akkurat LL", () => {
+      console.log("Font has been loaded!");
+      let login_button = document.getElementById("sso_login");
+      if (!login_button) {
+        update_canvas();
+      }
+      // Perform actions that depend on the font being loaded
+    });
+    */
   </script>
 
   <!-- Baked SVGs -->
