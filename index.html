@@ -3732,7 +3732,7 @@
         let sponsor_name = "";
         let svgSponsorElement = undefined;
 
-        if (logo_name.includes("sustainable1")) {
+        if (initial_logo_name.includes("sustainable1")) {
           // Color version
           svgSponsorElement = document.getElementById("spg_sustainable1");
 
@@ -3763,10 +3763,10 @@
         }
 
         // Seek & Prosper
-        if (logo_name.includes("prosper")) {
+        if (initial_logo_name.includes("prosper")) {
           // Color version
           sponsor_reference = { width: 605.74, height: 77 };
-          sponsor_scale = 0.4;
+          sponsor_scale = 0.35;
           svgSponsorElement = document.getElementById("spg_seek_and_prosper");
           // Change logo back to Corporate
           logo_name = "spg_corporate";
@@ -3873,7 +3873,7 @@
         let logo_position = canvas_content.logo.corner;
 
         // Move logo to position
-        if (logo_position == "top") {
+        if (logo_position == "top" || initial_logo_name.includes("prosper")) {
           position.x = canvas_content.marginLeft;
           position.y = canvas_content.marginTop;
         }
@@ -4239,6 +4239,15 @@
             logo_padding,
         };
 
+        // Seek and Prosper changes
+        let seek_and_prosper_corporate_logo_total_height = 0;
+        if (canvas_content.logo.name.includes("prosper")) {
+          seek_and_prosper_corporate_logo_total_height = canvas_content.logo.height + logo_padding * 1.5;
+          position.y += seek_and_prosper_corporate_logo_total_height;
+
+          text_area.height -= seek_and_prosper_corporate_logo_total_height;
+        }
+
         // Dynamic font size
         let estimate_headline_size = estimate_typescale(
           canvas.width,
@@ -4268,7 +4277,7 @@
             canvas_content.event_name == ""
               ? 0
               : event_name_properties.height + event_name_font_size;
-          position.y = canvas_content.marginTop + event_name_height;
+          position.y = canvas_content.marginTop + event_name_height + seek_and_prosper_corporate_logo_total_height;
           text_area.height = text_area.height - event_name_height;
         }
 
@@ -4510,7 +4519,7 @@
         // Determine the starting location of the container
         let text_initial_position_y = canvas_content.text_bottom_aligned
           ? canvas_content.marginBottom - total_content_height
-          : canvas_content.marginTop + event_name_height; // Sets the headline position
+          : canvas_content.marginTop + event_name_height + seek_and_prosper_corporate_logo_total_height; // Sets the headline position
 
         // Recalculate y positions
         headline_position_y = text_initial_position_y;
@@ -5679,6 +5688,7 @@
       ) {
         // Get the width of the text
         function get_text_width(text, fontSize, letterSpacing) {
+          let seek_and_prosper_highlight_padding = seek_and_prosper_headline ? (fontSize * 0.15) * 2 : 0;
           // Start the width as 0
           let width = 0;
           ctx.font = `${fontWeight} ${fontSize}px Akkurat LL`;
@@ -5686,7 +5696,7 @@
           for (let i = 0; i < text.length; i++) {
             width += ctx.measureText(text[i]).width + letterSpacing;
           }
-          return width;
+          return width + seek_and_prosper_highlight_padding;
         }
 
         // Check if ONE word is wider than the container, and if custom string is wider than the container
@@ -5804,6 +5814,14 @@
 
         const original_text = text;
 
+                // Check if seek and prosper
+                var seek_and_prosper_headline =
+          canvas_content.logo.name.includes("prosper") &&
+          original_text == canvas_content.headline;
+        var seek_and_prosper_body =
+          canvas_content.logo.name.includes("prosper") &&
+          original_text != canvas_content.headline;
+
         // Text processing
         // Clean up input text -- Remove multiple new lines and replace return lines with new lines
         text = remove_duplicate_new_lines(text);
@@ -5868,12 +5886,6 @@
 
         // Seek and prosper pre-calculation
         let seek_and_prosper_highlight_padding = fontSize * 0.15;
-        let seek_and_prosper_headline =
-          canvas_content.logo.name.includes("prosper") &&
-          original_text == canvas_content.headline;
-        let seek_and_prosper_body =
-          canvas_content.logo.name.includes("prosper") &&
-          original_text != canvas_content.headline;
 
         if (seek_and_prosper_headline) {
           offset_y = 0.75;
