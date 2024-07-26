@@ -5685,6 +5685,7 @@
       ) {
         // Get the width of the text
         function get_text_width(text, fontSize, letterSpacing) {
+          let seek_and_prosper_highlight_padding = seek_and_prosper_headline ? (fontSize * 0.15) * 2 : 0;
           // Start the width as 0
           let width = 0;
           ctx.font = `${fontWeight} ${fontSize}px Akkurat LL`;
@@ -5692,7 +5693,7 @@
           for (let i = 0; i < text.length; i++) {
             width += ctx.measureText(text[i]).width + letterSpacing;
           }
-          return width;
+          return width + seek_and_prosper_highlight_padding;
         }
 
         // Check if ONE word is wider than the container, and if custom string is wider than the container
@@ -5810,6 +5811,14 @@
 
         const original_text = text;
 
+                // Check if seek and prosper
+                var seek_and_prosper_headline =
+          canvas_content.logo.name.includes("prosper") &&
+          original_text == canvas_content.headline;
+        var seek_and_prosper_body =
+          canvas_content.logo.name.includes("prosper") &&
+          original_text != canvas_content.headline;
+
         // Text processing
         // Clean up input text -- Remove multiple new lines and replace return lines with new lines
         text = remove_duplicate_new_lines(text);
@@ -5874,12 +5883,6 @@
 
         // Seek and prosper pre-calculation
         let seek_and_prosper_highlight_padding = fontSize * 0.15;
-        let seek_and_prosper_headline =
-          canvas_content.logo.name.includes("prosper") &&
-          original_text == canvas_content.headline;
-        let seek_and_prosper_body =
-          canvas_content.logo.name.includes("prosper") &&
-          original_text != canvas_content.headline;
 
         if (seek_and_prosper_headline) {
           offset_y = 0.75;
