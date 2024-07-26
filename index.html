@@ -5792,7 +5792,7 @@
           return lines;
         }
 
-        function draw_text_with_superscript(text, x, y) {
+        function draw_text_with_superscript(text, x, y, render_text) {
           const specialChars = ["™", "®", "©"];
           const originalFontSize = parseInt(ctx.font.match(/\d+/)[0]);
           const superscriptFontSize = Math.floor(originalFontSize * 0.6);
@@ -5800,6 +5800,7 @@
           const spacingFactor = 0.6; // Adjust this value to change the spacing after special characters
 
           let currentPositionX = x;
+          let total_text_width = 0;
 
           // Draw the characters
           ctx.fillStyle = fontColor;
@@ -5809,16 +5810,23 @@
 
             if (isSpecialChar) {
               // Draw the characters
-              ctx.font = ctx.font.replace(/\d+/, superscriptFontSize);
-              ctx.fillText(char, currentPositionX, y + superscriptYOffset);
-              ctx.font = ctx.font.replace(/\d+/, originalFontSize);
+              if (render_text) {
+                ctx.font = ctx.font.replace(/\d+/, superscriptFontSize);
+                ctx.fillText(char, currentPositionX, y + superscriptYOffset);
+                ctx.font = ctx.font.replace(/\d+/, originalFontSize);
+                }
               currentPositionX += ctx.measureText(char).width * spacingFactor; // Apply the spacing factor
+              total_text_width += ctx.measureText(char).width * spacingFactor;
             } else {
               // Draw the characters
+              if (render_text) {
               ctx.fillText(char, currentPositionX, y);
+              }
               currentPositionX += ctx.measureText(char).width;
+              total_text_width += ctx.measureText(char).width;
             }
           }
+          return total_text_width;
         }
 
         const original_text = text;
@@ -5919,25 +5927,12 @@
 
           // Apply seek and prosper style
           if (renderText && seek_and_prosper_headline) {
+            // Change to correct font size pre-calculation
+            ctx.font = `${fontWeight} ${fontSize}px Akkurat LL`;
             // Change font color
             fontColor = "#000000";
             // Draw the Highlight fill box
-            let text_width = ctx.measureText(line).width;
-
-            // Remove extra spacing from all the special characters
-            let special_character_width = 0;
-            for (let q = 0; q < line.length; q++) {
-              const specialChars = ["™", "®", "©"];
-              let char = line.charAt(q);
-              let isSpecialChar = specialChars.includes(char);
-
-              if (isSpecialChar) {
-                // Draw the characters
-                const spacingFactor = 0.4; // Adjust this value to change the spacing after special characters
-                special_character_width +=
-                  ctx.measureText(char).width * spacingFactor; // Apply the spacing factor
-              }
-            }
+            let text_width = draw_text_with_superscript(line, position_x, y_position_map[i], false);
 
             if (text_width != 0) {
               let shave_off_top = fontSize * 0.07;
@@ -5950,9 +5945,7 @@
               ctx.fillRect(
                 position_x - seek_and_prosper_highlight_padding,
                 y_position_map[i] - fontSize + shave_off_top,
-                ctx.measureText(line).width +
-                  seek_and_prosper_highlight_padding * 2 -
-                  special_character_width,
+                text_width + seek_and_prosper_highlight_padding * 2,
                 fontSize + seek_and_prosper_highlight_padding
               );
             }
@@ -5970,7 +5963,7 @@
           // Add superscript, trademark and copywriting
           if (renderText) {
             // Draw characters
-            draw_text_with_superscript(line, position_x, y_position_map[i]);
+            draw_text_with_superscript(line, position_x, y_position_map[i], true);
           }
         }
 
