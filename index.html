@@ -3988,9 +3988,18 @@
             canvas_content.error.logo_overlapping = true;
             console.log("Sponsor logos are overlapping");
 
+            // Seek and prosper -- Only register if they are both top aligned
+            if (canvas_content.logo.name.includes("prosper")) {
+              if (canvas_content.logo.corner.includes("bottom")) {
+                canvas_content.error.logo_overlapping = false;
+              }
+            }
+
             // Timeout
             setTimeout(function () {
+              if (canvas_content.error.logo_overlapping) {
               show_logo_overlap_text();
+              }
             }, 500);
 
             function show_logo_overlap_text() {
