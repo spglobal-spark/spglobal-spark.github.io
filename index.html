@@ -4230,12 +4230,6 @@
           y: canvas_content.marginTop,
         };
 
-        let seek_and_prosper_text_position_y_offset = 0;
-        if (canvas_content.logo.name.includes("prosper")) {
-          seek_and_prosper_text_position_y_offset = canvas_content.logo.height + logo_padding * 1.5;
-          position.y += seek_and_prosper_text_position_y_offset;
-        }
-
         // Default text area available
         let text_area = {
           width: canvas_content.marginWidth,
@@ -4244,6 +4238,15 @@
             canvas_content.logo.height -
             logo_padding,
         };
+
+        // Seek and Prosper changes
+        let seek_and_prosper_corporate_logo_total_height = 0;
+        if (canvas_content.logo.name.includes("prosper")) {
+          seek_and_prosper_corporate_logo_total_height = canvas_content.logo.height + logo_padding * 1.5;
+          position.y += seek_and_prosper_corporate_logo_total_height;
+
+          text_area.height -= seek_and_prosper_corporate_logo_total_height;
+        }
 
         // Dynamic font size
         let estimate_headline_size = estimate_typescale(
@@ -4274,7 +4277,7 @@
             canvas_content.event_name == ""
               ? 0
               : event_name_properties.height + event_name_font_size;
-          position.y = canvas_content.marginTop + event_name_height + seek_and_prosper_text_position_y_offset;
+          position.y = canvas_content.marginTop + event_name_height + seek_and_prosper_corporate_logo_total_height;
           text_area.height = text_area.height - event_name_height;
         }
 
@@ -4516,7 +4519,7 @@
         // Determine the starting location of the container
         let text_initial_position_y = canvas_content.text_bottom_aligned
           ? canvas_content.marginBottom - total_content_height
-          : canvas_content.marginTop + event_name_height + seek_and_prosper_text_position_y_offset; // Sets the headline position
+          : canvas_content.marginTop + event_name_height + seek_and_prosper_corporate_logo_total_height; // Sets the headline position
 
         // Recalculate y positions
         headline_position_y = text_initial_position_y;
