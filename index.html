@@ -991,7 +991,6 @@
     canvas_content.speaker_title = "";
 
     // Seek and Prosper
-    canvas_content.seek_and_prosper_style = true;
     canvas_content.seek_and_prosper_lineheight = 1.3;
     canvas_content.seek_and_prosper_fillcolor = "#EDF86F";
     //canvas_content.seek_and_prosper_padding =
@@ -2672,7 +2671,7 @@
         add_button_to_inside_tools_container("Market Intelligence");
         add_button_to_inside_tools_container("Mobility");
         add_button_to_inside_tools_container("Sustainable1");
-        add_button_to_inside_tools_container("Seek & Prosper");
+        add_button_to_inside_tools_container("Seek And Prosper");
       }
 
       if (buttonName === "text_button") {
@@ -3602,13 +3601,16 @@
 
       // Get original size
       let logo_name = canvas_content.logo.name;
-      let initial_logo_name = canvas_content.logo.name;
-      //console.log(logo_name);
+      const initial_logo_name = canvas_content.logo.name;
+      console.log(logo_name);
 
       /* Consponsor logo */
       let sponsor_reference = { width: 369.3, height: 77 };
       let sponsor_logo_visible = false;
+      let sponsor_scale = 0.6;
+      let sponsor_name = "";
       let svgSponsorElement = undefined;
+
       if (logo_name.includes("sustainable1")) {
         // Color version
         svgSponsorElement = document.getElementById("spg_sustainable1");
@@ -3639,6 +3641,17 @@
         sponsor_logo_visible = true;
       }
 
+      // Seek & Prosper
+      if (logo_name.includes("prosper")) {
+        // Color version
+        sponsor_reference = { width: 605.74, height: 77 };
+        sponsor_scale = 0.4;
+        svgSponsorElement = document.getElementById("spg_seek_and_prosper");
+        // Change logo back to Corporate
+        logo_name = "spg_corporate"; 
+        sponsor_logo_visible = true;
+      }
+
       let svgElement = document.getElementById(logo_name);
       let { width, height } = svgElement.getBBox();
 
@@ -3661,6 +3674,12 @@
       if (is_fullscreen_image()) {
         svgElement.getElementById("Wordmark").style.fill =
           canvas_content.color_font;
+      }
+
+      // Set corporate logo to white if Seek & Prosper
+      if (initial_logo_name.includes("prosper")) {
+        svgElement.getElementById("Bar").style.fill = '#ffffff';
+        svgElement.getElementById("Wordmark").style.fill = '#ffffff';
       }
 
       let name = svgElement.getElementById("Name");
@@ -3780,7 +3799,7 @@
       // If there is a sponsor logo
       if (svgSponsorElement != undefined) {
         // Rescale
-        let sponsor_logo_scale = logo_scale * 0.6;
+        let sponsor_logo_scale = logo_scale * sponsor_scale;
 
         // Add sponsor logo
         var sponsor_logo_width = sponsor_reference.width * sponsor_logo_scale;
@@ -4138,7 +4157,7 @@
         canvas_content.ignore_line_breaks.headline
       );
 
-      let headline_lineheight = (canvas_content.seek_and_prosper_style) ? canvas_content.seek_and_prosper_lineheight : 1.05;
+      let headline_lineheight = (canvas_content.logo.name.includes("prosper")) ? canvas_content.seek_and_prosper_lineheight : 1.05;
 
       // Downscale the font if the user picks a smaller font
       let headline_properties;
@@ -5713,12 +5732,18 @@
 
       // Seek and prosper pre-calculation
       let seek_and_prosper_highlight_padding = fontSize * 0.15;
-      let apply_seek_and_prosper = (canvas_content.seek_and_prosper_style && original_text == canvas_content.headline);
-      if (apply_seek_and_prosper) {
+      let seek_and_prosper_headline = (canvas_content.logo.name.includes("prosper") && original_text == canvas_content.headline);
+      let seek_and_prosper_body = (canvas_content.logo.name.includes("prosper") && original_text != canvas_content.headline);
+
+      if (seek_and_prosper_headline) {
         offset_y = 0.75;
         position_x += seek_and_prosper_highlight_padding;
         position_y += seek_and_prosper_highlight_padding;
         }
+      
+      if (seek_and_prosper_body) {
+        fontColor = '#ffffff';
+      }
 
       // Map y-position
         for (let i = 0; i < textForRendering.length; i++) {
@@ -5731,7 +5756,7 @@
             fontSize * offset_y);
 
             // Apply seek and prosper style
-          if (renderText && apply_seek_and_prosper) {
+          if (renderText && seek_and_prosper_headline) {
             // Change font color
             fontColor = '#000000';
             // Draw the Highlight fill box
