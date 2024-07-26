@@ -3732,7 +3732,7 @@
         let sponsor_name = "";
         let svgSponsorElement = undefined;
 
-        if (logo_name.includes("sustainable1")) {
+        if (initial_logo_name.includes("sustainable1")) {
           // Color version
           svgSponsorElement = document.getElementById("spg_sustainable1");
 
@@ -3763,10 +3763,10 @@
         }
 
         // Seek & Prosper
-        if (logo_name.includes("prosper")) {
+        if (initial_logo_name.includes("prosper")) {
           // Color version
           sponsor_reference = { width: 605.74, height: 77 };
-          sponsor_scale = 0.4;
+          sponsor_scale = 0.35;
           svgSponsorElement = document.getElementById("spg_seek_and_prosper");
           // Change logo back to Corporate
           logo_name = "spg_corporate";
@@ -3873,7 +3873,7 @@
         let logo_position = canvas_content.logo.corner;
 
         // Move logo to position
-        if (logo_position == "top") {
+        if (logo_position == "top" || initial_logo_name.includes("prosper")) {
           position.x = canvas_content.marginLeft;
           position.y = canvas_content.marginTop;
         }
@@ -4230,6 +4230,12 @@
           y: canvas_content.marginTop,
         };
 
+        let seek_and_prosper_text_position_y_offset = 0;
+        if (canvas_content.logo.name.includes("prosper")) {
+          seek_and_prosper_text_position_y_offset = canvas_content.logo.height + logo_padding * 1.5;
+          position.y += seek_and_prosper_text_position_y_offset;
+        }
+
         // Default text area available
         let text_area = {
           width: canvas_content.marginWidth,
@@ -4268,7 +4274,7 @@
             canvas_content.event_name == ""
               ? 0
               : event_name_properties.height + event_name_font_size;
-          position.y = canvas_content.marginTop + event_name_height;
+          position.y = canvas_content.marginTop + event_name_height + seek_and_prosper_text_position_y_offset;
           text_area.height = text_area.height - event_name_height;
         }
 
@@ -4510,7 +4516,7 @@
         // Determine the starting location of the container
         let text_initial_position_y = canvas_content.text_bottom_aligned
           ? canvas_content.marginBottom - total_content_height
-          : canvas_content.marginTop + event_name_height; // Sets the headline position
+          : canvas_content.marginTop + event_name_height + seek_and_prosper_text_position_y_offset; // Sets the headline position
 
         // Recalculate y positions
         headline_position_y = text_initial_position_y;
