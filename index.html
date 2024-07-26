@@ -849,10 +849,11 @@
       }
     }
 
-    // Launch canvas without login
+    /* Launch canvas without login
     setTimeout(1000, function () {
       launch_canvas();
     });
+    */
 
     async function signIn() {
       // ADDED ASYNC to allow AWAIT to work
@@ -1889,7 +1890,7 @@
       }
       button.textContent = label_string;
       button.name = name;
-      //console.log(button.textContent);
+
       button.addEventListener("click", panel_button_clicked);
       insideToolsContainer.appendChild(button);
       return button;
@@ -3615,7 +3616,6 @@
       // Get original size
       let logo_name = canvas_content.logo.name;
       const initial_logo_name = canvas_content.logo.name;
-      console.log(logo_name);
 
       /* Consponsor logo */
       let sponsor_reference = { width: 369.3, height: 77 };
@@ -4922,7 +4922,6 @@
       let split_words = text.split(" ");
       const words = merge_spglobal_and_dow_strings(split_words); // Merges S&P Global into one word
       const avgCharsPerLine = text.length / numberOfLines;
-      //console.log(`number of lines: ${numberOfLines}`);
 
       let lines = [];
       let currentLine = "";
@@ -5568,17 +5567,6 @@
       fontWeight,
       renderText
     ) {
-      console.log("Text:", text,
-            "X Position:", position_x,
-            "Y Position:", position_y,
-            "Rectangle Width:", rectWidth,
-            "Rectangle Height:", rectHeight,
-            "Font Size:", fontSize,
-            "Font Color:", fontColor,
-            "Letter Spacing:", letterSpacing,
-            "Default Line Height:", defaultLineHeight,
-            "Font Weight:", fontWeight,
-            "Render Text:", renderText);
       // Get the width of the text
       function get_text_width(text, fontSize, letterSpacing) {
         // Start the width as 0
@@ -5811,13 +5799,11 @@
                 // Draw the characters
                 const spacingFactor = 0.4; // Adjust this value to change the spacing after special characters
                 special_character_width += ctx.measureText(char).width * spacingFactor; // Apply the spacing factor
-                console.log(special_character_width);
               }
             }
 
             if (text_width != 0) {
               let shave_off_top = fontSize * 0.07;
-              console.log(canvas_content.background_color)
               let background_color = (canvas_content.background_color == "#000000") ? '#ffffff' : canvas_content.background_color;
               ctx.fillStyle = background_color;
               ctx.beginPath(); // Start a new path
@@ -6363,16 +6349,6 @@
         }
       });
     }
-
-    // If the @font-face has been loaded -- Update the canvas
-    fontLoaded("Akkurat LL", () => {
-      console.log("Font has been loaded!");
-      let login_button = document.getElementById("sso_login");
-      if (!login_button) {
-        update_canvas();
-      }
-      // Perform actions that depend on the font being loaded
-    });
   </script>
 
   <!-- Baked SVGs -->
