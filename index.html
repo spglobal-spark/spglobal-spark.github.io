@@ -5328,11 +5328,14 @@
 
         let background_fill_color = canvas_content.color_font;
         let stroke_color = canvas_content.color_font;
+        let button_color = canvas_content.button_color;
 
         // Seek and Prosper
         if (canvas_content.logo.name.includes("prosper")) {
-          canvas_content.button_color = "white";
-          canvas_content.color_font = spglobal_colors.white;
+          background_fill_color = spglobal_colors.white;
+          button_color = "white";
+          stroke_color = spglobal_colors.white;
+          fontColor = spglobal_colors.white;
         }
 
         // Draw background
@@ -5340,12 +5343,12 @@
         ctx.strokeStyle = stroke_color;
 
         // Custom button colors
-        if (canvas_content.button_color != "white") {
-          if (canvas_content.button_color == "red") {
+        if (button_color != "white") {
+          if (button_color == "red") {
             ctx.fillStyle = spglobal_colors.red;
             ctx.strokeStyle = spglobal_colors.red;
           }
-          if (canvas_content.button_color == "yellow") {
+          if (button_color == "yellow") {
             ctx.fillStyle = spglobal_colors.yellow;
             ctx.strokeStyle = spglobal_colors.yellow;
           }
@@ -5367,14 +5370,14 @@
 
               // Font color setting the inverse
               fontColor =
-                canvas_content.color_font == spglobal_colors.black
+              fontColor == spglobal_colors.black
                   ? spglobal_colors.white
                   : spglobal_colors.black;
 
               // Red is a special exemption
               if (canvas_content.background_color == spglobal_colors.red) {
                 if (canvas_content.portal_size_percent < 100) {
-                  fontColor = spglobal_colors.red;
+                  fontColor = (canvas_content.logo.name.includes("prosper")) ? spglobal_colors.black : spglobal_colors.red;
                 }
               }
             }
@@ -5382,14 +5385,14 @@
             ctx.closePath();
           }
 
-          if (canvas_content.button_color != "white") {
-            if (canvas_content.button_color == "red") {
-              fontColor = spglobal_colors.red;
+          if (button_color != "white") {
+            if (button_color == "red") {
+              fontColor = spglobal_colors.black;
               if (backgroundColor == "solid") {
                 fontColor = spglobal_colors.white;
               }
             }
-            if (canvas_content.button_color == "yellow") {
+            if (button_color == "yellow") {
               fontColor = spglobal_colors.yellow;
               if (backgroundColor == "solid") {
                 fontColor = spglobal_colors.black;
@@ -5930,7 +5933,7 @@
             // Change to correct font size pre-calculation
             ctx.font = `${fontWeight} ${fontSize}px Akkurat LL`;
             // Change font color
-            fontColor = "#000000";
+            fontColor = (canvas_content.background_color == spglobal_colors.red) ? "#ffffff" : "#000000";
             // Draw the Highlight fill box
             let text_width = draw_text_with_superscript(line, position_x, y_position_map[i], false);
 
