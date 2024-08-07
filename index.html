@@ -3762,7 +3762,9 @@
               canvas_content.background_color == spglobal_colors.blue ||
               canvas_content.background_color == spglobal_colors.yellow
             ) {
+              if (canvas_content.seek_and_prosper_active == false) {
               fill_color = "#000000";
+              }
             }
             // Get all <path> elements within the SVG
             var pathElements = svgSponsorElement.getElementsByTagName("path");
@@ -3774,6 +3776,12 @@
 
           logo_name = "spg_corporate"; // Change logo back to Corporate
           sponsor_logo_visible = true;
+
+          // Force to bottom
+          if (canvas_content.seek_and_prosper_active) {
+            canvas_content.logo.corner = "bottom";
+            canvas_content.text_bottom_aligned = false;
+          }
         }
 
         // Seek & Prosper
@@ -3989,6 +3997,65 @@
           canvas_content.logo.sponsor_y = sponsor_position.y;
           canvas_content.logo.sponsor_width = sponsor_logo_width;
           canvas_content.logo.sponsor_height = sponsor_logo_height;
+        }
+
+        // Sustainable1 + Seek & Prosper
+        if (svgSponsorElement != undefined && initial_logo_name.includes("sustainable1") && canvas_content.seek_and_prosper_active) {
+          // Rescale
+          let s1_scale = 0.6; // Sustainable1
+          let s1_logo_scale = logo_scale * s1_scale;
+
+          let s1_reference = { width: 369.3, height: 77 };
+
+          // Add sponsor logo
+          var s1_logo_width = s1_reference.width * s1_logo_scale;
+          var s1_logo_height =
+            s1_reference.height * s1_logo_scale;
+
+          // Create centering offset
+          var s1_offset_y = s1_logo_height * 0.09;
+
+          // Positioning
+          let s1_position = {};
+          // Position top right
+            s1_position.x =
+              canvas_content.marginRight - s1_logo_width;
+            s1_position.y = canvas_content.marginTop - s1_offset_y;
+
+            // Get knock out logo
+          let svgSustainableLogoElement = document.getElementById(
+              "spg_sustainable1_knockout"
+            );
+
+          // Clone the SVG
+          let cloneds1SvgElement = svgSustainableLogoElement.cloneNode(true);
+          let s1OuterHTML = cloneds1SvgElement.outerHTML,
+            s1blob = new Blob([s1OuterHTML], {
+              type: "image/svg+xml;charset=utf-8",
+            });
+
+          let s1URL = window.URL || window.webkitURL || window;
+          let s1blobURL = s1URL.createObjectURL(s1blob);
+
+          // Load as an image
+          let s1_image = new Image();
+          s1_image.onload = () => {
+            // Draw logo
+            ctx.drawImage(
+              s1_image,
+              s1_position.x,
+              s1_position.y,
+              s1_logo_width,
+              s1_logo_height
+            );
+          };
+          s1_image.src = s1blobURL;
+
+          // Store s1 information
+          canvas_content.logo.s1_x = s1_position.x;
+          canvas_content.logo.s1_y = s1_position.y;
+          canvas_content.logo.s1_width = s1_logo_width;
+          canvas_content.logo.s1_height = s1_logo_height;
         }
 
         // Check for errors
