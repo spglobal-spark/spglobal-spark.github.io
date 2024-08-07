@@ -3783,7 +3783,7 @@
           sponsor_scale = 0.35;
           svgSponsorElement = document.getElementById("spg_seek_and_prosper");
           // Change logo back to Corporate
-          logo_name = "spg_corporate";
+          //logo_name = "spg_corporate";
           sponsor_logo_visible = true;
         }
 
@@ -3811,7 +3811,7 @@
             canvas_content.color_font;
         }
 
-        // Set corporate logo to white if Seek & Prosper
+        // Set logo to white if Seek & Prosper
         if (canvas_content.seek_and_prosper_active) {
           svgElement.getElementById("Bar").style.fill = "#ffffff";
           svgElement.getElementById("Wordmark").style.fill = "#ffffff";
@@ -3819,7 +3819,7 @@
 
         let name = svgElement.getElementById("Name");
         if (name != null) {
-          name.style.fill = canvas_content.color_font;
+          name.style.fill = canvas_content.seek_and_prosper_active ? "#ffffff" : canvas_content.color_font;
         }
 
         // Hide all SVGs
@@ -3898,7 +3898,7 @@
           logo_name != "spg_corporate" &&
           logo_name != "spg_dow_jones_indices"
         ) {
-          if (logo_position == "bottom" || logo_position == "bottom") {
+          if (logo_position == "bottom" && canvas_content.seek_and_prosper_active == false) {
             position.y += logo_height * logo_shift_percent;
           }
         }
