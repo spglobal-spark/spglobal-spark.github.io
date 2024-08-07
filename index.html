@@ -3002,8 +3002,9 @@
                 canvas_content.portal_override_margins
               );
             }
-            // Overlay
-            if (is_fullscreen_image()) {
+          }
+          // Overlay
+          if (is_fullscreen_image()) {
               add_toggle_switch_with_label(
                 "Show Overlay",
                 canvas_content.portal_color_overlay
@@ -3017,7 +3018,6 @@
                 );
               }
             }
-          }
         }
         if (buttonName === "event_button") {
           // FAQ
@@ -3563,6 +3563,12 @@
               canvas_content.color_font == spglobal_colors.black
                 ? spglobal_colors.white
                 : spglobal_colors.black;
+            
+            // Always black on Seek & Prosper
+            if (canvas_content.seek_and_prosper_active) {
+              overlayColor = spglobal_colors.black;
+            }
+            
             // Draw the rectangle
             ctx.globalAlpha = canvas_content.portal_overlay_value;
             ctx.fillStyle = overlayColor;
@@ -4727,20 +4733,22 @@
         var button_bottom_right = false;
         // Check if the button is outside of the bounds
         if (button_outside_bounds == true || square_force_button_bottom_right) {
-          // Render the button in the bottom right hand corner
-          button_position_y =
-            canvas_content.marginBottom - button_properties.height;
-          button_position_x =
-            canvas_content.marginRight - button_properties.width;
-          // Set button to bottom right
-          button_bottom_right = true;
+          if (canvas_content.button_visibility) {
+            // Render the button in the bottom right hand corner
+            button_position_y =
+              canvas_content.marginBottom - button_properties.height;
+            button_position_x =
+              canvas_content.marginRight - button_properties.width;
+            // Set button to bottom right
+            button_bottom_right = true;
 
-          if (
-            button_position_x <
-            canvas_content.marginLeft + canvas_content.logo.width + logo_padding
-          ) {
-            console.log("Button is overlapping logo");
-            button_overlapping_logo = true;
+            if (
+              button_position_x <
+              canvas_content.marginLeft + canvas_content.logo.width + logo_padding
+            ) {
+              console.log("Button is overlapping logo");
+              button_overlapping_logo = true;
+            }
           }
         }
 
@@ -4829,13 +4837,13 @@
               button_position_x <
               canvas_content.marginLeft +
                 canvas_content.logo.width +
-                logo_padding
+                logo_padding && canvas_content.button_visibility
             ) {
               console.log("Button is overlapping logo");
               button_overlapping_logo = true;
             }
 
-            if (canvas_content.logo.sponsor) {
+            if (canvas_content.logo.sponsor && canvas_content.button_visibility) {
               console.log("Button is overlapping logo");
               button_overlapping_logo = true;
             }
