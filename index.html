@@ -1099,6 +1099,7 @@
       canvas_content.speaker_title = "";
 
       // Seek and Prosper
+      canvas_content.seek_and_prosper_active = false;
       canvas_content.seek_and_prosper_lineheight = 1.3;
       canvas_content.seek_and_prosper_fillcolor = "#EDF86F";
       //canvas_content.seek_and_prosper_padding =
@@ -2463,6 +2464,14 @@
           }
         }
 
+        if (current_panel_open == "Logo") {
+          if (button_label.includes("Seek")) {
+            canvas_content.seek_and_prosper_active =
+              !canvas_content.seek_and_prosper_active;
+            update_toolbox_panel("logo_button");
+          }
+        }
+
         if (current_panel_open == "Layout") {
           if (button_label.includes("Show Overlay")) {
             canvas_content.portal_color_overlay =
@@ -2627,7 +2636,7 @@
           addAccordion("Color", "Change the background and font color", false);
           add_color_indicator("White", spglobal_colors.white, "black");
           // Seek and prosper
-          if (canvas_content.logo.name.includes("prosper") == false) {
+          if (canvas_content.seek_and_prosper_active == false) {
             add_color_indicator("Black", spglobal_colors.black, "white");
           }
           add_color_indicator("Red", spglobal_colors.red, "white");
@@ -2639,7 +2648,7 @@
           if (
             (canvas_content.background_color == spglobal_colors.black ||
               canvas_content.background_color == spglobal_colors.white) &&
-            canvas_content.logo.name.includes("prosper") == false // Seek and prosper
+            canvas_content.seek_and_prosper_active == false // Seek and prosper
           ) {
             add_label_to_inside_tools_container("Call to action");
             var color_list =
@@ -2785,6 +2794,11 @@
           add_button_to_inside_tools_container("Mobility");
           add_button_to_inside_tools_container("Sustainable1");
           add_button_to_inside_tools_container("Seek And Prosper");
+
+          add_toggle_switch_with_label(
+            "Seek And Prosper",
+            canvas_content.seek_and_prosper_active
+          );
         }
 
         if (buttonName === "text_button") {
@@ -3989,7 +4003,7 @@
             console.log("Sponsor logos are overlapping");
 
             // Seek and prosper -- Only register if they are both top aligned
-            if (canvas_content.logo.name.includes("prosper")) {
+            if (canvas_content.seek_and_prosper_active) {
               if (canvas_content.logo.corner.includes("bottom")) {
                 canvas_content.error.logo_overlapping = false;
               }
@@ -4250,7 +4264,7 @@
 
         // Seek and Prosper changes
         let seek_and_prosper_corporate_logo_total_height = 0;
-        if (canvas_content.logo.name.includes("prosper")) {
+        if (canvas_content.seek_and_prosper_active) {
           seek_and_prosper_corporate_logo_total_height = canvas_content.logo.height + logo_padding * 1.5;
           position.y += seek_and_prosper_corporate_logo_total_height;
 
@@ -4296,7 +4310,7 @@
           canvas_content.ignore_line_breaks.headline
         );
 
-        let headline_lineheight = canvas_content.logo.name.includes("prosper")
+        let headline_lineheight = canvas_content.seek_and_prosper_active
           ? canvas_content.seek_and_prosper_lineheight
           : 1.05;
 
@@ -5331,7 +5345,7 @@
         let button_color = canvas_content.button_color;
 
         // Seek and Prosper
-        if (canvas_content.logo.name.includes("prosper")) {
+        if (canvas_content.seek_and_prosper_active) {
           background_fill_color = spglobal_colors.white;
           button_color = "white";
           stroke_color = spglobal_colors.white;
@@ -5377,7 +5391,7 @@
               // Red is a special exemption
               if (canvas_content.background_color == spglobal_colors.red) {
                 if (canvas_content.portal_size_percent < 100) {
-                  fontColor = (canvas_content.logo.name.includes("prosper")) ? spglobal_colors.black : spglobal_colors.red;
+                  fontColor = (canvas_content.seek_and_prosper_active) ? spglobal_colors.black : spglobal_colors.red;
                 }
               }
             }
@@ -5443,7 +5457,7 @@
         const height = canvas.height;
 
         // Seek and Prosper background black background lock in
-        if (canvas_content.logo.name.includes("prosper")) {
+        if (canvas_content.seek_and_prosper_active) {
           color = "#000000";
         }
 
@@ -5836,10 +5850,10 @@
 
                 // Check if seek and prosper
                 var seek_and_prosper_headline =
-          canvas_content.logo.name.includes("prosper") &&
+          canvas_content.seek_and_prosper_active &&
           original_text == canvas_content.headline;
         var seek_and_prosper_body =
-          canvas_content.logo.name.includes("prosper") &&
+          canvas_content.seek_and_prosper_active &&
           original_text != canvas_content.headline;
 
         // Text processing
