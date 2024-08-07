@@ -2793,7 +2793,7 @@
           add_button_to_inside_tools_container("Market Intelligence");
           add_button_to_inside_tools_container("Mobility");
           add_button_to_inside_tools_container("Sustainable1");
-          add_button_to_inside_tools_container("Seek And Prosper");
+          //add_button_to_inside_tools_container("Seek And Prosper");
 
           add_toggle_switch_with_label(
             "Seek And Prosper",
@@ -3777,7 +3777,7 @@
         }
 
         // Seek & Prosper
-        if (initial_logo_name.includes("prosper")) {
+        if (canvas_content.seek_and_prosper_active) {
           // Color version
           sponsor_reference = { width: 605.74, height: 77 };
           sponsor_scale = 0.35;
@@ -3812,7 +3812,7 @@
         }
 
         // Set corporate logo to white if Seek & Prosper
-        if (initial_logo_name.includes("prosper")) {
+        if (canvas_content.seek_and_prosper_active) {
           svgElement.getElementById("Bar").style.fill = "#ffffff";
           svgElement.getElementById("Wordmark").style.fill = "#ffffff";
         }
@@ -3887,7 +3887,7 @@
         let logo_position = canvas_content.logo.corner;
 
         // Move logo to position
-        if (logo_position == "top" || initial_logo_name.includes("prosper")) {
+        if (logo_position == "top" || canvas_content.seek_and_prosper_active) {
           position.x = canvas_content.marginLeft;
           position.y = canvas_content.marginTop;
         }
