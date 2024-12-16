@@ -1034,7 +1034,7 @@
       let image_stop_loading_animation;
 
       // Minimum font size
-      const minimum_font_size = 22;
+      const minimum_font_size = 16; //22;
 
       // User defined settings
       let canvas_content = {};
@@ -1141,6 +1141,12 @@
         "1200x628 Landscape",
         "1200x1200 Square",
         "628x1200 Portrait",
+        /*
+        "160x600 Static Banners",
+        "300x250 Static Banners",
+        "728x90 Static Banners",
+        "300x600 Static Banners",
+        */
         /*"800x418 Landscape"
       "1920x1080 Landscape",
       "1080x1920 Portrait", */
@@ -1153,8 +1159,10 @@
         64: { body: 32, button: 22 },
         48: { body: 24, button: 18 },
         32: { body: 22, button: 16 },
-        24: { body: 22, button: 16 },
-        22: { body: 22, button: 16 },
+        24: { body: 20, button: 16 },
+        22: { body: 18, button: 16 },
+        18: { body: 14, button: 14 },
+        16: { body: 12, button: 12 },
       };
 
       // Button height
@@ -2865,6 +2873,7 @@
             );
             body_button.style.height = "128px";
           }
+
           // Button
           addAccordion(
             "Important",
@@ -3119,6 +3128,14 @@
           insideToolsContainer.appendChild(feedback_button);
 
           feedback_button.addEventListener("click", function () {
+          
+          // Essential Canvas Feedback Email 
+          var link = "mailto:lyndon.nadel@spglobal.com"
+          + "?subject=" + encodeURIComponent("Essential Canvas Feedback")
+          + "&body=" + encodeURIComponent(feedback_inputbox.value);
+          window.location.href = link;
+
+            /*
             // Click the send data button
             const user = auth.currentUser;
             if (user) {
@@ -3145,6 +3162,7 @@
                 feedback_button.disabled = false; // Re-enable the button
               }, 5000); // 5000 milliseconds (5 seconds)
             }
+            */
           });
 
           add_label_to_inside_tools_container("Overview");
@@ -3334,6 +3352,11 @@
 
             canvas_content.canvas_width = width;
             canvas_content.canvas_height = height;
+
+            // Hide Body copy if the banner is very small
+            if (canvas_content.canvas_height < 128) {
+              canvas_content.body_visibility = false;
+            }
 
             // Update canvas
             create_canvas();
@@ -3851,10 +3874,16 @@
         let rescaled = false;
         // Default is based on the margins. Scale is 1 if the margins are 40px
         let logo_scale = Math.max(0.65, canvas_content.margin / 40);
+
         // Rescale if the canvas height is small
         if (canvas_content.canvas_height < 628) {
           logo_scale = logo_scale * 0.8;
         }
+        // Smaller still if the height is tiny
+        if (canvas_content.canvas_height < 128) {
+          logo_scale = logo_scale * 0.7;
+        }
+
 
         // Then we have to check if the logo will fit in the space provided which is the margins
         if (reference.width * logo_scale > canvas_content.marginWidth) {
@@ -4355,6 +4384,10 @@
         if (canvas_content.text_bottom_aligned == false) {
           let event_name_font_size = 16; // 16 is the minimum font size for all content using add_text_to_canvas
 
+          if (canvas_content.canvas_height <= 250) {
+            event_name_font_size = 14;
+          }
+
           var event_name_properties = add_text_to_canvas(
             canvas_content.event_name,
             position.x,
@@ -4404,7 +4437,7 @@
             700,
             false
           );
-
+          // Shrink font size
           estimate_headline_size = round_to_nearest_typescale(
             headline_properties.font_size - 1
           );
@@ -4433,8 +4466,8 @@
           canvas_content.portal_size_percent == 0 ||
           canvas_content.portal_count == 0
         ) {
-          // Limit the width if it's a Landscape canvas
-          if (canvas_content.shortestSide == "height") {
+          // Limit the width if it's a Landscape canvas -- And the height matches a typical Social Media size
+          if (canvas_content.shortestSide == "height" && canvas_content.height > 600) {
             text_area.width = text_area.width * 0.8;
           }
         }
@@ -4726,13 +4759,14 @@
           canvas_content.text_bottom_aligned == false &&
           (canvas_content.portal_side == "top" ||
             canvas_content.portal_side == "bottom") &&
-          canvas_content.portal_count > 0;
+          canvas_content.portal_count > 0 || canvas_content.canvas_height < 128;
 
         // Check if button is out of bounds
         var button_overlapping_logo = false;
         var button_bottom_right = false;
-        // Check if the button is outside of the bounds
+        // Check if the button is outside of the bounds -- Or Force button to the bottom right corner
         if (button_outside_bounds == true || square_force_button_bottom_right) {
+          console.log("Show  button")
           if (canvas_content.button_visibility) {
             // Render the button in the bottom right hand corner
             button_position_y =
@@ -4884,6 +4918,7 @@
         // RENDER THE BUTTON
         let button;
         if (show_button) {
+          console.log("SHOW THE BUTTON!")
           button_properties = add_button_to_canvas(
             button_text,
             button_font_size,
@@ -4894,6 +4929,7 @@
             button_position_y,
             true
           );
+          console.log(button_properties)
         }
 
         // Store font sizes
@@ -5314,6 +5350,28 @@
         if (portal_size) {
           // Two Portals
           canvas_content.portal_count = 2;
+          
+          // Check if seek_and_prosper_active is true
+    if (canvas_content.seek_and_prosper_active) {
+      // For seek and prosper, treat both portals as one
+      content_width = canvas.width * canvas_percent;
+      content_height = canvas.height -
+      canvas_content.margin * (fit_margins * 2);
+      pos_x = canvas_side === "right" ? canvas.width - content_width : 0;
+      pos_y = canvas_content.margin * fit_margins;
+
+      // Update portal information
+      canvas_content.portal_width = content_width;
+      canvas_content.portal_height = content_height;
+      canvas_content.portal_x = pos_x;
+      canvas_content.portal_y = pos_y;
+
+      canvas_content.portal_divider_x = 0;
+      canvas_content.portal_divider_y = 0;
+      canvas_content.portal_divider_height = 0;
+    } else {
+
+          // * start
           // Default left aligned large PORTAL
           let portal_width = content_width * 0.65; // 65%
 
@@ -5333,6 +5391,8 @@
           }
 
           content_width = portal_width;
+          // * end
+        }
         }
 
         return {
@@ -5402,6 +5462,8 @@
         var textHeight = fontSize;
         var textWidth = textMetrics.width;
 
+        console.log("fontSize " + fontSize)
+
         // Set icon dimensions
         var iconHeight = 0.7 * fontSize;
         var iconWidth = iconHeight; // For right angle chevron, height = width
@@ -5443,8 +5505,9 @@
           }
         }
 
-        let rectangle_width = textWidth + 2 * hPadding;
-        let rectangle_height = textHeight + 2 * vPadding;
+        let rectangle_width = textWidth + (2 * hPadding);
+        let rectangle_height = textHeight + (2 * vPadding);
+        console.log("rectangle_height " + rectangle_height)
 
         if (render) {
           if (backgroundColor != "none") {
@@ -5813,7 +5876,7 @@
 
         function calculate_line_height(fontSize) {
           // set the minimum and maximum font sizes and line height values
-          const minFontSize = 16;
+          const minFontSize = minimum_font_size;
           const maxFontSize = 48;
           const minLineHeight = defaultLineHeight;
           const maxLineHeight = defaultLineHeight * 1.095;
