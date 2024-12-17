@@ -1506,6 +1506,58 @@
       window.addEventListener("resize", handle_window_resize);
 
       // Download Canvas
+      function download_canvas_as_jpg() {
+        if (!canvas) {
+          alert("Please create the canvas before downloading.");
+          return;
+        }
+
+        const link = document.createElement("a");
+        link.href = canvas.toDataURL("image/jpeg", 0.7); // Set quality to 0.7 for JPG
+        const today = new Date();
+        const formattedDate = `${today.getDate()}-${today.getMonth() + 1}-${today.getFullYear()}`;
+        var my_project_name = canvas_content.project_name + `-${formattedDate}.jpg`; // Change extension to .jpg
+        link.download = my_project_name;
+        link.click();
+
+        // Your data object
+        var data_object = {
+          download: "JPG",
+          timestamp: new Date().toString(),
+          project_name: my_project_name,
+          headline: canvas_content.headline,
+          description: canvas_content.body,
+          cta: canvas_content.button,
+          logo: canvas_content.logo.name,
+          orientation: canvas_content.orientation,
+          portal_size: canvas_content.portal_size_percent,
+          portal_count: canvas_content.portal_count,
+          background_color: canvas_content.background_color,
+          canvas_width: canvas_content.canvas_width,
+          canvas_height: canvas_content.canvas_height,
+        };
+
+        // Click the send data button
+        const user = auth.currentUser;
+        if (user) {
+          // Data being sent
+          const email = user.email.split("@")[0];
+          data_object.username = email;
+          // Create a reference to the Collection and Document
+          const docRef = addDoc(
+            collection(db, email + "-" + data_object.download),
+            data_object
+          );
+          // Create a reference to the download
+          const recordContent = addDoc(collection(db, "All-Downloads"), {
+            user: data_object.username,
+            time: data_object.timestamp,
+            division: data_object.logo,
+          });
+        }
+      }
+
+      // Download Canvas
       function download_canvas_as_png() {
         if (!canvas) {
           alert("Please create the canvas before downloading.");
@@ -2214,7 +2266,7 @@
 
         if (current_panel_open == "File") {
           // Download image
-          if (button_label.includes("Download")) {
+          if (button_label.includes("Download") && button_label.includes("PNG")) {
             if (canvas_content.error.text_outside_bounds > 0) {
               alert("Resolve errors before downloading");
               return;
@@ -2226,6 +2278,22 @@
             // Download canvas
             setTimeout(function () {
               download_canvas_as_png();
+            }, 250); // Slight delay to ensure that the canvas is updated
+          }
+
+          // Download image
+          if (button_label.includes("Download") && button_label.includes("JPG")) {
+            if (canvas_content.error.text_outside_bounds > 0) {
+              alert("Resolve errors before downloading");
+              return;
+            }
+            console.log("Download image");
+            // Turn off guides
+            canvas_content.show_guides = false;
+            update_canvas();
+            // Download canvas
+            setTimeout(function () {
+              download_canvas_as_jpg();
             }, 250); // Slight delay to ensure that the canvas is updated
           }
 
@@ -2762,12 +2830,23 @@
             download_label,
             "download_template"
           );
+
+          let download_jpg_label = found_errors
+            ? "Fix errors before downloading"
+            : "Download Image (.JPG)";
+          let download_jpg_button = add_button_to_inside_tools_container(
+            download_jpg_label,
+            "download_template"
+          );
+
           if (
             canvas_content.error.text_outside_bounds > 0 ||
             canvas_content.error.button_overlapping_logo
           ) {
             download_button.style.color = "red";
             download_button.style.border = "1px solid red";
+            download_jpg_button.style.color = "red";
+            download_jpg_button.style.border = "1px solid red";
           }
 
           add_label_to_inside_tools_container("SAVE EDITABLE FILE");
@@ -4350,7 +4429,7 @@
         const right_aligned_text = canvas_content.canvas_height < smallest_static_banner_height;
 
         // Default text area available
-        const logo_height = right_aligned_text ? 0 : canvas_content.logo.height - logo_padding;
+        const logo_height = right_aligned_text ? 0 : canvas_content.logo.height + logo_padding;
         const text_offset = right_aligned_text ? canvas_content.logo.width + logo_padding : 0;
         const text_cutoff = right_aligned_text && canvas_content.seek_and_prosper_active ? canvas_content.logo.sponsor_width + logo_padding : 0;
 
@@ -5001,6 +5080,7 @@
 
         let show_boundingboxes = false;
         let show_text_safe_area = false;
+        console.log("text outside bounds: " + canvas_content.error.text_outside_bounds);
         if (
           canvas_content.error.text_outside_bounds > 0 ||
           canvas_content.error.button_overlapping_logo ||
