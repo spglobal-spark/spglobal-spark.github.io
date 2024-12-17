@@ -1116,7 +1116,7 @@
 
       canvas_content.portal_image_flip = [false, false];
       canvas_content.portal_size_percent = 50;
-      canvas_content.portal_size_values = [0, 30, 50, 70, 100];
+      canvas_content.portal_size_values = [0, 25, 50, 70, 100];
       canvas_content.portal_size_slider = 2;
       canvas_content.portal_upload_image_number = 0;
       canvas_content.portal_override_margins = false;
@@ -1141,17 +1141,15 @@
         "1200x628 Landscape",
         "1200x1200 Square",
         "628x1200 Portrait",
-        /*
         "160x600 Static Banners",
         "300x250 Static Banners",
         "728x90 Static Banners",
         "300x600 Static Banners",
-        */
       ];
       canvas_content.template_size = template_sizes[0];
 
       // Banner
-      const minimum_banner_height = 128;
+      const smallest_static_banner_height = 128;
 
       // Typography scale
       const typescale = {
@@ -1162,7 +1160,7 @@
         24: { body: 20, button: 16 },
         22: { body: 18, button: 16 },
         18: { body: 14, button: 14 },
-        16: { body: 12, button: 12 },
+        16: { body: 10, button: 10 },
       };
 
       // Button height
@@ -3353,11 +3351,6 @@
             canvas_content.canvas_width = width;
             canvas_content.canvas_height = height;
 
-            // Hide Body copy if the banner is very small
-            if (canvas_content.canvas_height < minimum_banner_height) {
-              canvas_content.body_visibility = false;
-            }
-
             // Update canvas
             create_canvas();
           }
@@ -3881,7 +3874,7 @@
         }
 
         // Smaller still if the height is tiny
-        if (canvas_content.canvas_height < minimum_banner_height) {
+        if (canvas_content.canvas_height < smallest_static_banner_height) {
           if (logo_name == "spg_corporate") {
           logo_scale = logo_scale * 0.7;
           } else {
@@ -4354,7 +4347,7 @@
           return ctx.measureText(canvas_content.button).width;
         }
 
-        const right_aligned_text = canvas_content.canvas_height < minimum_banner_height;
+        const right_aligned_text = canvas_content.canvas_height < smallest_static_banner_height;
 
         // Default text area available
         const logo_height = right_aligned_text ? 0 : canvas_content.logo.height - logo_padding;
@@ -4387,6 +4380,11 @@
           canvas.height
         );
 
+        // Larger font size if the font size is not set to small
+        if (canvas_content.canvas_height < smallest_static_banner_height && !canvas_content.font_size.small) {
+          estimate_headline_size = 24;
+        }
+
         // Event name
         let event_name_height = 0;
         if (canvas_content.text_bottom_aligned == false) {
@@ -4398,7 +4396,7 @@
             event_name_font_size = 14;
           }
 
-          if (canvas_content.canvas_height < minimum_banner_height) {
+          if (canvas_content.canvas_height < smallest_static_banner_height) {
             event_name_font_size = 12;
           }
 
@@ -4513,6 +4511,14 @@
           headline_properties.font_size == 16
             ? 4
             : Math.max(headline_fixed_font_size * 0.5, minimum_margin);
+
+        // Condensed margin between copy on smaller banners
+        /*
+        if (canvas_content.canvas_height < smallest_static_banner_height) {
+          content_margin = 4;
+        }
+        */
+
         let headline_margin = show_body || show_button ? content_margin : 0; // Collapse margin if there is no content below the headline
         headline_margin = headline_text == "" ? 0 : headline_margin; // Collapse headline margin if there is no text
 
@@ -4664,6 +4670,12 @@
           ? canvas_content.marginBottom - total_content_height
           : canvas_content.marginTop + event_name_height + seek_and_prosper_corporate_logo_total_height; // Sets the headline position
 
+          // Text is vertically centered on the small 728x90 banners
+        if (canvas_content.canvas_height < smallest_static_banner_height && !canvas_content.text_bottom_aligned) {
+         const centered_y_offset = (text_area.height - (total_content_height * 0.9)) * 0.5; // 0.9 Fixes some visual misalignment
+         text_initial_position_y += centered_y_offset;
+        }
+
         // Recalculate y positions
         headline_position_y = text_initial_position_y;
 
@@ -4693,6 +4705,9 @@
           safe_area_width,
           visible
         ) {
+          // The text height calculations are slightly off
+          area_height = area_height * 0.9; // This 0.9 number makes the text height calculation more visually accurate
+
           // Don't check if its not visible
           if (visible == false) {
             //console.log(name + ": " + visible);
@@ -4723,6 +4738,8 @@
           }
           return false;
         }
+
+        //Transforming energy for tomorrow. Transforming energy
 
         var headline_outside_bounds = is_outside_boundingbox(
           "Headline",
@@ -4773,7 +4790,7 @@
           canvas_content.text_bottom_aligned == false &&
           (canvas_content.portal_side == "top" ||
             canvas_content.portal_side == "bottom") &&
-          canvas_content.portal_count > 0 || canvas_content.canvas_height < minimum_banner_height;
+          canvas_content.portal_count > 0; //|| canvas_content.canvas_height < smallest_static_banner_height;
 
         // Check if button is out of bounds
         var button_overlapping_logo = false;
@@ -6146,7 +6163,7 @@
           x: position_x,
           y: position_y,
           width: textWidth,
-          height: textHeight,
+          height: textHeight, //* 0.9, // The scale is slightly off because the visual character heights aren't as tall as the measured character heights
           text: original_text,
           widow: widow_result,
           special_characters: special_characters_count,
