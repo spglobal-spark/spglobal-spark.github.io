@@ -1147,11 +1147,11 @@
         "728x90 Static Banners",
         "300x600 Static Banners",
         */
-        /*"800x418 Landscape"
-      "1920x1080 Landscape",
-      "1080x1920 Portrait", */
       ];
       canvas_content.template_size = template_sizes[0];
+
+      // Banner
+      const minimum_banner_height = 128;
 
       // Typography scale
       const typescale = {
@@ -3354,7 +3354,7 @@
             canvas_content.canvas_height = height;
 
             // Hide Body copy if the banner is very small
-            if (canvas_content.canvas_height < 128) {
+            if (canvas_content.canvas_height < minimum_banner_height) {
               canvas_content.body_visibility = false;
             }
 
@@ -3879,9 +3879,14 @@
         if (canvas_content.canvas_height < 628) {
           logo_scale = logo_scale * 0.8;
         }
+
         // Smaller still if the height is tiny
-        if (canvas_content.canvas_height < 128) {
+        if (canvas_content.canvas_height < minimum_banner_height) {
+          if (logo_name == "spg_corporate") {
           logo_scale = logo_scale * 0.7;
+          } else {
+            logo_scale = logo_scale * 0.98;
+          }
         }
 
 
@@ -4349,24 +4354,27 @@
           return ctx.measureText(canvas_content.button).width;
         }
 
+        const right_aligned_text = canvas_content.canvas_height < minimum_banner_height;
+
+        // Default text area available
+        const logo_height = right_aligned_text ? 0 : canvas_content.logo.height - logo_padding;
+        const text_offset = right_aligned_text ? canvas_content.logo.width + logo_padding : 0;
+        const text_cutoff = right_aligned_text && canvas_content.seek_and_prosper_active ? canvas_content.logo.sponsor_width + logo_padding : 0;
+
         // Position starts top left corner
         let position = {
-          x: canvas_content.marginLeft,
+          x: canvas_content.marginLeft + text_offset,
           y: canvas_content.marginTop,
         };
 
-        // Default text area available
         let text_area = {
-          width: canvas_content.marginWidth,
-          height:
-            canvas_content.marginHeight -
-            canvas_content.logo.height -
-            logo_padding,
+          width: canvas_content.marginWidth - text_offset - text_cutoff,
+          height: canvas_content.marginHeight - logo_height,
         };
 
         // Seek and Prosper changes
         let seek_and_prosper_corporate_logo_total_height = 0;
-        if (canvas_content.seek_and_prosper_active) {
+        if (canvas_content.seek_and_prosper_active && !right_aligned_text) {
           seek_and_prosper_corporate_logo_total_height = canvas_content.logo.height + logo_padding * 1.5;
           position.y += seek_and_prosper_corporate_logo_total_height;
 
@@ -4382,10 +4390,16 @@
         // Event name
         let event_name_height = 0;
         if (canvas_content.text_bottom_aligned == false) {
-          let event_name_font_size = 16; // 16 is the minimum font size for all content using add_text_to_canvas
+
+          // Set the font size based on banner size
+          let event_name_font_size = 16; 
 
           if (canvas_content.canvas_height <= 250) {
             event_name_font_size = 14;
+          }
+
+          if (canvas_content.canvas_height < minimum_banner_height) {
+            event_name_font_size = 12;
           }
 
           var event_name_properties = add_text_to_canvas(
@@ -4759,7 +4773,7 @@
           canvas_content.text_bottom_aligned == false &&
           (canvas_content.portal_side == "top" ||
             canvas_content.portal_side == "bottom") &&
-          canvas_content.portal_count > 0 || canvas_content.canvas_height < 128;
+          canvas_content.portal_count > 0 || canvas_content.canvas_height < minimum_banner_height;
 
         // Check if button is out of bounds
         var button_overlapping_logo = false;
