@@ -2880,10 +2880,13 @@
           add_button_to_inside_tools_container("Sustainable1");
           //add_button_to_inside_tools_container("Seek And Prosper");
 
-          add_toggle_switch_with_label(
-            "Seek And Prosper",
-            canvas_content.seek_and_prosper_active
-          );
+          // Turn off seek and prosper if it's an HTML5 Banner
+          if (!canvas_content.template_size.includes("Static Banners")) {
+            add_toggle_switch_with_label(
+              "Seek And Prosper",
+              canvas_content.seek_and_prosper_active
+            );
+          }
         }
 
         if (buttonName === "text_button") {
@@ -3429,6 +3432,11 @@
 
             canvas_content.canvas_width = width;
             canvas_content.canvas_height = height;
+
+            // Turn off seek and prosper if it's an HTML5 Banner
+            if (canvas_content.template_size.includes("Static Banners")) {
+              canvas_content.seek_and_prosper_active = false;
+            }
 
             // Update canvas
             create_canvas();
@@ -4591,12 +4599,12 @@
             ? 4
             : Math.max(headline_fixed_font_size * 0.5, minimum_margin);
 
-        // Condensed margin between copy on smaller banners
-        /*
+        // Condense
+        //Data, technology, people.
+        //Impact tomorrow. Data, technology, people. That's the path to progress.
         if (canvas_content.canvas_height < smallest_static_banner_height) {
           content_margin = 4;
         }
-        */
 
         let headline_margin = show_body || show_button ? content_margin : 0; // Collapse margin if there is no content below the headline
         headline_margin = headline_text == "" ? 0 : headline_margin; // Collapse headline margin if there is no text
@@ -4874,8 +4882,10 @@
         // Check if button is out of bounds
         var button_overlapping_logo = false;
         var button_bottom_right = false;
+        var ignore_button_outside_bounds = (canvas_content.canvas_height != 90 && canvas_content.canvas_width != 160)
+
         // Check if the button is outside of the bounds -- Or Force button to the bottom right corner
-        if (button_outside_bounds == true || square_force_button_bottom_right) {
+        if ((button_outside_bounds == true || square_force_button_bottom_right) && ignore_button_outside_bounds) {
           console.log("Show  button")
           if (canvas_content.button_visibility) {
             // Render the button in the bottom right hand corner
@@ -4966,8 +4976,7 @@
           button_bottom_right = false;
           // Check if the button is outside of the bounds
           if (
-            button_outside_bounds == true ||
-            square_force_button_bottom_right
+            (button_outside_bounds == true || square_force_button_bottom_right) && ignore_button_outside_bounds
           ) {
             // Render the button in the bottom right hand corner
             button_position_y =
@@ -5027,6 +5036,7 @@
 
         // RENDER THE BUTTON
         let button;
+        var button_outside_bounds = false
         if (show_button) {
           console.log("SHOW THE BUTTON!")
           button_properties = add_button_to_canvas(
@@ -5042,6 +5052,25 @@
           console.log(button_properties)
         }
 
+        // Check body collision again
+        var button_outside_bounds = is_outside_boundingbox(
+            "Button",
+            button_position_x,
+            button_position_y,
+            button_properties.height + (button_padding * 2),
+            button_properties.width + (button_padding * 2),
+            button_position_x,
+            text_area.y,
+            text_area.height,
+            text_area.width,
+            show_button
+          );
+        
+         // Ignore if the button has been forced to the bottom right corner
+        if (button_bottom_right) {
+          button_outside_bounds = false;
+        }
+
         // Store font sizes
         canvas_content.font_size.headline = headline_properties.font_size;
         canvas_content.font_size.body = body_properties.font_size;
@@ -5050,7 +5079,7 @@
 
         // Create error messages
         canvas_content.error.text_outside_bounds =
-          headline_outside_bounds + body_outside_bounds;
+          headline_outside_bounds + body_outside_bounds + button_outside_bounds;
 
         // Text errors
         // Headline
@@ -5067,6 +5096,7 @@
 
         // Button
         canvas_content.error.button_overlapping_logo = button_overlapping_logo;
+        canvas_content.error.button_outside_bounds = button_outside_bounds;
 
         function log_dictionary_keys_and_values(dictionary) {
           for (const key in dictionary) {
@@ -5257,8 +5287,8 @@
 
           // Draw guides around button
           if (
-            canvas_content.button.length > 0 &&
-            canvas_content.error.button_overlapping_logo
+            (canvas_content.button.length > 0 &&
+            canvas_content.error.button_overlapping_logo) || canvas_content.error.button_outside_bounds
           ) {
             ctx.strokeStyle = error_color;
             ctx.lineWidth = 3;
@@ -5268,9 +5298,10 @@
               button_properties.width,
               button_properties.height
             );
+            var text_in_rect = canvas_content.error.button_outside_bounds ? "Button outside bounds" : "Button overlap logo";
             drawTextInRedRectangle(
               ctx,
-              "Button overlaps logo",
+              text_in_rect,
               button_properties
             );
           }
@@ -5555,6 +5586,11 @@
         y,
         render = true
       ) {
+
+        // Reset line
+        ctx.setLineDash([]);
+        ctx.lineWidth = 2;
+
         if (text == "") {
           return { x: x, y: y, width: 0, height: 0 };
         }
