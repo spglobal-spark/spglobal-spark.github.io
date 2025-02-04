@@ -2877,11 +2877,12 @@
           add_button_to_inside_tools_container("Commodity Insights");
           add_button_to_inside_tools_container("Market Intelligence");
           add_button_to_inside_tools_container("Mobility");
-          add_button_to_inside_tools_container("Sustainable1");
+          
           //add_button_to_inside_tools_container("Seek And Prosper");
 
           // Turn off seek and prosper if it's an HTML5 Banner
           if (!canvas_content.template_size.includes("Static Banners")) {
+            add_button_to_inside_tools_container("Sustainable1");
             add_toggle_switch_with_label(
               "Seek And Prosper",
               canvas_content.seek_and_prosper_active
@@ -3435,6 +3436,9 @@
 
             // Turn off seek and prosper if it's an HTML5 Banner
             if (canvas_content.template_size.includes("Static Banners")) {
+              if (canvas_content.logo.name.includes("sustainable1")) {
+                  canvas_content.logo.name = "spg_corporate";
+                }
               canvas_content.seek_and_prosper_active = false;
             }
 
@@ -3705,6 +3709,9 @@
 
           // Render text overlay
           render_text();
+
+          // Render outline
+          render_html5_outline();
         };
       }
 
@@ -4420,6 +4427,24 @@
 
         // Render Text
         render_text();
+
+        // Render outline
+        render_html5_outline();
+      }
+      
+      function render_html5_outline() {
+         // Render 1PX outline around the canvas
+         if (canvas_content.template_size.includes("Static Banners")) {
+          ctx.strokeStyle = "#555555"; // Set stroke color to blue
+          ctx.lineWidth = 1;
+          ctx.setLineDash([]); // Set the line to be dashed with a pattern of 5 pixels on and 5 pixels off
+          ctx.strokeRect(
+            0,
+            0,
+            canvas_content.canvas_width,
+            canvas_content.canvas_height
+          );
+        }
       }
 
       // Seek and Prosper Attempt
