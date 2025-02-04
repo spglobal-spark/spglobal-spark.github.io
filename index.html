@@ -1034,7 +1034,7 @@
       let image_stop_loading_animation;
 
       // Minimum font size
-      const minimum_font_size = 22;
+      const minimum_font_size = 16; //22;
 
       // User defined settings
       let canvas_content = {};
@@ -1116,7 +1116,7 @@
 
       canvas_content.portal_image_flip = [false, false];
       canvas_content.portal_size_percent = 50;
-      canvas_content.portal_size_values = [0, 30, 50, 70, 100];
+      canvas_content.portal_size_values = [0, 25, 50, 70, 100];
       canvas_content.portal_size_slider = 2;
       canvas_content.portal_upload_image_number = 0;
       canvas_content.portal_override_margins = false;
@@ -1141,11 +1141,15 @@
         "1200x628 Landscape",
         "1200x1200 Square",
         "628x1200 Portrait",
-        /*"800x418 Landscape"
-      "1920x1080 Landscape",
-      "1080x1920 Portrait", */
+        "160x600 Static Banners",
+        "300x250 Static Banners",
+        "728x90 Static Banners",
+        "300x600 Static Banners",
       ];
       canvas_content.template_size = template_sizes[0];
+
+      // Banner
+      const smallest_static_banner_height = 128;
 
       // Typography scale
       const typescale = {
@@ -1153,8 +1157,10 @@
         64: { body: 32, button: 22 },
         48: { body: 24, button: 18 },
         32: { body: 22, button: 16 },
-        24: { body: 22, button: 16 },
-        22: { body: 22, button: 16 },
+        24: { body: 20, button: 16 },
+        22: { body: 18, button: 16 },
+        18: { body: 14, button: 14 },
+        16: { body: 10, button: 10 },
       };
 
       // Button height
@@ -1498,6 +1504,58 @@
       }
 
       window.addEventListener("resize", handle_window_resize);
+
+      // Download Canvas
+      function download_canvas_as_jpg() {
+        if (!canvas) {
+          alert("Please create the canvas before downloading.");
+          return;
+        }
+
+        const link = document.createElement("a");
+        link.href = canvas.toDataURL("image/jpeg", 0.7); // Set quality to 0.7 for JPG
+        const today = new Date();
+        const formattedDate = `${today.getDate()}-${today.getMonth() + 1}-${today.getFullYear()}`;
+        var my_project_name = canvas_content.project_name + `-${formattedDate}.jpg`; // Change extension to .jpg
+        link.download = my_project_name;
+        link.click();
+
+        // Your data object
+        var data_object = {
+          download: "JPG",
+          timestamp: new Date().toString(),
+          project_name: my_project_name,
+          headline: canvas_content.headline,
+          description: canvas_content.body,
+          cta: canvas_content.button,
+          logo: canvas_content.logo.name,
+          orientation: canvas_content.orientation,
+          portal_size: canvas_content.portal_size_percent,
+          portal_count: canvas_content.portal_count,
+          background_color: canvas_content.background_color,
+          canvas_width: canvas_content.canvas_width,
+          canvas_height: canvas_content.canvas_height,
+        };
+
+        // Click the send data button
+        const user = auth.currentUser;
+        if (user) {
+          // Data being sent
+          const email = user.email.split("@")[0];
+          data_object.username = email;
+          // Create a reference to the Collection and Document
+          const docRef = addDoc(
+            collection(db, email + "-" + data_object.download),
+            data_object
+          );
+          // Create a reference to the download
+          const recordContent = addDoc(collection(db, "All-Downloads"), {
+            user: data_object.username,
+            time: data_object.timestamp,
+            division: data_object.logo,
+          });
+        }
+      }
 
       // Download Canvas
       function download_canvas_as_png() {
@@ -2208,7 +2266,7 @@
 
         if (current_panel_open == "File") {
           // Download image
-          if (button_label.includes("Download")) {
+          if (button_label.includes("Download") && button_label.includes("PNG")) {
             if (canvas_content.error.text_outside_bounds > 0) {
               alert("Resolve errors before downloading");
               return;
@@ -2220,6 +2278,22 @@
             // Download canvas
             setTimeout(function () {
               download_canvas_as_png();
+            }, 250); // Slight delay to ensure that the canvas is updated
+          }
+
+          // Download image
+          if (button_label.includes("Download") && button_label.includes("JPG")) {
+            if (canvas_content.error.text_outside_bounds > 0) {
+              alert("Resolve errors before downloading");
+              return;
+            }
+            console.log("Download image");
+            // Turn off guides
+            canvas_content.show_guides = false;
+            update_canvas();
+            // Download canvas
+            setTimeout(function () {
+              download_canvas_as_jpg();
             }, 250); // Slight delay to ensure that the canvas is updated
           }
 
@@ -2756,12 +2830,23 @@
             download_label,
             "download_template"
           );
+
+          let download_jpg_label = found_errors
+            ? "Fix errors before downloading"
+            : "Download Image (.JPG)";
+          let download_jpg_button = add_button_to_inside_tools_container(
+            download_jpg_label,
+            "download_template"
+          );
+
           if (
             canvas_content.error.text_outside_bounds > 0 ||
             canvas_content.error.button_overlapping_logo
           ) {
             download_button.style.color = "red";
             download_button.style.border = "1px solid red";
+            download_jpg_button.style.color = "red";
+            download_jpg_button.style.border = "1px solid red";
           }
 
           add_label_to_inside_tools_container("SAVE EDITABLE FILE");
@@ -2792,13 +2877,17 @@
           add_button_to_inside_tools_container("Commodity Insights");
           add_button_to_inside_tools_container("Market Intelligence");
           add_button_to_inside_tools_container("Mobility");
-          add_button_to_inside_tools_container("Sustainable1");
+          
           //add_button_to_inside_tools_container("Seek And Prosper");
 
-          add_toggle_switch_with_label(
-            "Seek And Prosper",
-            canvas_content.seek_and_prosper_active
-          );
+          // Turn off seek and prosper if it's an HTML5 Banner
+          if (!canvas_content.template_size.includes("Static Banners")) {
+            add_button_to_inside_tools_container("Sustainable1");
+            add_toggle_switch_with_label(
+              "Seek And Prosper",
+              canvas_content.seek_and_prosper_active
+            );
+          }
         }
 
         if (buttonName === "text_button") {
@@ -2865,6 +2954,7 @@
             );
             body_button.style.height = "128px";
           }
+
           // Button
           addAccordion(
             "Important",
@@ -3119,6 +3209,14 @@
           insideToolsContainer.appendChild(feedback_button);
 
           feedback_button.addEventListener("click", function () {
+          
+          // Essential Canvas Feedback Email 
+          var link = "mailto:lyndon.nadel@spglobal.com"
+          + "?subject=" + encodeURIComponent("Essential Canvas Feedback")
+          + "&body=" + encodeURIComponent(feedback_inputbox.value);
+          window.location.href = link;
+
+            /*
             // Click the send data button
             const user = auth.currentUser;
             if (user) {
@@ -3145,6 +3243,7 @@
                 feedback_button.disabled = false; // Re-enable the button
               }, 5000); // 5000 milliseconds (5 seconds)
             }
+            */
           });
 
           add_label_to_inside_tools_container("Overview");
@@ -3334,6 +3433,14 @@
 
             canvas_content.canvas_width = width;
             canvas_content.canvas_height = height;
+
+            // Turn off seek and prosper if it's an HTML5 Banner
+            if (canvas_content.template_size.includes("Static Banners")) {
+              if (canvas_content.logo.name.includes("sustainable1")) {
+                  canvas_content.logo.name = "spg_corporate";
+                }
+              canvas_content.seek_and_prosper_active = false;
+            }
 
             // Update canvas
             create_canvas();
@@ -3602,6 +3709,9 @@
 
           // Render text overlay
           render_text();
+
+          // Render outline
+          render_html5_outline();
         };
       }
 
@@ -3851,10 +3961,21 @@
         let rescaled = false;
         // Default is based on the margins. Scale is 1 if the margins are 40px
         let logo_scale = Math.max(0.65, canvas_content.margin / 40);
+
         // Rescale if the canvas height is small
         if (canvas_content.canvas_height < 628) {
           logo_scale = logo_scale * 0.8;
         }
+
+        // Smaller still if the height is tiny
+        if (canvas_content.canvas_height < smallest_static_banner_height) {
+          if (logo_name == "spg_corporate") {
+          logo_scale = logo_scale * 0.7;
+          } else {
+            logo_scale = logo_scale * 0.98;
+          }
+        }
+
 
         // Then we have to check if the logo will fit in the space provided which is the margins
         if (reference.width * logo_scale > canvas_content.marginWidth) {
@@ -4306,6 +4427,24 @@
 
         // Render Text
         render_text();
+
+        // Render outline
+        render_html5_outline();
+      }
+      
+      function render_html5_outline() {
+         // Render 1PX outline around the canvas
+         if (canvas_content.template_size.includes("Static Banners")) {
+          ctx.strokeStyle = "#555555"; // Set stroke color to blue
+          ctx.lineWidth = 1;
+          ctx.setLineDash([]); // Set the line to be dashed with a pattern of 5 pixels on and 5 pixels off
+          ctx.strokeRect(
+            0,
+            0,
+            canvas_content.canvas_width,
+            canvas_content.canvas_height
+          );
+        }
       }
 
       // Seek and Prosper Attempt
@@ -4320,24 +4459,27 @@
           return ctx.measureText(canvas_content.button).width;
         }
 
+        const right_aligned_text = canvas_content.canvas_height < smallest_static_banner_height;
+
+        // Default text area available
+        const logo_height = right_aligned_text ? 0 : canvas_content.logo.height + logo_padding;
+        const text_offset = right_aligned_text ? canvas_content.logo.width + logo_padding : 0;
+        const text_cutoff = right_aligned_text && canvas_content.seek_and_prosper_active ? canvas_content.logo.sponsor_width + logo_padding : 0;
+
         // Position starts top left corner
         let position = {
-          x: canvas_content.marginLeft,
+          x: canvas_content.marginLeft + text_offset,
           y: canvas_content.marginTop,
         };
 
-        // Default text area available
         let text_area = {
-          width: canvas_content.marginWidth,
-          height:
-            canvas_content.marginHeight -
-            canvas_content.logo.height -
-            logo_padding,
+          width: canvas_content.marginWidth - text_offset - text_cutoff,
+          height: canvas_content.marginHeight - logo_height,
         };
 
         // Seek and Prosper changes
         let seek_and_prosper_corporate_logo_total_height = 0;
-        if (canvas_content.seek_and_prosper_active) {
+        if (canvas_content.seek_and_prosper_active && !right_aligned_text) {
           seek_and_prosper_corporate_logo_total_height = canvas_content.logo.height + logo_padding * 1.5;
           position.y += seek_and_prosper_corporate_logo_total_height;
 
@@ -4350,10 +4492,25 @@
           canvas.height
         );
 
+        // Larger font size if the font size is not set to small
+        if (canvas_content.canvas_height < smallest_static_banner_height && !canvas_content.font_size.small) {
+          estimate_headline_size = 24;
+        }
+
         // Event name
         let event_name_height = 0;
         if (canvas_content.text_bottom_aligned == false) {
-          let event_name_font_size = 16; // 16 is the minimum font size for all content using add_text_to_canvas
+
+          // Set the font size based on banner size
+          let event_name_font_size = 16; 
+
+          if (canvas_content.canvas_height <= 250) {
+            event_name_font_size = 14;
+          }
+
+          if (canvas_content.canvas_height < smallest_static_banner_height) {
+            event_name_font_size = 12;
+          }
 
           var event_name_properties = add_text_to_canvas(
             canvas_content.event_name,
@@ -4404,7 +4561,7 @@
             700,
             false
           );
-
+          // Shrink font size
           estimate_headline_size = round_to_nearest_typescale(
             headline_properties.font_size - 1
           );
@@ -4433,8 +4590,8 @@
           canvas_content.portal_size_percent == 0 ||
           canvas_content.portal_count == 0
         ) {
-          // Limit the width if it's a Landscape canvas
-          if (canvas_content.shortestSide == "height") {
+          // Limit the width if it's a Landscape canvas -- And the height matches a typical Social Media size
+          if (canvas_content.shortestSide == "height" && canvas_content.height > 600) {
             text_area.width = text_area.width * 0.8;
           }
         }
@@ -4466,6 +4623,14 @@
           headline_properties.font_size == 16
             ? 4
             : Math.max(headline_fixed_font_size * 0.5, minimum_margin);
+
+        // Condense
+        //Data, technology, people.
+        //Impact tomorrow. Data, technology, people. That's the path to progress.
+        if (canvas_content.canvas_height < smallest_static_banner_height) {
+          content_margin = 4;
+        }
+
         let headline_margin = show_body || show_button ? content_margin : 0; // Collapse margin if there is no content below the headline
         headline_margin = headline_text == "" ? 0 : headline_margin; // Collapse headline margin if there is no text
 
@@ -4617,6 +4782,12 @@
           ? canvas_content.marginBottom - total_content_height
           : canvas_content.marginTop + event_name_height + seek_and_prosper_corporate_logo_total_height; // Sets the headline position
 
+          // Text is vertically centered on the small 728x90 banners
+        if (canvas_content.canvas_height < smallest_static_banner_height && !canvas_content.text_bottom_aligned) {
+         const centered_y_offset = (text_area.height - (total_content_height * 0.9)) * 0.5; // 0.9 Fixes some visual misalignment
+         text_initial_position_y += centered_y_offset;
+        }
+
         // Recalculate y positions
         headline_position_y = text_initial_position_y;
 
@@ -4646,6 +4817,9 @@
           safe_area_width,
           visible
         ) {
+          // The text height calculations are slightly off
+          area_height = area_height * 0.9; // This 0.9 number makes the text height calculation more visually accurate
+
           // Don't check if its not visible
           if (visible == false) {
             //console.log(name + ": " + visible);
@@ -4676,6 +4850,8 @@
           }
           return false;
         }
+
+        //Transforming energy for tomorrow. Transforming energy
 
         var headline_outside_bounds = is_outside_boundingbox(
           "Headline",
@@ -4726,13 +4902,16 @@
           canvas_content.text_bottom_aligned == false &&
           (canvas_content.portal_side == "top" ||
             canvas_content.portal_side == "bottom") &&
-          canvas_content.portal_count > 0;
+          canvas_content.portal_count > 0; //|| canvas_content.canvas_height < smallest_static_banner_height;
 
         // Check if button is out of bounds
         var button_overlapping_logo = false;
         var button_bottom_right = false;
-        // Check if the button is outside of the bounds
-        if (button_outside_bounds == true || square_force_button_bottom_right) {
+        var ignore_button_outside_bounds = (canvas_content.canvas_height != 90 && canvas_content.canvas_width != 160)
+
+        // Check if the button is outside of the bounds -- Or Force button to the bottom right corner
+        if ((button_outside_bounds == true || square_force_button_bottom_right) && ignore_button_outside_bounds) {
+          console.log("Show  button")
           if (canvas_content.button_visibility) {
             // Render the button in the bottom right hand corner
             button_position_y =
@@ -4822,8 +5001,7 @@
           button_bottom_right = false;
           // Check if the button is outside of the bounds
           if (
-            button_outside_bounds == true ||
-            square_force_button_bottom_right
+            (button_outside_bounds == true || square_force_button_bottom_right) && ignore_button_outside_bounds
           ) {
             // Render the button in the bottom right hand corner
             button_position_y =
@@ -4883,7 +5061,9 @@
 
         // RENDER THE BUTTON
         let button;
+        var button_outside_bounds = false
         if (show_button) {
+          console.log("SHOW THE BUTTON!")
           button_properties = add_button_to_canvas(
             button_text,
             button_font_size,
@@ -4894,6 +5074,26 @@
             button_position_y,
             true
           );
+          console.log(button_properties)
+        }
+
+        // Check body collision again
+        var button_outside_bounds = is_outside_boundingbox(
+            "Button",
+            button_position_x,
+            button_position_y,
+            button_properties.height + (button_padding * 2),
+            button_properties.width + (button_padding * 2),
+            button_position_x,
+            text_area.y,
+            text_area.height,
+            text_area.width,
+            show_button
+          );
+        
+         // Ignore if the button has been forced to the bottom right corner
+        if (button_bottom_right) {
+          button_outside_bounds = false;
         }
 
         // Store font sizes
@@ -4904,7 +5104,7 @@
 
         // Create error messages
         canvas_content.error.text_outside_bounds =
-          headline_outside_bounds + body_outside_bounds;
+          headline_outside_bounds + body_outside_bounds + button_outside_bounds;
 
         // Text errors
         // Headline
@@ -4921,6 +5121,7 @@
 
         // Button
         canvas_content.error.button_overlapping_logo = button_overlapping_logo;
+        canvas_content.error.button_outside_bounds = button_outside_bounds;
 
         function log_dictionary_keys_and_values(dictionary) {
           for (const key in dictionary) {
@@ -4934,6 +5135,7 @@
 
         let show_boundingboxes = false;
         let show_text_safe_area = false;
+        console.log("text outside bounds: " + canvas_content.error.text_outside_bounds);
         if (
           canvas_content.error.text_outside_bounds > 0 ||
           canvas_content.error.button_overlapping_logo ||
@@ -5110,8 +5312,8 @@
 
           // Draw guides around button
           if (
-            canvas_content.button.length > 0 &&
-            canvas_content.error.button_overlapping_logo
+            (canvas_content.button.length > 0 &&
+            canvas_content.error.button_overlapping_logo) || canvas_content.error.button_outside_bounds
           ) {
             ctx.strokeStyle = error_color;
             ctx.lineWidth = 3;
@@ -5121,9 +5323,10 @@
               button_properties.width,
               button_properties.height
             );
+            var text_in_rect = canvas_content.error.button_outside_bounds ? "Button outside bounds" : "Button overlap logo";
             drawTextInRedRectangle(
               ctx,
-              "Button overlaps logo",
+              text_in_rect,
               button_properties
             );
           }
@@ -5314,6 +5517,28 @@
         if (portal_size) {
           // Two Portals
           canvas_content.portal_count = 2;
+          
+          // Check if seek_and_prosper_active is true
+    if (canvas_content.seek_and_prosper_active) {
+      // For seek and prosper, treat both portals as one
+      content_width = canvas.width * canvas_percent;
+      content_height = canvas.height -
+      canvas_content.margin * (fit_margins * 2);
+      pos_x = canvas_side === "right" ? canvas.width - content_width : 0;
+      pos_y = canvas_content.margin * fit_margins;
+
+      // Update portal information
+      canvas_content.portal_width = content_width;
+      canvas_content.portal_height = content_height;
+      canvas_content.portal_x = pos_x;
+      canvas_content.portal_y = pos_y;
+
+      canvas_content.portal_divider_x = 0;
+      canvas_content.portal_divider_y = 0;
+      canvas_content.portal_divider_height = 0;
+    } else {
+
+          // * start
           // Default left aligned large PORTAL
           let portal_width = content_width * 0.65; // 65%
 
@@ -5333,6 +5558,8 @@
           }
 
           content_width = portal_width;
+          // * end
+        }
         }
 
         return {
@@ -5384,6 +5611,11 @@
         y,
         render = true
       ) {
+
+        // Reset line
+        ctx.setLineDash([]);
+        ctx.lineWidth = 2;
+
         if (text == "") {
           return { x: x, y: y, width: 0, height: 0 };
         }
@@ -5401,6 +5633,8 @@
         var textMetrics = ctx.measureText(text);
         var textHeight = fontSize;
         var textWidth = textMetrics.width;
+
+        console.log("fontSize " + fontSize)
 
         // Set icon dimensions
         var iconHeight = 0.7 * fontSize;
@@ -5443,8 +5677,9 @@
           }
         }
 
-        let rectangle_width = textWidth + 2 * hPadding;
-        let rectangle_height = textHeight + 2 * vPadding;
+        let rectangle_width = textWidth + (2 * hPadding);
+        let rectangle_height = textHeight + (2 * vPadding);
+        console.log("rectangle_height " + rectangle_height)
 
         if (render) {
           if (backgroundColor != "none") {
@@ -5813,7 +6048,7 @@
 
         function calculate_line_height(fontSize) {
           // set the minimum and maximum font sizes and line height values
-          const minFontSize = 16;
+          const minFontSize = minimum_font_size;
           const maxFontSize = 48;
           const minLineHeight = defaultLineHeight;
           const maxLineHeight = defaultLineHeight * 1.095;
@@ -6069,7 +6304,7 @@
           x: position_x,
           y: position_y,
           width: textWidth,
-          height: textHeight,
+          height: textHeight, //* 0.9, // The scale is slightly off because the visual character heights aren't as tall as the measured character heights
           text: original_text,
           widow: widow_result,
           special_characters: special_characters_count,
