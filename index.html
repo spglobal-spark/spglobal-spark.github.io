@@ -2873,14 +2873,8 @@
           
           //add_button_to_inside_tools_container("Seek And Prosper");
 
-          // Turn off seek and prosper if it's an HTML5 Banner
-          if (!canvas_content.template_size.includes("Static Banners")) {
-            add_button_to_inside_tools_container("Sustainable1");
-            add_toggle_switch_with_label(
-              "Seek And Prosper",
-              canvas_content.seek_and_prosper_active
-            );
-          }
+          // Turn off seek and prosper -- Always
+          //add_toggle_switch_with_label("Seek And Prosper", canvas_content.seek_and_prosper_active);
         }
 
         if (buttonName === "text_button") {
@@ -3427,13 +3421,8 @@
             canvas_content.canvas_width = width;
             canvas_content.canvas_height = height;
 
-            // Turn off seek and prosper if it's an HTML5 Banner
-            if (canvas_content.template_size.includes("Static Banners")) {
-              if (canvas_content.logo.name.includes("sustainable1")) {
-                  canvas_content.logo.name = "spg_corporate";
-                }
-              canvas_content.seek_and_prosper_active = false;
-            }
+            // Turn off seek and prosper -- Always
+            canvas_content.seek_and_prosper_active = false;
 
             // Update canvas
             create_canvas();
