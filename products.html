@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Database</title>
+    <style>
+      p {
+        color: #333;
+        line-height: 150%;
+      }
+      .section-container {
+        display: block;
+        width: calc(100% - 4rem);
+        padding: 2rem;
+        border-radius: 0.25rem;
+        margin-bottom: 1rem;
+        background-color: white;
+        box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15); /* Pretty box shadow */
+      }
+      .filter-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+      .filter-column {
+        width: 100%;
+        padding: 1rem;
+        border-radius: 0.25rem;
+        background-color: white;
+        box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15); /* Pretty box shadow */
+      }
+      .filterProducts {
+        width: calc(100% - 2rem);
+        padding: 1rem;
+        font-size: 1.5rem;
+      }
+      h1 {
+        font-size: 2.5rem;
+      }
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        margin: 0;
+        margin-bottom: 1rem;
+      }
+      .product-card {
+        padding: 1.5rem;
+        border: 1px solid #ccc;
+        background-color: white;
+        width: calc(100%);
+        text-align: left;
+        margin-bottom: 0.5rem;
+        font-size: 1rem;
+        box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15); /* Pretty box shadow */
+      }
+      .division-title {
+        font-size: 0.75rem;
+        color: #555;
+        margin-bottom: 0.25rem;
+      }
+      select {
+        padding: 0.25rem;
+        width: 8rem;
+      }
+      .overline {
+        display: block;
+        font-size: 0.875rem;
+        color: #333;
+        margin-bottom: 0.25rem;
+      }
+      .spacer-small {
+        height: 1rem;
+      }
+      .spacer-medium {
+        height: 2.5rem;
+      }
+      hr {
+        border: none;
+        border-top: 1px solid #ccc;
+      }
+      .margin-top-spacer-small {
+        margin-top: 1rem;
+      }
+      .margin-spacer-small {
+        margin: 1.5rem 0;
+      }
+      .filter-input {
+        height: 2rem;
+        width: calc(100% - 2rem);
+        box-sizing: border-box; /* Important for inner border to work as expected */
+        padding: 0 0.5rem; /* Shorthand for padding-top, -right, -bottom, -left */
+      }
+      textarea {
+        padding: 0.5rem !important;
+      }
+      .clear-filter-button {
+        height: 2rem;
+        width: 2rem;
+      }
+      .suggestions-dropdown {
+        position: absolute;
+        border: 1px solid #ccc;
+        border-top: none;
+        z-index: 10;
+        background-color: #fff;
+        width: calc(
+          100% - 5.5rem
+        ); /* Adjust as needed, same as input width or wider */
+        max-height: 8rem; /* For 8 options, adjust as needed */
+        overflow-y: auto;
+        display: none; /* Hidden by default */
+      }
+      .suggestions-dropdown div {
+        padding: 1rem;
+        cursor: pointer;
+      }
+      .suggestions-dropdown div:hover {
+        background-color: #f0f0f0;
+      }
+      .chip-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .filter-chip-section {
+        margin-bottom: 1rem;
+      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 12px;
+        border-radius: 1.5rem;
+        background-color: #deecf0;
+        color: #333;
+        border: none;
+        cursor: pointer;
+        font-size: 0.875rem;
+        transition: background-color 0.2s;
+      }
+      .chip.category {
+        background-color: #edf86f;
+      }
+      .summary-row {
+        display: flex;
+        padding: 2rem 0;
+        border-bottom: 1px solid #ccc; /* Add a border between rows */
+      }
+
+      .title-column {
+        flex: 0 0 33.33%; /* 1/3 width */
+        padding-right: 10px; /* Add some spacing between columns */
+      }
+
+      .title-column h4 {
+        font-weight: bold;
+        margin-top: 0;
+      }
+
+      .description-column {
+        flex: 0 0 66.66%; /* 2/3 width */
+      }
+      .description-column p {
+        margin: 0;
+      }
+
+      /* Media query for screens below 768px */
+      @media (max-width: 767.98px) {
+        .summary-row {
+          display: block; /* Change to block for single column */
+        }
+
+        .title-column {
+          flex: 0 0 100%; /* Take full width */
+          padding-right: 0; /* Remove right padding */
+          margin-bottom: 0.5rem; /* Add some bottom margin for spacing */
+        }
+
+        .description-column {
+          flex: 0 0 100%; /* Take full width */
+        }
+      }
+      .product-link {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: black;
+        display: block;
+        text-decoration: underline;
+        margin-bottom: 0.5rem;
+      }
+      body {
+        font-family: Helvetica, sans-serif;
+        background-color: #f0f0f0;
+        padding: 2rem;
+        margin: 0;
+
+        display: grid;
+        grid-template-columns: auto 1fr; /* Two columns: auto width for nav, remaining for main */
+        grid-template-rows: auto 1fr; /* Auto height for nav row, remaining for main row */
+        grid-template-areas: "nav main";
+        grid-gap: 5rem;
+      }
+      nav {
+        max-width: 32rem;
+        width: 18rem; /* Ensure it takes the full width of its grid cell */
+        height: 100%;
+        padding: 0;
+      }
+      .navigation {
+        width: 100%;
+        grid-area: nav;
+        padding: 1.5rem;
+        border-radius: 0.25rem;
+        background-color: white;
+        text-align: left;
+        margin-bottom: 0; /* Remove bottom margin as it's in its own column */
+        box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15); /* Pretty box shadow */
+        position: sticky;
+        top: 0;
+        overflow-y: auto; /* Add scroll if the nav content overflows */
+      }
+      main {
+        grid-area: main;
+        width: 100%;
+        max-width: none; /* Remove max-width to fill the remaining space */
+      }
+      .navigation button {
+        padding: 0.5rem;
+        font-size: 1rem;
+        width: calc(100%);
+        margin-bottom: 0.25rem;
+      }
+      /* Media query for screens below 1024px width */
+      @media (max-width: 1023px) {
+        body {
+          grid-template-columns: 1fr; /* Single column */
+          grid-template-rows: auto auto; /* Adjust rows for single column layout */
+          grid-template-areas:
+            "nav"
+            "main";
+          grid-gap: 2rem; /* Adjust gap for single column */
+        }
+
+        nav {
+          width: calc(
+            100% - 3rem
+          ); /* Make nav take full width in single column */
+          max-width: none; /* Remove max-width restriction */
+        }
+
+        .navigation {
+          margin-bottom: 1rem; /* Add some bottom margin when stacked */
+          position: static; /* Remove sticky positioning in single column layout if desired */
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav id="navigation">
+      <div class="navigation">
+        <h4>Finder</h4>
+        <button>Products</button>
+        <button>Collections</button>
+        <button>Thought Leadership</button>
+        <button>Events</button>
+        <!-- <button>Search (AI Powered) -- Explain like I am 5 years old</button> -->
+      </div>
+    </nav>
+    <main id="body-container"></main>
+  </body>
+</html>
+
+<script type="module">
+    //var user_email = "lyndon.nadel@spglobal.com";
+    //var user_password = "FigmaJam@2023";
+    createLoginForm();
+
+    // ---------------------------------------------------------------------------- //
+    // ---------------------------------------------------------------------------- //
+    // Import Firebase ------------------------------------------------------------ //
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      getDocs,
+      query,
+      where,
+      updateDoc,
+      doc,
+    } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
+
+    import {
+      getAuth,
+      signInWithEmailAndPassword,
+      onAuthStateChanged,
+    } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
+
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+
+    // Your web app's Firebase configuration
+    var config = {
+      apiKey: "AIzaSyBkCP5dlE0wDBfRkyG2f4ilcOZoiwFq1vQ",
+      authDomain: "dog-chat-bae46.firebaseapp.com",
+      databaseURL: "https://dog-chat-bae46.firebaseio.com",
+      projectId: "dog-chat-bae46",
+      storageBucket: "dog-chat-bae46.firebasestorage.app",
+      messagingSenderId: "906364181402",
+      appId: "1:906364181402:web:c1ed8ef306a9a8b1a4f823",
+    };
+
+    // ---------------------------------------------------------------------------- //
+    // ---------------------------------------------------------------------------- //
+    // Run program ---------------------------------------------------------------- //
+    function runProgram() {
+      // Generate the main product fields
+      createProductCard();
+    }
+
+    // ---------------------------------------------------------------------------- //
+    // ---------------------------------------------------------------------------- //
+    // Initialize Firebase -------------------------------------------------------- //
+    const app = initializeApp(config);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in, see docs for a list of available properties
+        // https://firebase.google.com/docs/reference/js/auth.user
+        const uid = user.uid;
+        console.log(
+          "Firebase Auth State Changed: User is signed in",
+          user.email,
+          uid
+        );
+        removeLoginForm(); // Remove the login
+        // Run project
+        runProgram();
+      } else {
+        // User is signed out
+        console.log("Firebase Auth State Changed: User is signed out");
+      }
+    });
+
+    // ---------------------------------------------------------------------------- //
+    // ---------------------------------------------------------------------------- //
+    // Read & Write to Firebase --------------------------------------------------- //
+    function readAllData(database_name, data_array, callback_function) {
+      getDocs(collection(db, database_name))
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            const documentData = doc.data(); // Get the data object from the document
+            const documentId = doc.id; // Get the document ID
+            data_array.push(documentData); // Push to the database
+          });
+          if (callback_function && typeof callback_function === "function") {
+            callback_function(database_name, data_array); // Trigger the callback function when operation is completed
+          }
+        })
+        .catch((error) => {
+          console.log("Could not return: " + database_name);
+          console.error("Error getting documents: ", error);
+        });
+    }
+
+    function addData(databaseName, json_data) {
+      // Click the send data button
+      const user = auth.currentUser;
+      if (user) {
+        // Create a reference to the Collection and Document
+        const docRef = addDoc(collection(db, databaseName), json_data);
+      }
+    }
+
+    // ---------------------------------------------------------------------------- //
+    // ---------------------------------------------------------------------------- //
+    // Manage Login Form ---------------------------------------------------------- //
+    function createLoginForm() {
+      const main = document.getElementById("body-container");
+      // Create login container
+      const loginContainer = document.createElement("div");
+      loginContainer.id = "login-container";
+      main.appendChild(loginContainer);
+
+      // Create login form
+      const loginForm = document.createElement("div");
+      loginForm.id = "login-form";
+      loginContainer.appendChild(loginForm);
+
+      // Create username label and input
+      const usernameLabel = document.createElement("label");
+      usernameLabel.textContent = "Username:";
+      const usernameInput = document.createElement("input");
+      usernameInput.type = "text";
+      usernameInput.id = "username";
+      loginForm.appendChild(usernameLabel);
+      loginForm.appendChild(usernameInput);
+
+      // Create password label and input
+      const passwordLabel = document.createElement("label");
+      passwordLabel.textContent = "Password:";
+      const passwordInput = document.createElement("input");
+      passwordInput.type = "password";
+      passwordInput.id = "password";
+      loginForm.appendChild(passwordLabel);
+      loginForm.appendChild(passwordInput);
+
+      // Create login button
+      const loginButton = document.createElement("button");
+      loginButton.textContent = "Login";
+      loginForm.appendChild(loginButton);
+
+      // Login button click event
+      loginButton.addEventListener("click", function () {
+        const username = usernameInput.value;
+        const password = passwordInput.value;
+        // Log into firebase
+        signInWithEmailAndPassword(auth, username, password)
+          .then((userCredential) => {
+            // Signed in
+            const user = userCredential.user;
+            console.log("Firebase authentication successful for:", user.email);
+            removeLoginForm();
+          })
+          .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.error(
+              "Firebase authentication failed:",
+              errorCode,
+              errorMessage
+            );
+          });
+      });
+    }
+
+    function removeLoginForm() {
+      const loginForm = document.getElementById("login-container");
+      if (loginForm) {
+        loginForm.remove();
+      }
+    }
+
+    // ---------------------------------------------------------------------------- //
+    // ---------------------------------------------------------------------------- //
+    // Chip functions ------------------------------------------------------------- //
+    function createChip(label) {
+      const chipButton = document.createElement("button");
+      chipButton.classList.add("chip");
+      chipButton.textContent = label;
+      chipButton.onclick = function () {
+        console.log(label); // Default behavior: log the button text / label
+      };
+      return chipButton;
+    }
+
+    function removeChip(label) {
+      const chips = filterChipList.querySelectorAll(".chip");
+      chips.forEach((chip) => {
+        if (chip.textContent === label) {
+          chip.remove();
+        }
+      });
+    }
+
+    // ---------------------------------------------------------------------------- //
+    // ---------------------------------------------------------------------------- //
+    // Product Dom Elements ------------------------------------------------------------- //
+    var product_index = 0;
+    var product_list = [];
+    // Create a Product Detail Page
+    function createProductCard() {
+      const productContainer = document.getElementById("body-container");
+      // Download All Products
+      readAllData("Products", [], function (database_name, data) {
+        console.log(data);
+        product_list = data;
+
+        // Show all products
+        createAllProductList();
+      });
+    }
+
+    // Product list
+  function createAllProductList() {
+    // Show a list of products
+    const productContainer = document.getElementById("body-container");
+    //productContainer.innerHTML = ''; // Clear existing content
+
+    const allProductsContainer = document.createElement("div");
+    allProductsContainer.id = "product-list";
+    productContainer.appendChild(allProductsContainer);
+
+    // Solutions container
+    const allProductsHeadline = document.createElement("h1");
+    allProductsHeadline.textContent = "Products (" + product_list.length + ")";
+    allProductsContainer.appendChild(allProductsHeadline);
+
+    // Create search input
+    const searchInput = document.createElement("input");
+    searchInput.type = "text";
+    searchInput.placeholder = [];
+      "Filter results by Product Name, Type (Solution / Dataset), or Division";
+    searchInput.classList.add("filterProducts");
+    //searchInput.style.marginTop = "1rem";
+    searchInput.style.marginBottom = "1rem";
+    allProductsContainer.appendChild(searchInput);
+
+    // Solutions container
+    const solutionHeadline = document.createElement("h3");
+    solutionHeadline.textContent = "Solutions";
+    solutionHeadline.style.marginTop = "2rem";
+    allProductsContainer.appendChild(solutionHeadline);
+
+    const solutionList = document.createElement("div");
+    allProductsContainer.appendChild(solutionList);
+
+    // DataFeed container
+    const datafeedHeadline = document.createElement("h3");
+    datafeedHeadline.textContent = "Datasets";
+    datafeedHeadline.style.marginTop = "4rem";
+    allProductsContainer.appendChild(datafeedHeadline);
+
+    const datafeedList = document.createElement("div");
+    allProductsContainer.appendChild(datafeedList);
+
+    const productCards = []; // Array to store all product cards for filtering
+
+    for (let i = 0; i < product_list.length; i++) {
+      const product = product_list[i];
+      const header = product["Header"]["Product Name"];
+      const product_type = product["Header"]["Type"];
+      const header_and_type = "<b>" + header + "</b>  | " + product_type;
+      const header_division = product["Header"]["Division"];
+
+      // Add Cards
+      const productCard = document.createElement("button");
+      productCard.classList.add("product-card");
+      if (header_division) {
+      const divisionElement = document.createElement("div");
+      divisionElement.textContent = header_division;
+      divisionElement.classList.add("division-title");
+      productCard.appendChild(divisionElement);
+    }
+
+    productCard.innerHTML += header_and_type; // Append header and type after the division
+    
+      productCard.id = "product-card-" + String(i);
+      productCard.dataset.productName = header.toLowerCase(); // Store lowercase for filtering
+      productCard.dataset.productType = product_type.toLowerCase(); // Store lowercase for filtering
+      productCard.dataset.productDivision = header_division ? header_division.toLowerCase() : ''; // Store lowercase division for filtering
+      productCards.push(productCard); // Add to the array
+
+      if (product_type == "Dataset") {
+        datafeedList.appendChild(productCard);
+      } else {
+        solutionList.appendChild(productCard);
+      }
+
+      productCard.onclick = function () {
+        window.location.hash = "";
+        // Clear the product container
+        const summaryContainer = document.getElementById("summary_container");
+        if (summaryContainer) {
+          summaryContainer.innerHTML = "";
+        }
+        // Create the product summary
+        const numericIdString = this.id.substring("product-card-".length);
+        console.log(parseInt(numericIdString));
+        // Product Detail Page
+        createProductSummary(parseInt(numericIdString));
+        window.location.hash = "summary_container";
+      };
+    }
+
+    // Function to handle the search filtering
+    searchInput.addEventListener("input", function () {
+      const searchTerm = this.value.toLowerCase();
+      const keywords = searchTerm
+        .split(" ")
+        .filter((keyword) => keyword.length > 0); // Split by spaces and remove empty strings
+
+      productCards.forEach((card) => {
+        const productName = card.dataset.productName;
+        const productType = card.dataset.productType;
+        const productDivision = card.dataset.productDivision;
+        let allKeywordsFound = true;
+
+        if (keywords.length === 0) {
+          card.style.display = "block"; // Show all cards when search is cleared
+          return;
+        }
+
+        for (const keyword of keywords) {
+          const foundInName = productName.includes(keyword);
+          const foundInType = productType.includes(keyword);
+          const foundInDivision = productDivision.includes(keyword);
+
+          if (!foundInName && !foundInType && !foundInDivision) {
+            allKeywordsFound = false;
+            break; // No need to check further keywords for this card
+          }
+        }
+
+        if (allKeywordsFound) {
+          card.style.display = "block"; // Show card if all keywords are found
+        } else {
+          card.style.display = "none"; // Hide card if not all keywords are found
+        }
+      });
+    });
+  }
+
+    // Product Detail Page
+    function createProductSummary(product_index) {
+      // Product Index
+      const product = product_list[product_index];
+      console.log(product);
+      const productContainer = document.getElementById("body-container");
+
+      let summaryContainer = document.getElementById("summary_container");
+      if (!summaryContainer) {
+        summaryContainer = document.createElement("div");
+        summaryContainer.id = "summary_container";
+        summaryContainer.classList.add("section-container");
+        summaryContainer.style.marginBottom = "4rem";
+        productContainer.prepend(summaryContainer);
+      }
+
+      // Add Tags
+      const divisionTitle = document.createElement("div");
+      divisionTitle.textContent = product["Header"]["Division"];
+      divisionTitle.className = "overline";
+      divisionTitle.style.marginBottom = "0.5rem";
+      summaryContainer.appendChild(divisionTitle);
+
+      // Product Name
+      const productHeadlineLink = document.createElement("a");
+      productHeadlineLink.id = "product-headline"; // Keep the original ID for potential styling
+      productHeadlineLink.classList.add("product-link"); // Add the product-link class for consistency
+      productHeadlineLink.href = product["Header"]["Source"];
+      productHeadlineLink.target = "_blank";
+      productHeadlineLink.innerText = product["Header"]["Product Name"];
+      summaryContainer.appendChild(productHeadlineLink);
+
+      // Date
+      const scrapeDate = document.createElement("p");
+      scrapeDate.id = "web-scrape-date";
+      scrapeDate.innerHTML = "<b>Published: </b>" + product["Header"]["Date"];
+      summaryContainer.appendChild(scrapeDate);
+
+      // Product Type
+      const productType = document.createElement("p");
+      productType.id = "product-type";
+      productType.innerHTML = "<b>Type: </b>" + product["Header"]["Type"];
+      summaryContainer.appendChild(productType);
+
+      // Add Features & Benefits
+      const aiTitle = document.createElement("div");
+      aiTitle.textContent =
+        "Note: Content has been webscraped and reconstructed using AI. Review sources before external use.";
+      aiTitle.className = "overline";
+      summaryContainer.appendChild(aiTitle);
+
+      // HR
+      let hr = document.createElement("hr");
+      hr.classList.add("margin-spacer-small");
+      summaryContainer.appendChild(hr);
+
+      // Add Tags
+      const aiOverviewTitle = document.createElement("h2");
+      aiOverviewTitle.textContent = "Product Description";
+      //aiOverviewTitle.className = "overline";
+      aiOverviewTitle.style.marginBottom = "1rem";
+      summaryContainer.appendChild(aiOverviewTitle);
+
+      // Product Description
+      const productDescription = document.createElement("p");
+      productDescription.id = "product-description";
+      productDescription.innerText = product["Summary"]["Description"];
+      summaryContainer.appendChild(productDescription);
+
+      // Add Features & Benefits
+      const aiFeatures = document.createElement("div");
+      aiFeatures.textContent = "Features & Benefits";
+      aiFeatures.className = "overline";
+      aiFeatures.style.marginTop = "4rem";
+      summaryContainer.appendChild(aiFeatures);
+
+      // List
+      createSummaryElements(product["Summary"]["Features"], summaryContainer);
+
+      let spacer;
+
+      // Product Description
+      if (product["MetaData"]["Description"] != "" && product["MetaData"]["Description"] != null) {
+        // Create spacer
+      spacer = document.createElement("div");
+      spacer.className = "spacer-medium";
+      summaryContainer.appendChild(spacer);
+
+        // Add Tags
+        const metaDataTitle = document.createElement("div");
+        metaDataTitle.textContent = "Meta Data Description";
+        metaDataTitle.className = "overline";
+        metaDataTitle.style.marginBottom = "0.5rem";
+        summaryContainer.appendChild(metaDataTitle);
+        // Meta Data Description
+        const metaDescription = document.createElement("p");
+        metaDescription.id = "product-description";
+        metaDescription.innerText = product["MetaData"]["Description"];
+        summaryContainer.appendChild(metaDescription);
+      }
+
+      // Create spacer
+      spacer = document.createElement("div");
+      spacer.className = "spacer-small";
+      summaryContainer.appendChild(spacer);
+
+      // Theme List
+      if (product["MetaData"]["Theme"].length > 0) {
+        createChipSection("Meta Theme", product["MetaData"]["Theme"]);
+      }
+
+      // HR
+      if (product["MetaData"]["Theme"].length > 0 || (product["MetaData"]["Description"] != "" && product["MetaData"]["Description"] != null)) {
+      hr = document.createElement("hr");
+      hr.classList.add("margin-spacer-small");
+      summaryContainer.appendChild(hr);
+      }
+
+      // Create spacer
+      spacer = document.createElement("div");
+      spacer.className = "spacer-medium";
+      summaryContainer.appendChild(spacer);
+
+      // Add chips
+      createChipSection("Themes (AI Generated)", product["Themes"]);
+
+      // Create spacer
+      spacer = document.createElement("div");
+      spacer.className = "spacer-medium";
+      summaryContainer.appendChild(spacer);
+
+      // HR
+      hr = document.createElement("hr");
+      hr.classList.add("margin-spacer-small");
+      summaryContainer.appendChild(hr);
+
+      // Add chips
+      createChipSection("Industry (AI Generated)", product["Industry"]);
+
+      function createSummaryElements(dataArray, parentContainer) {
+        dataArray.forEach((item) => {
+          const rowDiv = document.createElement("div");
+          rowDiv.classList.add("summary-row");
+
+          const titleColumn = document.createElement("div");
+          titleColumn.classList.add("title-column");
+          const titleHeader = document.createElement("h4");
+          titleHeader.textContent = item.Title;
+          titleColumn.appendChild(titleHeader);
+
+          const descriptionColumn = document.createElement("div");
+          descriptionColumn.classList.add("description-column");
+          const descriptionParagraph = document.createElement("p");
+          descriptionParagraph.textContent = item.Description;
+          descriptionColumn.appendChild(descriptionParagraph);
+
+          rowDiv.appendChild(titleColumn);
+          rowDiv.appendChild(descriptionColumn);
+          parentContainer.appendChild(rowDiv);
+        });
+      }
+
+      function createChipSection(sectionTitle, data) {
+        const lowercaseTitle = sectionTitle.toLowerCase();
+        // Add Tags
+        const chipTitle = document.createElement("div");
+        chipTitle.id = `${lowercaseTitle}-chip-title`;
+        chipTitle.textContent = sectionTitle;
+        chipTitle.className = "overline";
+        chipTitle.style.marginBottom = "0.5rem";
+        summaryContainer.appendChild(chipTitle);
+
+        const chipContainer = document.createElement("div");
+        chipContainer.id = `${lowercaseTitle}-chip-container`;
+        chipContainer.className = "chip-list";
+        summaryContainer.appendChild(chipContainer);
+
+        for (var i = 0; i < data.length; i++) {
+          const item = data[i];
+
+          if (typeof item === "string") {
+            // Process string array entries
+            const chip = document.createElement("div");
+            chip.classList.add("chip");
+            chip.innerText = item;
+            chipContainer.appendChild(chip);
+          } else if (typeof item === "object" && item !== null) {
+            // Process JSON array entries
+            for (const key in item) {
+              if (item.hasOwnProperty(key)) {
+                // Add the key as a category chip
+                const categoryChip = document.createElement("div");
+                categoryChip.classList.add("chip", "category");
+                categoryChip.innerText = key;
+                chipContainer.appendChild(categoryChip);
+
+                // Add the values as regular chips
+                const values = item[key];
+                if (Array.isArray(values)) {
+                  values.forEach((value) => {
+                    const chip = document.createElement("div");
+                    chip.classList.add("chip");
+                    chip.innerText = value;
+                    chipContainer.appendChild(chip);
+                  });
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+</script>
