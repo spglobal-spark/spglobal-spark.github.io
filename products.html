@@ -5,6 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Product Database</title>
     <style>
+      html {
+  scroll-behavior: smooth;
+}
+      body {
+        font-family: Helvetica, sans-serif;
+        background-color: #f0f0f0;
+        padding: 0rem 2rem 2rem 2rem;
+        margin: 0;
+
+        display: grid;
+        grid-template-columns: auto 1fr; /* Two columns: auto width for nav, remaining for main */
+        grid-template-rows: auto 1fr; /* Auto height for nav row, remaining for main row */
+        grid-template-areas: "nav main";
+        grid-gap: 5rem;
+      }
       p {
         color: #333;
         line-height: 150%;
@@ -56,6 +71,17 @@
         margin-bottom: 0.5rem;
         font-size: 1rem;
         box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15); /* Pretty box shadow */
+        transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out; /* Add transition for background-color */
+      }
+
+      .product-card:hover {
+        transform: translateY(-6px); /* Raise the card by 6px */
+        background-color: #DEECF0;
+      }
+
+      .product-card:hover b,
+      .product-card:hover strong {
+        text-decoration: underline;
       }
       .division-title {
         font-size: 0.75rem;
@@ -191,18 +217,6 @@
         text-decoration: underline;
         margin-bottom: 0.5rem;
       }
-      body {
-        font-family: Helvetica, sans-serif;
-        background-color: #f0f0f0;
-        padding: 2rem;
-        margin: 0;
-
-        display: grid;
-        grid-template-columns: auto 1fr; /* Two columns: auto width for nav, remaining for main */
-        grid-template-rows: auto 1fr; /* Auto height for nav row, remaining for main row */
-        grid-template-areas: "nav main";
-        grid-gap: 5rem;
-      }
       nav {
         max-width: 32rem;
         width: 18rem; /* Ensure it takes the full width of its grid cell */
@@ -219,19 +233,39 @@
         margin-bottom: 0; /* Remove bottom margin as it's in its own column */
         box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15); /* Pretty box shadow */
         position: sticky;
-        top: 0;
+        top: 2rem;
         overflow-y: auto; /* Add scroll if the nav content overflows */
+      }
+      .navigation button {
+        font-size: 1rem;
+        width: calc(100%);
+        border: 0;
+        text-align: left;
+        font-weight: bold;
+        border-radius: 0.25rem;
+        margin-bottom: 0.5rem;
+        padding: 1rem;
+        transition: transform 0.2s ease-in-out, background-color 0.2s ease-in-out; /* Add transition for background-color */
+        position: relative; /* Needed for absolute positioning of ::after */
+        padding-right: 1.5rem; /* Make space for the arrow */
+      }
+      .navigation button:hover {
+        background-color: #DEECF0;
+        /* text-decoration: underline; */
+      }
+      .navigation button:hover::after {
+        font-family: sans-serif;
+        content: "→";
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
       }
       main {
         grid-area: main;
         width: 100%;
         max-width: none; /* Remove max-width to fill the remaining space */
-      }
-      .navigation button {
-        padding: 0.5rem;
-        font-size: 1rem;
-        width: calc(100%);
-        margin-bottom: 0.25rem;
+        padding-top: 2rem;
       }
       /* Media query for screens below 1024px width */
       @media (max-width: 1023px) {
@@ -256,16 +290,41 @@
           position: static; /* Remove sticky positioning in single column layout if desired */
         }
       }
+
+      .main-logo {
+        width: auto;
+        height: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .main-logo svg {
+        width: auto;
+        height: 2rem;
+      }
+     
     </style>
   </head>
   <body>
     <nav id="navigation">
       <div class="navigation">
-        <h4>Finder</h4>
-        <button>Products</button>
-        <button>Collections</button>
-        <button>Thought Leadership</button>
-        <button>Events</button>
+        <!-- Logo -->
+         <div class="main-logo">
+        <svg id="spglobal-logo" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 332.69 72">
+          <defs>
+            <style>
+              .cls-1 {
+                fill: #d6002a;
+              }
+            </style>
+          </defs>
+          <path id="Wordmark" class="cls-1" d="M37.92,56.65c0,3.72-1.28,7.21-3.93,9.86-3.7,3.7-9.05,4.93-14.13,5.06-5.36.13-10.88-1.18-14.93-4.86-3.09-2.8-4.93-6.83-4.93-11h8.8c0,2.16.94,4.27,2.47,5.8,2.1,2.11,5.28,2.56,8.14,2.53,2.75-.02,6-.44,7.99-2.53,2.14-2.31,2.85-6.4.04-8.53-2.94-2.22-7.14-2.07-10.63-2.4-3.64-.35-7.37-.96-10.41-3.13-2.9-2.07-4.72-5.3-5.1-8.84-.45-4.21,1.07-8.06,4.04-11.03,3.43-3.43,8.53-4.88,13.27-4.99,4.88-.11,10.17,1.17,13.79,4.59,2.81,2.64,4.71,6.16,4.8,10.06h-8.8c-.09-1.72-.9-3.41-2.07-4.67-1.79-1.89-4.87-2.56-7.38-2.53-2.67.03-5.57.59-7.48,2.6-2.29,2.49-2.24,6.77.98,8.44,1.62.84,3.59.9,5.36,1.1,1.97.22,3.95.38,5.92.64,3.73.48,7.43,1.58,10.24,4.21,2.66,2.5,3.96,6.01,3.96,9.62ZM75.13,70.78l-3.33-3.73c-5.55,4.9-14.06,6.45-20.86,3.34-6.53-2.98-9.92-10.61-7.42-17.44,1.31-3.58,4.44-6.35,7.62-8.3-3.19-3.38-5.54-7.06-4.97-11.89.5-4.2,3.37-7.81,7.31-9.32,4.21-1.61,9.44-1.31,13.3,1.07,3.75,2.32,5.57,6.4,5.25,10.74-.41,5.41-4.5,8.95-8.89,11.53l8.2,8.93c.93-1.75,1.04-3.86,1.2-5.8.16-1.93.13-3.86.13-5.8h12.2v6.6h-5.47c-.18,3.68-.81,7.47-2.87,10.6l8.73,9.46h-10.13ZM56,49.85c-2.23,1.36-4.62,2.78-5.35,5.47-.67,2.42-.05,5.17,1.71,6.97,3.54,3.62,11.13,3.23,14.44-.51l-10.8-11.93ZM64.27,34.46c0-2-.9-3.77-2.77-4.63-1.91-.88-4.34-.62-6.03.63-1.66,1.23-2.09,3.51-1.49,5.42.73,2.31,2.56,3.99,4.22,5.64,2.88-1.62,6.07-3.31,6.07-7.06ZM126.74,38.59c0,4.28-1.39,8.58-4.71,11.43-3.28,2.82-7.73,3.77-11.95,3.77h-10v16.93h-8.53V23.46h18.53c4.22,0,8.65.95,11.95,3.74,3.34,2.82,4.71,7.13,4.71,11.39ZM118.08,38.65c0-2.18-.7-4.41-2.37-5.89-1.61-1.42-3.89-1.78-5.97-1.78h-9.66v15.26h9.66c2.07,0,4.35-.34,5.97-1.75,1.67-1.46,2.37-3.68,2.37-5.85ZM177.2,70.71l-1-5.2c-2.34,4.38-7.99,6.18-12.65,6.06-4.99-.13-9.8-1.53-13.28-5.26-4.99-5.17-6.13-12.27-6.13-19.2,0-6.94,1.01-13.88,6.13-19,7.23-7.23,20.83-7.56,28.06-.13,2.53,2.63,4.1,5.87,4.33,9.53h-8.8c-.16-1.69-1.04-3.02-2.07-4.33-3.67-4.26-11.64-3.63-15.26.33-3.38,3.57-3.68,9.11-3.66,13.76.02,4.56.42,10.14,3.73,13.64,3.56,3.9,11.07,4.13,14.73.27,2.45-2.54,3.07-5.77,3.07-9.2h-11.26v-7.13h19.6v25.86h-5.53ZM203.58,70.65c-3.11.65-6.47.78-9.32-.88-2.9-1.69-3.81-4.79-3.81-7.98V22.53h8.4v37.86c0,1.07.2,2.41,1.24,2.97,1.07.57,2.35.3,3.49.3v7ZM238.95,53.39c0,4.68-1.14,9.06-4.06,12.8-5.89,7.2-18.37,7.2-24.26,0-5.58-7.11-5.58-18.49,0-25.59,5.89-7.2,18.37-7.2,24.26,0,2.93,3.74,4.06,8.11,4.06,12.8ZM230.48,53.39c0-3.04-.32-6.4-2.47-8.73-2.72-2.93-7.81-2.94-10.53,0-2.15,2.33-2.47,5.7-2.47,8.73,0,3.04.32,6.4,2.47,8.73,2.72,2.94,7.81,2.93,10.53,0,2.14-2.33,2.47-5.7,2.47-8.73ZM277.39,53.45c0,5.66-1.65,11.45-6.2,15.13-4.98,4.16-14.37,4.22-18.13-1.67l-.53,3.8h-7.2V22.59h8.33v16c1.95-2.38,5.35-3.27,8.29-3.38,3.31-.13,6.65.63,9.24,2.78,4.13,3.42,6.2,8.58,6.2,15.46ZM268.93,53.32c0-2.91-.38-6.02-2.2-8.4-1.77-2.14-4.29-3.04-7.03-2.64-2.63.39-4.51,2.26-5.46,4.68-1.04,2.62-1.14,5.74-.87,8.52.26,2.67.85,5.41,2.89,7.3,3.04,2.81,7.94,2.06,10.46-1,1.83-2.39,2.2-5.54,2.2-8.46ZM314.38,70.31c-3.79,1.66-9.47,1.19-10-3.93-3.08,5.47-11.38,6.37-16.65,4.03-2.94-1.31-5.19-3.72-6.04-6.86-.86-3.18-.27-6.72,1.81-9.3,2.31-2.87,5.98-4.1,9.54-4.39l10.2-.73v-2.13c0-1.53-.35-3.37-1.59-4.4-1.05-.88-2.6-1.03-3.91-1.06-3.27-.08-6.49,1.24-6.7,4.93h-8.06c.21-3.14,1.44-6.14,3.93-8.16,2.4-1.95,5.52-2.79,8.56-3.03,5.84-.46,12.57.99,14.91,6.99.88,2.22,1,4.64,1,7v12.86c0,1.53.99,2.69,2.67,2.13.13,0,.24-.02.33-.07v6.13ZM303.25,55.32l-8.8.67c-2.34.16-4.75,1.53-4.98,4.06-.24,2.58,1.73,4.48,4.22,4.77,2.33.27,4.98-.37,6.85-1.81,1.92-1.47,2.7-3.73,2.7-6.09v-1.6ZM332.69,70.65c-3.15.66-6.59.78-9.45-.96-2.81-1.7-3.68-4.77-3.68-7.91V22.53h8.4v37.86c0,1.07.2,2.41,1.24,2.97,1.07.57,2.35.3,3.49.3v7Z"/>
+          <rect id="Bar" width="332.69" height="8.53"/>
+        </svg>
+      </div>
+        <button id="nav-products">Find Products</button>
+        <button id="nav-collections">Collections</button>
+        <button id="nav-thought-leadership">Thought Leadership</button>
+       <button id="nav-events">Events</button>
         <!-- <button>Search (AI Powered) -- Explain like I am 5 years old</button> -->
       </div>
     </nav>
@@ -274,220 +333,270 @@
 </html>
 
 <script type="module">
-    //var user_email = "lyndon.nadel@spglobal.com";
-    //var user_password = "FigmaJam@2023";
-    createLoginForm();
+  //var user_email = "lyndon.nadel@spglobal.com";
+  //var user_password = "FigmaJam@2023";
+  createLoginForm();
 
-    // ---------------------------------------------------------------------------- //
-    // ---------------------------------------------------------------------------- //
-    // Import Firebase ------------------------------------------------------------ //
-    // Import the functions you need from the SDKs you need
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
-    import {
-      getFirestore,
-      collection,
-      addDoc,
-      getDocs,
-      query,
-      where,
-      updateDoc,
-      doc,
-    } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
+  // ---------------------------------------------------------------------------- //
+  // ---------------------------------------------------------------------------- //
+  // Import Firebase ------------------------------------------------------------ //
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    getDocs,
+    query,
+    where,
+    updateDoc,
+    doc,
+  } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-firestore.js";
 
-    import {
-      getAuth,
-      signInWithEmailAndPassword,
-      onAuthStateChanged,
-    } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
+  import {
+    getAuth,
+    signInWithEmailAndPassword,
+    onAuthStateChanged,
+  } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 
-    // TODO: Add SDKs for Firebase products that you want to use
-    // https://firebase.google.com/docs/web/setup#available-libraries
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
 
-    // Your web app's Firebase configuration
-    var config = {
-      apiKey: "AIzaSyBkCP5dlE0wDBfRkyG2f4ilcOZoiwFq1vQ",
-      authDomain: "dog-chat-bae46.firebaseapp.com",
-      databaseURL: "https://dog-chat-bae46.firebaseio.com",
-      projectId: "dog-chat-bae46",
-      storageBucket: "dog-chat-bae46.firebasestorage.app",
-      messagingSenderId: "906364181402",
-      appId: "1:906364181402:web:c1ed8ef306a9a8b1a4f823",
-    };
+  // Your web app's Firebase configuration
+  var config = {
+    apiKey: "AIzaSyBkCP5dlE0wDBfRkyG2f4ilcOZoiwFq1vQ",
+    authDomain: "dog-chat-bae46.firebaseapp.com",
+    databaseURL: "https://dog-chat-bae46.firebaseio.com",
+    projectId: "dog-chat-bae46",
+    storageBucket: "dog-chat-bae46.firebasestorage.app",
+    messagingSenderId: "906364181402",
+    appId: "1:906364181402:web:c1ed8ef306a9a8b1a4f823",
+  };
 
-    // ---------------------------------------------------------------------------- //
-    // ---------------------------------------------------------------------------- //
-    // Run program ---------------------------------------------------------------- //
-    function runProgram() {
-      // Generate the main product fields
-      createProductCard();
-    }
+  // ---------------------------------------------------------------------------- //
+  // ---------------------------------------------------------------------------- //
+  // Buttons ---------------------------------------------------------------- //
+  function assignOpenTabToNavButtons() {
+    // Find the <nav> element by its ID.
+    const navigationElement = document.getElementById("navigation");
 
-    // ---------------------------------------------------------------------------- //
-    // ---------------------------------------------------------------------------- //
-    // Initialize Firebase -------------------------------------------------------- //
-    const app = initializeApp(config);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
+    // Check if the <nav> element was found.
+    if (navigationElement) {
+      // Find all the <button> elements inside the <nav> element.
+      const buttons = navigationElement.getElementsByTagName("button");
 
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // User is signed in, see docs for a list of available properties
-        // https://firebase.google.com/docs/reference/js/auth.user
-        const uid = user.uid;
-        console.log(
-          "Firebase Auth State Changed: User is signed in",
-          user.email,
-          uid
-        );
-        removeLoginForm(); // Remove the login
-        // Run project
-        runProgram();
-      } else {
-        // User is signed out
-        console.log("Firebase Auth State Changed: User is signed out");
+      // Go through each button that we found.
+      for (let i = 0; i < buttons.length; i++) {
+        const button = buttons[i];
+        // When someone clicks on this button, we want to run a special instruction called "openTab".
+        // Imagine "openTab" is like a secret code that tells the computer what to do when the button is pressed.
+        button.onclick = openTab;
       }
-    });
+    } else {
+      console.log("The <nav> element with id 'navigation' was not found.");
+    }
+  }
 
-    // ---------------------------------------------------------------------------- //
-    // ---------------------------------------------------------------------------- //
-    // Read & Write to Firebase --------------------------------------------------- //
-    function readAllData(database_name, data_array, callback_function) {
-      getDocs(collection(db, database_name))
-        .then((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-            const documentData = doc.data(); // Get the data object from the document
-            const documentId = doc.id; // Get the document ID
-            data_array.push(documentData); // Push to the database
-          });
-          if (callback_function && typeof callback_function === "function") {
-            callback_function(database_name, data_array); // Trigger the callback function when operation is completed
-          }
+  function openTab() {
+    var title = this.id;
+    if (title === "nav-thought-leadership") {
+      // Open a link to the airtable url in a new tab
+      window.open(
+        "https://airtable.com/appvJrM1t0piSLfl3/shrWik7dCeBDYOj7X",
+        "_blank"
+      );
+    } else if (title === "nav-products") {
+      // You can add logic here to open a different URL or perform another action
+      console.log("Opening Products tab (replace with actual logic)");
+    } else if (title === "nav-collections") {
+      // Add logic for the Collections button
+      console.log("Opening Collections tab (replace with actual logic)");
+    } else if (title === "nav-events") {
+      window.open(
+        "https://spgl-my.sharepoint.com/:x:/r/personal/kyle_may_spglobal_com/Documents/2025%20SP%20Global%20Cross%20Divisional%20Event%20Master%20List%20-%20as%20of%2002-19-25_Enterprise%20Edits.xlsx?d=w7d486c1d9a1d40f3af7805eb48389141&csf=1&web=1&e=usWTsr",
+        "_blank"
+      );
+      // Add logic for the Events button
+      console.log("Opening Events tab (replace with actual logic)");
+    }
+  }
+
+  // ---------------------------------------------------------------------------- //
+  // ---------------------------------------------------------------------------- //
+  // Run program ---------------------------------------------------------------- //
+  function runProgram() {
+    // Assign buttons to navigation
+    assignOpenTabToNavButtons();
+    // Generate the main product fields
+    createProductCard();
+  }
+
+  // ---------------------------------------------------------------------------- //
+  // ---------------------------------------------------------------------------- //
+  // Initialize Firebase -------------------------------------------------------- //
+  const app = initializeApp(config);
+  const db = getFirestore(app);
+  const auth = getAuth(app);
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      // User is signed in, see docs for a list of available properties
+      // https://firebase.google.com/docs/reference/js/auth.user
+      const uid = user.uid;
+      console.log(
+        "Firebase Auth State Changed: User is signed in",
+        user.email,
+        uid
+      );
+      removeLoginForm(); // Remove the login
+      // Run project
+      runProgram();
+    } else {
+      // User is signed out
+      console.log("Firebase Auth State Changed: User is signed out");
+    }
+  });
+
+  // ---------------------------------------------------------------------------- //
+  // ---------------------------------------------------------------------------- //
+  // Read & Write to Firebase --------------------------------------------------- //
+  function readAllData(database_name, data_array, callback_function) {
+    getDocs(collection(db, database_name))
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          const documentData = doc.data(); // Get the data object from the document
+          const documentId = doc.id; // Get the document ID
+          data_array.push(documentData); // Push to the database
+        });
+        if (callback_function && typeof callback_function === "function") {
+          callback_function(database_name, data_array); // Trigger the callback function when operation is completed
+        }
+      })
+      .catch((error) => {
+        console.log("Could not return: " + database_name);
+        console.error("Error getting documents: ", error);
+      });
+  }
+
+  function addData(databaseName, json_data) {
+    // Click the send data button
+    const user = auth.currentUser;
+    if (user) {
+      // Create a reference to the Collection and Document
+      const docRef = addDoc(collection(db, databaseName), json_data);
+    }
+  }
+
+  // ---------------------------------------------------------------------------- //
+  // ---------------------------------------------------------------------------- //
+  // Manage Login Form ---------------------------------------------------------- //
+  function createLoginForm() {
+    const main = document.getElementById("body-container");
+    // Create login container
+    const loginContainer = document.createElement("div");
+    loginContainer.id = "login-container";
+    main.appendChild(loginContainer);
+
+    // Create login form
+    const loginForm = document.createElement("div");
+    loginForm.id = "login-form";
+    loginContainer.appendChild(loginForm);
+
+    // Create username label and input
+    const usernameLabel = document.createElement("label");
+    usernameLabel.textContent = "Username:";
+    const usernameInput = document.createElement("input");
+    usernameInput.type = "text";
+    usernameInput.id = "username";
+    loginForm.appendChild(usernameLabel);
+    loginForm.appendChild(usernameInput);
+
+    // Create password label and input
+    const passwordLabel = document.createElement("label");
+    passwordLabel.textContent = "Password:";
+    const passwordInput = document.createElement("input");
+    passwordInput.type = "password";
+    passwordInput.id = "password";
+    loginForm.appendChild(passwordLabel);
+    loginForm.appendChild(passwordInput);
+
+    // Create login button
+    const loginButton = document.createElement("button");
+    loginButton.textContent = "Login";
+    loginForm.appendChild(loginButton);
+
+    // Login button click event
+    loginButton.addEventListener("click", function () {
+      const username = usernameInput.value;
+      const password = passwordInput.value;
+      // Log into firebase
+      signInWithEmailAndPassword(auth, username, password)
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          console.log("Firebase authentication successful for:", user.email);
+          removeLoginForm();
         })
         .catch((error) => {
-          console.log("Could not return: " + database_name);
-          console.error("Error getting documents: ", error);
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.error(
+            "Firebase authentication failed:",
+            errorCode,
+            errorMessage
+          );
         });
-    }
+    });
+  }
 
-    function addData(databaseName, json_data) {
-      // Click the send data button
-      const user = auth.currentUser;
-      if (user) {
-        // Create a reference to the Collection and Document
-        const docRef = addDoc(collection(db, databaseName), json_data);
+  function removeLoginForm() {
+    const loginForm = document.getElementById("login-container");
+    if (loginForm) {
+      loginForm.remove();
+    }
+  }
+
+  // ---------------------------------------------------------------------------- //
+  // ---------------------------------------------------------------------------- //
+  // Chip functions ------------------------------------------------------------- //
+  function createChip(label) {
+    const chipButton = document.createElement("button");
+    chipButton.classList.add("chip");
+    chipButton.textContent = label;
+    chipButton.onclick = function () {
+      console.log(label); // Default behavior: log the button text / label
+    };
+    return chipButton;
+  }
+
+  function removeChip(label) {
+    const chips = filterChipList.querySelectorAll(".chip");
+    chips.forEach((chip) => {
+      if (chip.textContent === label) {
+        chip.remove();
       }
-    }
+    });
+  }
 
-    // ---------------------------------------------------------------------------- //
-    // ---------------------------------------------------------------------------- //
-    // Manage Login Form ---------------------------------------------------------- //
-    function createLoginForm() {
-      const main = document.getElementById("body-container");
-      // Create login container
-      const loginContainer = document.createElement("div");
-      loginContainer.id = "login-container";
-      main.appendChild(loginContainer);
+  // ---------------------------------------------------------------------------- //
+  // ---------------------------------------------------------------------------- //
+  // Product Dom Elements ------------------------------------------------------------- //
+  var product_index = 0;
+  var product_list = [];
+  // Create a Product Detail Page
+  function createProductCard() {
+    const productContainer = document.getElementById("body-container");
+    // Download All Products
+    readAllData("Products", [], function (database_name, data) {
+      console.log(data);
+      product_list = data;
 
-      // Create login form
-      const loginForm = document.createElement("div");
-      loginForm.id = "login-form";
-      loginContainer.appendChild(loginForm);
+      // Show all products
+      createAllProductList();
+    });
+  }
 
-      // Create username label and input
-      const usernameLabel = document.createElement("label");
-      usernameLabel.textContent = "Username:";
-      const usernameInput = document.createElement("input");
-      usernameInput.type = "text";
-      usernameInput.id = "username";
-      loginForm.appendChild(usernameLabel);
-      loginForm.appendChild(usernameInput);
-
-      // Create password label and input
-      const passwordLabel = document.createElement("label");
-      passwordLabel.textContent = "Password:";
-      const passwordInput = document.createElement("input");
-      passwordInput.type = "password";
-      passwordInput.id = "password";
-      loginForm.appendChild(passwordLabel);
-      loginForm.appendChild(passwordInput);
-
-      // Create login button
-      const loginButton = document.createElement("button");
-      loginButton.textContent = "Login";
-      loginForm.appendChild(loginButton);
-
-      // Login button click event
-      loginButton.addEventListener("click", function () {
-        const username = usernameInput.value;
-        const password = passwordInput.value;
-        // Log into firebase
-        signInWithEmailAndPassword(auth, username, password)
-          .then((userCredential) => {
-            // Signed in
-            const user = userCredential.user;
-            console.log("Firebase authentication successful for:", user.email);
-            removeLoginForm();
-          })
-          .catch((error) => {
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            console.error(
-              "Firebase authentication failed:",
-              errorCode,
-              errorMessage
-            );
-          });
-      });
-    }
-
-    function removeLoginForm() {
-      const loginForm = document.getElementById("login-container");
-      if (loginForm) {
-        loginForm.remove();
-      }
-    }
-
-    // ---------------------------------------------------------------------------- //
-    // ---------------------------------------------------------------------------- //
-    // Chip functions ------------------------------------------------------------- //
-    function createChip(label) {
-      const chipButton = document.createElement("button");
-      chipButton.classList.add("chip");
-      chipButton.textContent = label;
-      chipButton.onclick = function () {
-        console.log(label); // Default behavior: log the button text / label
-      };
-      return chipButton;
-    }
-
-    function removeChip(label) {
-      const chips = filterChipList.querySelectorAll(".chip");
-      chips.forEach((chip) => {
-        if (chip.textContent === label) {
-          chip.remove();
-        }
-      });
-    }
-
-    // ---------------------------------------------------------------------------- //
-    // ---------------------------------------------------------------------------- //
-    // Product Dom Elements ------------------------------------------------------------- //
-    var product_index = 0;
-    var product_list = [];
-    // Create a Product Detail Page
-    function createProductCard() {
-      const productContainer = document.getElementById("body-container");
-      // Download All Products
-      readAllData("Products", [], function (database_name, data) {
-        console.log(data);
-        product_list = data;
-
-        // Show all products
-        createAllProductList();
-      });
-    }
-
-    // Product list
+  // Product list
   function createAllProductList() {
     // Show a list of products
     const productContainer = document.getElementById("body-container");
@@ -506,7 +615,7 @@
     const searchInput = document.createElement("input");
     searchInput.type = "text";
     searchInput.placeholder = [];
-      "Filter results by Product Name, Type (Solution / Dataset), or Division";
+    ("Filter results by Product Name, Type (Solution / Dataset), or Division");
     searchInput.classList.add("filterProducts");
     //searchInput.style.marginTop = "1rem";
     searchInput.style.marginBottom = "1rem";
@@ -543,18 +652,20 @@
       const productCard = document.createElement("button");
       productCard.classList.add("product-card");
       if (header_division) {
-      const divisionElement = document.createElement("div");
-      divisionElement.textContent = header_division;
-      divisionElement.classList.add("division-title");
-      productCard.appendChild(divisionElement);
-    }
+        const divisionElement = document.createElement("div");
+        divisionElement.textContent = header_division;
+        divisionElement.classList.add("division-title");
+        productCard.appendChild(divisionElement);
+      }
 
-    productCard.innerHTML += header_and_type; // Append header and type after the division
-    
+      productCard.innerHTML += header_and_type; // Append header and type after the division
+
       productCard.id = "product-card-" + String(i);
       productCard.dataset.productName = header.toLowerCase(); // Store lowercase for filtering
       productCard.dataset.productType = product_type.toLowerCase(); // Store lowercase for filtering
-      productCard.dataset.productDivision = header_division ? header_division.toLowerCase() : ''; // Store lowercase division for filtering
+      productCard.dataset.productDivision = header_division
+        ? header_division.toLowerCase()
+        : ""; // Store lowercase division for filtering
       productCards.push(productCard); // Add to the array
 
       if (product_type == "Dataset") {
@@ -575,7 +686,7 @@
         console.log(parseInt(numericIdString));
         // Product Detail Page
         createProductSummary(parseInt(numericIdString));
-        window.location.hash = "summary_container";
+        window.location.hash = "body-container";
       };
     }
 
@@ -617,216 +728,223 @@
     });
   }
 
-    // Product Detail Page
-    function createProductSummary(product_index) {
-      // Product Index
-      const product = product_list[product_index];
-      console.log(product);
-      const productContainer = document.getElementById("body-container");
+  // Product Detail Page
+  function createProductSummary(product_index) {
+    // Product Index
+    const product = product_list[product_index];
+    console.log(product);
+    const productContainer = document.getElementById("body-container");
 
-      let summaryContainer = document.getElementById("summary_container");
-      if (!summaryContainer) {
-        summaryContainer = document.createElement("div");
-        summaryContainer.id = "summary_container";
-        summaryContainer.classList.add("section-container");
-        summaryContainer.style.marginBottom = "4rem";
-        productContainer.prepend(summaryContainer);
-      }
+    let summaryContainer = document.getElementById("summary_container");
+    if (!summaryContainer) {
+      summaryContainer = document.createElement("div");
+      summaryContainer.id = "summary_container";
+      summaryContainer.classList.add("section-container");
+      summaryContainer.style.marginBottom = "4rem";
+      productContainer.prepend(summaryContainer);
+    }
 
-      // Add Tags
-      const divisionTitle = document.createElement("div");
-      divisionTitle.textContent = product["Header"]["Division"];
-      divisionTitle.className = "overline";
-      divisionTitle.style.marginBottom = "0.5rem";
-      summaryContainer.appendChild(divisionTitle);
+    // Add Tags
+    const divisionTitle = document.createElement("div");
+    divisionTitle.textContent = product["Header"]["Division"];
+    divisionTitle.className = "overline";
+    divisionTitle.style.marginBottom = "0.5rem";
+    summaryContainer.appendChild(divisionTitle);
 
-      // Product Name
-      const productHeadlineLink = document.createElement("a");
-      productHeadlineLink.id = "product-headline"; // Keep the original ID for potential styling
-      productHeadlineLink.classList.add("product-link"); // Add the product-link class for consistency
-      productHeadlineLink.href = product["Header"]["Source"];
-      productHeadlineLink.target = "_blank";
-      productHeadlineLink.innerText = product["Header"]["Product Name"];
-      summaryContainer.appendChild(productHeadlineLink);
+    // Product Name
+    const productHeadlineLink = document.createElement("a");
+    productHeadlineLink.id = "product-headline"; // Keep the original ID for potential styling
+    productHeadlineLink.classList.add("product-link"); // Add the product-link class for consistency
+    productHeadlineLink.href = product["Header"]["Source"];
+    productHeadlineLink.target = "_blank";
+    productHeadlineLink.innerText = product["Header"]["Product Name"];
+    summaryContainer.appendChild(productHeadlineLink);
 
-      // Date
-      const scrapeDate = document.createElement("p");
-      scrapeDate.id = "web-scrape-date";
-      scrapeDate.innerHTML = "<b>Published: </b>" + product["Header"]["Date"];
-      summaryContainer.appendChild(scrapeDate);
+    // Date
+    const scrapeDate = document.createElement("p");
+    scrapeDate.id = "web-scrape-date";
+    scrapeDate.innerHTML = "<b>Published: </b>" + product["Header"]["Date"];
+    summaryContainer.appendChild(scrapeDate);
 
-      // Product Type
-      const productType = document.createElement("p");
-      productType.id = "product-type";
-      productType.innerHTML = "<b>Type: </b>" + product["Header"]["Type"];
-      summaryContainer.appendChild(productType);
+    // Product Type
+    const productType = document.createElement("p");
+    productType.id = "product-type";
+    productType.innerHTML = "<b>Type: </b>" + product["Header"]["Type"];
+    summaryContainer.appendChild(productType);
 
-      // Add Features & Benefits
-      const aiTitle = document.createElement("div");
-      aiTitle.textContent =
-        "Note: Content has been webscraped and reconstructed using AI. Review sources before external use.";
-      aiTitle.className = "overline";
-      summaryContainer.appendChild(aiTitle);
+    // Add Features & Benefits
+    const aiTitle = document.createElement("div");
+    aiTitle.textContent =
+      "Note: Content has been webscraped and reconstructed using AI. Review sources before external use.";
+    aiTitle.className = "overline";
+    summaryContainer.appendChild(aiTitle);
 
-      // HR
-      let hr = document.createElement("hr");
-      hr.classList.add("margin-spacer-small");
-      summaryContainer.appendChild(hr);
+    // HR
+    let hr = document.createElement("hr");
+    hr.classList.add("margin-spacer-small");
+    summaryContainer.appendChild(hr);
 
-      // Add Tags
-      const aiOverviewTitle = document.createElement("h2");
-      aiOverviewTitle.textContent = "Product Description";
-      //aiOverviewTitle.className = "overline";
-      aiOverviewTitle.style.marginBottom = "1rem";
-      summaryContainer.appendChild(aiOverviewTitle);
+    // Add Tags
+    const aiOverviewTitle = document.createElement("h2");
+    aiOverviewTitle.textContent = "Product Description";
+    //aiOverviewTitle.className = "overline";
+    aiOverviewTitle.style.marginBottom = "1rem";
+    summaryContainer.appendChild(aiOverviewTitle);
 
-      // Product Description
-      const productDescription = document.createElement("p");
-      productDescription.id = "product-description";
-      productDescription.innerText = product["Summary"]["Description"];
-      summaryContainer.appendChild(productDescription);
+    // Product Description
+    const productDescription = document.createElement("p");
+    productDescription.id = "product-description";
+    productDescription.innerText = product["Summary"]["Description"];
+    summaryContainer.appendChild(productDescription);
 
-      // Add Features & Benefits
-      const aiFeatures = document.createElement("div");
-      aiFeatures.textContent = "Features & Benefits";
-      aiFeatures.className = "overline";
-      aiFeatures.style.marginTop = "4rem";
-      summaryContainer.appendChild(aiFeatures);
+    // Add Features & Benefits
+    const aiFeatures = document.createElement("div");
+    aiFeatures.textContent = "Features & Benefits";
+    aiFeatures.className = "overline";
+    aiFeatures.style.marginTop = "4rem";
+    summaryContainer.appendChild(aiFeatures);
 
-      // List
-      createSummaryElements(product["Summary"]["Features"], summaryContainer);
+    // List
+    createSummaryElements(product["Summary"]["Features"], summaryContainer);
 
-      let spacer;
+    let spacer;
 
-      // Product Description
-      if (product["MetaData"]["Description"] != "" && product["MetaData"]["Description"] != null) {
-        // Create spacer
+    // Product Description
+    if (
+      product["MetaData"]["Description"] != "" &&
+      product["MetaData"]["Description"] != null
+    ) {
+      // Create spacer
       spacer = document.createElement("div");
       spacer.className = "spacer-medium";
       summaryContainer.appendChild(spacer);
 
-        // Add Tags
-        const metaDataTitle = document.createElement("div");
-        metaDataTitle.textContent = "Meta Data Description";
-        metaDataTitle.className = "overline";
-        metaDataTitle.style.marginBottom = "0.5rem";
-        summaryContainer.appendChild(metaDataTitle);
-        // Meta Data Description
-        const metaDescription = document.createElement("p");
-        metaDescription.id = "product-description";
-        metaDescription.innerText = product["MetaData"]["Description"];
-        summaryContainer.appendChild(metaDescription);
-      }
+      // Add Tags
+      const metaDataTitle = document.createElement("div");
+      metaDataTitle.textContent = "Meta Data Description";
+      metaDataTitle.className = "overline";
+      metaDataTitle.style.marginBottom = "0.5rem";
+      summaryContainer.appendChild(metaDataTitle);
+      // Meta Data Description
+      const metaDescription = document.createElement("p");
+      metaDescription.id = "product-description";
+      metaDescription.innerText = product["MetaData"]["Description"];
+      summaryContainer.appendChild(metaDescription);
+    }
 
-      // Create spacer
-      spacer = document.createElement("div");
-      spacer.className = "spacer-small";
-      summaryContainer.appendChild(spacer);
+    // Create spacer
+    spacer = document.createElement("div");
+    spacer.className = "spacer-small";
+    summaryContainer.appendChild(spacer);
 
-      // Theme List
-      if (product["MetaData"]["Theme"].length > 0) {
-        createChipSection("Meta Theme", product["MetaData"]["Theme"]);
-      }
+    // Theme List
+    if (product["MetaData"]["Theme"].length > 0) {
+      createChipSection("Meta Theme", product["MetaData"]["Theme"]);
+    }
 
-      // HR
-      if (product["MetaData"]["Theme"].length > 0 || (product["MetaData"]["Description"] != "" && product["MetaData"]["Description"] != null)) {
+    // HR
+    if (
+      product["MetaData"]["Theme"].length > 0 ||
+      (product["MetaData"]["Description"] != "" &&
+        product["MetaData"]["Description"] != null)
+    ) {
       hr = document.createElement("hr");
       hr.classList.add("margin-spacer-small");
       summaryContainer.appendChild(hr);
-      }
+    }
 
-      // Create spacer
-      spacer = document.createElement("div");
-      spacer.className = "spacer-medium";
-      summaryContainer.appendChild(spacer);
+    // Create spacer
+    spacer = document.createElement("div");
+    spacer.className = "spacer-medium";
+    summaryContainer.appendChild(spacer);
 
-      // Add chips
-      createChipSection("Themes (AI Generated)", product["Themes"]);
+    // Add chips
+    createChipSection("Themes (AI Generated)", product["Themes"]);
 
-      // Create spacer
-      spacer = document.createElement("div");
-      spacer.className = "spacer-medium";
-      summaryContainer.appendChild(spacer);
+    // Create spacer
+    spacer = document.createElement("div");
+    spacer.className = "spacer-medium";
+    summaryContainer.appendChild(spacer);
 
-      // HR
-      hr = document.createElement("hr");
-      hr.classList.add("margin-spacer-small");
-      summaryContainer.appendChild(hr);
+    // HR
+    hr = document.createElement("hr");
+    hr.classList.add("margin-spacer-small");
+    summaryContainer.appendChild(hr);
 
-      // Add chips
-      createChipSection("Industry (AI Generated)", product["Industry"]);
+    // Add chips
+    createChipSection("Industry (AI Generated)", product["Industry"]);
 
-      function createSummaryElements(dataArray, parentContainer) {
-        dataArray.forEach((item) => {
-          const rowDiv = document.createElement("div");
-          rowDiv.classList.add("summary-row");
+    function createSummaryElements(dataArray, parentContainer) {
+      dataArray.forEach((item) => {
+        const rowDiv = document.createElement("div");
+        rowDiv.classList.add("summary-row");
 
-          const titleColumn = document.createElement("div");
-          titleColumn.classList.add("title-column");
-          const titleHeader = document.createElement("h4");
-          titleHeader.textContent = item.Title;
-          titleColumn.appendChild(titleHeader);
+        const titleColumn = document.createElement("div");
+        titleColumn.classList.add("title-column");
+        const titleHeader = document.createElement("h4");
+        titleHeader.textContent = item.Title;
+        titleColumn.appendChild(titleHeader);
 
-          const descriptionColumn = document.createElement("div");
-          descriptionColumn.classList.add("description-column");
-          const descriptionParagraph = document.createElement("p");
-          descriptionParagraph.textContent = item.Description;
-          descriptionColumn.appendChild(descriptionParagraph);
+        const descriptionColumn = document.createElement("div");
+        descriptionColumn.classList.add("description-column");
+        const descriptionParagraph = document.createElement("p");
+        descriptionParagraph.textContent = item.Description;
+        descriptionColumn.appendChild(descriptionParagraph);
 
-          rowDiv.appendChild(titleColumn);
-          rowDiv.appendChild(descriptionColumn);
-          parentContainer.appendChild(rowDiv);
-        });
-      }
+        rowDiv.appendChild(titleColumn);
+        rowDiv.appendChild(descriptionColumn);
+        parentContainer.appendChild(rowDiv);
+      });
+    }
 
-      function createChipSection(sectionTitle, data) {
-        const lowercaseTitle = sectionTitle.toLowerCase();
-        // Add Tags
-        const chipTitle = document.createElement("div");
-        chipTitle.id = `${lowercaseTitle}-chip-title`;
-        chipTitle.textContent = sectionTitle;
-        chipTitle.className = "overline";
-        chipTitle.style.marginBottom = "0.5rem";
-        summaryContainer.appendChild(chipTitle);
+    function createChipSection(sectionTitle, data) {
+      const lowercaseTitle = sectionTitle.toLowerCase();
+      // Add Tags
+      const chipTitle = document.createElement("div");
+      chipTitle.id = `${lowercaseTitle}-chip-title`;
+      chipTitle.textContent = sectionTitle;
+      chipTitle.className = "overline";
+      chipTitle.style.marginBottom = "0.5rem";
+      summaryContainer.appendChild(chipTitle);
 
-        const chipContainer = document.createElement("div");
-        chipContainer.id = `${lowercaseTitle}-chip-container`;
-        chipContainer.className = "chip-list";
-        summaryContainer.appendChild(chipContainer);
+      const chipContainer = document.createElement("div");
+      chipContainer.id = `${lowercaseTitle}-chip-container`;
+      chipContainer.className = "chip-list";
+      summaryContainer.appendChild(chipContainer);
 
-        for (var i = 0; i < data.length; i++) {
-          const item = data[i];
+      for (var i = 0; i < data.length; i++) {
+        const item = data[i];
 
-          if (typeof item === "string") {
-            // Process string array entries
-            const chip = document.createElement("div");
-            chip.classList.add("chip");
-            chip.innerText = item;
-            chipContainer.appendChild(chip);
-          } else if (typeof item === "object" && item !== null) {
-            // Process JSON array entries
-            for (const key in item) {
-              if (item.hasOwnProperty(key)) {
-                // Add the key as a category chip
-                const categoryChip = document.createElement("div");
-                categoryChip.classList.add("chip", "category");
-                categoryChip.innerText = key;
-                chipContainer.appendChild(categoryChip);
+        if (typeof item === "string") {
+          // Process string array entries
+          const chip = document.createElement("div");
+          chip.classList.add("chip");
+          chip.innerText = item;
+          chipContainer.appendChild(chip);
+        } else if (typeof item === "object" && item !== null) {
+          // Process JSON array entries
+          for (const key in item) {
+            if (item.hasOwnProperty(key)) {
+              // Add the key as a category chip
+              const categoryChip = document.createElement("div");
+              categoryChip.classList.add("chip", "category");
+              categoryChip.innerText = key;
+              chipContainer.appendChild(categoryChip);
 
-                // Add the values as regular chips
-                const values = item[key];
-                if (Array.isArray(values)) {
-                  values.forEach((value) => {
-                    const chip = document.createElement("div");
-                    chip.classList.add("chip");
-                    chip.innerText = value;
-                    chipContainer.appendChild(chip);
-                  });
-                }
+              // Add the values as regular chips
+              const values = item[key];
+              if (Array.isArray(values)) {
+                values.forEach((value) => {
+                  const chip = document.createElement("div");
+                  chip.classList.add("chip");
+                  chip.innerText = value;
+                  chipContainer.appendChild(chip);
+                });
               }
             }
           }
         }
       }
     }
+  }
 </script>
