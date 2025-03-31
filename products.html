@@ -63,6 +63,7 @@
         display: inline-flex;
         padding: 0.75rem;
         height: 4rem;
+        background-color: #deecf0;
       }
 
       .divisionDropdown {
@@ -467,14 +468,14 @@
 
     // Download All Products
     readAllData("Products", [], function (database_name, data) {
-      console.log(data);
+      // console.log(data);
       product_list = data;
       // Load the Products
       createAllProductList();
     });
 
     readAllData("links", [], function (database_name, data) {
-      console.log(data[0]);
+      // console.log(data[0]);
       content_urls = data[0];
     });
   }
@@ -612,7 +613,7 @@
     chipButton.classList.add("chip");
     chipButton.textContent = label;
     chipButton.onclick = function () {
-      console.log(label); // Default behavior: log the button text / label
+      //console.log(label); // Default behavior: log the button text / label
     };
     return chipButton;
   }
@@ -846,7 +847,7 @@ document.getElementById("search-input").dispatchEvent(event);
         let found_keywords = [];
         if ((foundInIndustry || foundInTheme) && filters_applied == "tag") {
           const chipList = (productTheme + productIndustry).split(",");
-          console.log(productName);
+          // console.log(productName);
           chipList.forEach((chipString) => {
             chipcontainer.style.display = "flex";
             // Create Auto-Suggetions -- And Chips
@@ -895,7 +896,7 @@ document.getElementById("search-input").dispatchEvent(event);
       });
       // Remove duplicates
       const auto_suggestions = removeDuplicates(suggestion_list);
-      console.log(auto_suggestions);
+      //console.log(auto_suggestions);
       function removeDuplicates(arr) {
   return [...new Set(arr)];
 }
@@ -923,7 +924,7 @@ document.getElementById("search-input").dispatchEvent(event);
   function createProductSummary(product_index) {
     // Product Index
     const product = product_list[product_index];
-    console.log(product);
+    // console.log(product);
     const productContainer = document.getElementById("body-container");
 
     let summaryContainer = document.getElementById("summary_container");
