@@ -46,9 +46,32 @@
         box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15); /* Pretty box shadow */
       }
       .filterProducts {
-        width: calc(100% - 2rem);
+        width: calc(100% - 13.5rem);
         padding: 1rem;
         font-size: 1.5rem;
+        display: inline-flex;
+      }
+      .searchContainer {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+      .filterDropdown {
+        width: 10rem;
+        font-size: 1rem;
+        font-weight: bold;
+        display: inline-flex;
+        padding: 0.75rem;
+        height: 4rem;
+      }
+
+      .divisionDropdown {
+        width: 18rem;
+        font-size: 1rem;
+        font-weight: bold;
+        display: inline-flex;
+        padding: 0.75rem;
+        height: 4rem;
       }
       h1 {
         font-size: 2.5rem;
@@ -419,10 +442,7 @@
     var title = this.id;
     if (title === "nav-thought-leadership") {
       // Open a link to the airtable url in a new tab
-      window.open(
-        content_urls["thought-leadership"],
-        "_blank"
-      );
+      window.open(content_urls["thought-leadership"], "_blank");
     } else if (title === "nav-products") {
       // Show all products
       if (product_list.length > 0) {
@@ -432,10 +452,7 @@
       // Add logic for the Collections button
       console.log("Opening Collections tab (replace with actual logic)");
     } else if (title === "nav-events") {
-      window.open(
-        content_urls["events"],
-        "_blank"
-      );
+      window.open(content_urls["events"], "_blank");
       // Add logic for the Events button
       console.log("Opening Events tab (replace with actual logic)");
     }
@@ -452,9 +469,11 @@
     readAllData("Products", [], function (database_name, data) {
       console.log(data);
       product_list = data;
+      // Load the Products
+      createAllProductList();
     });
 
-    readAllData("links", [], function(database_name, data) {
+    readAllData("links", [], function (database_name, data) {
       console.log(data[0]);
       content_urls = data[0];
     });
@@ -612,73 +631,85 @@
   // Product Dom Elements ------------------------------------------------------------- //
   var product_index = 0;
   var product_list = [];
+  var filters_applied = "keyword";
   var content_urls = {};
 
   // Product list
   function createAllProductList() {
     // Show a list of products
     const productContainer = document.getElementById("body-container");
-    productContainer.innerHTML = ''; // Clear existing content
+    productContainer.innerHTML = ""; // Clear existing content
 
     const allProductsContainer = document.createElement("div");
     allProductsContainer.id = "product-list";
     productContainer.appendChild(allProductsContainer);
 
-// Solutions container
-const allProductsHeadline = document.createElement("h1");
-  allProductsHeadline.textContent = "Products (" + product_list.length + ")";
-  allProductsContainer.appendChild(allProductsHeadline);
+    // Solutions container
+    const allProductsHeadline = document.createElement("h1");
+    allProductsHeadline.textContent = "Products (" + product_list.length + ")";
+    allProductsContainer.appendChild(allProductsHeadline);
 
-  // Search container
-  const searchContainer = document.createElement("div");
-  allProductsContainer.appendChild(searchContainer);
+    // Search container
+    const searchContainer = document.createElement("div");
+    searchContainer.classList.add("searchContainer");
+    allProductsContainer.appendChild(searchContainer);
 
-  // Create dropdown menu
-  const filterDropdown = document.createElement("select");
-  filterDropdown.classList.add("filterDropdown");
-  filterDropdown.style.marginBottom = "0.5rem";
+    // Create dropdown menu
+    const filterDropdown = document.createElement("select");
+    filterDropdown.classList.add("filterDropdown");
+    filterDropdown.style.marginBottom = "0.5rem";
 
-  const options = ["Keyword", "Division", "Theme", "Industry"];
-  options.forEach(optionText => {
-    const option = document.createElement("option");
-    option.value = optionText.toLowerCase(); // Use lowercase for easier handling
-    option.textContent = optionText;
-    filterDropdown.appendChild(option);
-  });
-  searchContainer.appendChild(filterDropdown);
+    const options = ["Keyword", "Tag"];
+    options.forEach((optionText) => {
+      const option = document.createElement("option");
+      option.value = optionText.toLowerCase(); // Use lowercase for easier handling
+      option.textContent = optionText;
+      filterDropdown.appendChild(option);
+    });
+    searchContainer.appendChild(filterDropdown);
 
-  // Create search input
-  const searchInput = document.createElement("input");
-  searchInput.type = "text";
-  searchInput.placeholder = "Filter results by Keyword"; // Default placeholder
-  searchInput.classList.add("filterProducts");
-  searchInput.style.marginBottom = "1rem";
-  searchContainer.appendChild(searchInput);
+    // Update placeholder based on dropdown selection
+    filterDropdown.addEventListener("change", function () {
+      const selectedOption = this.value;
+      filters_applied = selectedOption;
 
-  // Update placeholder based on dropdown selection
-  filterDropdown.addEventListener("change", function() {
-    const selectedOption = this.value;
-    switch (selectedOption) {
-      case "keyword":
-        searchInput.placeholder = "Filter results by Keyword";
-        break;
-      case "division":
-        searchInput.placeholder = "Filter results by Division";
-        break;
-      case "theme":
-        searchInput.placeholder = "Filter results by Theme";
-        break;
-      case "industry":
-        searchInput.placeholder = "Filter results by Industry";
-        break;
-      default:
-        searchInput.placeholder = "Filter results";
+      switch (selectedOption) {
+        case "keyword":
+          searchInput.placeholder = "Filter results by Keyword";
+          break;
+        case "tag":
+          searchInput.placeholder = "Filter results by Tag";
+          break;
+        default:
+          searchInput.placeholder = "Filter results";
+      }
+      // You would likely trigger a filtering function here based on the
+      // selectedOption and the searchInput.value
+      console.log("Filtering by:", selectedOption);
+      console.log("Search term:", searchInput.value);
+
+      triggerSearch();
+    });
+
+    function triggerSearch() {
+            // Trigger event
+            const event = new Event('input', {
+  bubbles: true,
+  cancelable: true,
+});
+
+// Trigger event
+document.getElementById("search-input").dispatchEvent(event);
     }
-    // You would likely trigger a filtering function here based on the
-    // selectedOption and the searchInput.value
-    console.log("Filtering by:", selectedOption);
-    console.log("Search term:", searchInput.value);
-  });
+
+    // Create search input
+    const searchInput = document.createElement("input");
+    searchInput.id = "search-input";
+    searchInput.type = "text";
+    searchInput.placeholder = "Filter results by keyword"; // Default placeholder
+    searchInput.classList.add("filterProducts");
+    searchInput.style.marginBottom = "1rem";
+    searchContainer.appendChild(searchInput);
 
     // Solutions container
     const solutionHeadline = document.createElement("h3");
@@ -732,7 +763,9 @@ const allProductsHeadline = document.createElement("h1");
         ? header_division.toLowerCase()
         : ""; // Store lowercase division for filtering
       productCard.dataset.productTheme = mergeObjectToString(product["Themes"]);
-      productCard.dataset.productIndustry = mergeObjectToString(product["Industry"]);
+      productCard.dataset.productIndustry = mergeObjectToString(
+        product["Industry"]
+      );
       productCards.push(productCard); // Add to the array
 
       if (product_type == "Dataset") {
@@ -759,6 +792,8 @@ const allProductsHeadline = document.createElement("h1");
 
     // Function to handle the search filtering
     searchInput.addEventListener("input", function () {
+      let suggestion_list = []; // Autosuggestions
+
       const searchTerm = this.value.toLowerCase();
       const keywords = searchTerm
         .split(" ")
@@ -766,7 +801,7 @@ const allProductsHeadline = document.createElement("h1");
 
       productCards.forEach((card) => {
         // Find and clear chip container
-        const chipcontainer = card.querySelector('.chip-container.chip-list');
+        const chipcontainer = card.querySelector(".chip-container.chip-list");
         if (chipcontainer) {
           chipcontainer.innerHTML = "";
           chipcontainer.style.display = "none";
@@ -801,50 +836,85 @@ const allProductsHeadline = document.createElement("h1");
         // Check Tags
         let showChip = false;
         const foundInTheme = productTheme.toLowerCase().includes(searchTerm);
-        const foundInIndustry = productIndustry.toLowerCase().includes(searchTerm);
+        const foundInIndustry = productIndustry
+          .toLowerCase()
+          .includes(searchTerm);
         if (!foundInIndustry && !foundInTheme) {
           allTagsFound = false;
+        }
+
+        let found_keywords = [];
+        if ((foundInIndustry || foundInTheme) && filters_applied == "tag") {
+          const chipList = (productTheme + productIndustry).split(",");
+          console.log(productName);
+          chipList.forEach((chipString) => {
+            chipcontainer.style.display = "flex";
+            // Create Auto-Suggetions -- And Chips
+            if (chipString.toLowerCase().includes(searchTerm)) {
+              suggestion_list.push(chipString);
+              found_keywords.push(chipString);
+              // Create chips
+              const chipTag = createChip(chipString);
+              chipcontainer.appendChild(chipTag);
+              // Find exact matches
+            if (chipString.toLowerCase() == searchTerm) {
+              chipTag.style.backgroundColor = "pink";
+            }
+            }
+          });
+        }
+
+        if (found_keywords.length > 0) {
+            showChip = true;
           }
 
-          if (foundInIndustry || foundInTheme) {
-            const chipList = (productTheme + productIndustry).split(",");
-            chipList.forEach((chipString) => {
-              if (chipString.toLowerCase() == searchTerm) {
-                const chipTag = createChip("AI — " + chipString);
-                chipcontainer.appendChild(chipTag);
-                chipcontainer.style.display = "flex";
-                showChip = true;
-              }
-            })
 
+        let show_card = false;
+        switch (filters_applied) {
+          case "keyword":
+            if (allKeywordsFound) {
+              show_card = true;
             }
+            break;
+          case "tag":
+            if (showChip) {
+              show_card = true;
+            }
+            break;
+          default:
+            show_card = false;
+            console.log("Filter failed");
+        }
 
-        if (allKeywordsFound || showChip) {
+        if (show_card) {
           card.style.display = "block"; // Show card if all keywords are found
-
-
         } else {
           card.style.display = "none"; // Hide card if not all keywords are found
         }
       });
+      // Remove duplicates
+      const auto_suggestions = removeDuplicates(suggestion_list);
+      console.log(auto_suggestions);
+      function removeDuplicates(arr) {
+  return [...new Set(arr)];
+}
     });
   }
 
   function mergeObjectToString(arrOfObjects) {
-  const result = [];
-  for (const obj of arrOfObjects) {
-    for (const key in obj) {
-      if (obj.hasOwnProperty(key)) {
-        result.push(key);
-        if (Array.isArray(obj[key])) {
-          result.push(...obj[key]);
+    const result = [];
+    for (const obj of arrOfObjects) {
+      for (const key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          result.push(key);
+          if (Array.isArray(obj[key])) {
+            result.push(...obj[key]);
+          }
         }
       }
     }
+    return result.join(",");
   }
-  return result.join(',');
-}
-
 
   // ---------------------------------------------------------------------------- //
   // ---------------------------------------------------------------------------- //
