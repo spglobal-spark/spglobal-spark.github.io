@@ -859,6 +859,7 @@ document.getElementById("search-input").dispatchEvent(event);
               // Find exact matches
             if (chipString.toLowerCase() == searchTerm) {
               chipTag.style.backgroundColor = "pink";
+              chipTag.innerText = "Match — " + chipString;
             }
             }
           });
