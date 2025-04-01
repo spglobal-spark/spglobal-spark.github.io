@@ -463,22 +463,54 @@
   // ---------------------------------------------------------------------------- //
   // Run program ---------------------------------------------------------------- //
   function runProgram() {
-    // Assign buttons to navigation
-    assignOpenTabToNavButtons();
+  // Assign buttons to navigation
+  assignOpenTabToNavButtons();
 
+  // Check for existing cookies
+  const productListCookie = getCookie("product_list");
+  const contentUrlsCookie = getCookie("content_urls");
+
+  console.log("Product List Cookie:", productListCookie);
+  console.log("Content URLs Cookie:", contentUrlsCookie);
+
+  if (productListCookie && contentUrlsCookie) {
+    // If cookies exist, parse the data and run createAllProductList
+    const product_list = JSON.parse(productListCookie);
+    const content_urls = JSON.parse(contentUrlsCookie);
+    createAllProductList(product_list, content_urls);
+    console.log("Data pulled from cookies");
+  } else {
     // Download All Products
     readAllData("Products", [], function (database_name, data) {
-      // console.log(data);
+      // Store data in a cookie with a 1-hour expiration
+      const expirationDate = new Date();
+      expirationDate.setTime(expirationDate.getTime() + (1 * 60 * 60 * 1000)); // 1 hour
+      document.cookie = "product_list=" + JSON.stringify(data) + "; expires=" + expirationDate.toUTCString() + "; path=/";
       product_list = data;
       // Load the Products
-      createAllProductList();
+      createAllProductList(product_list);
+      console.log("Data downloaded from Firebase - Products");
     });
 
     readAllData("links", [], function (database_name, data) {
-      // console.log(data[0]);
+      // Store data in a cookie with a 1-hour expiration
+      const expirationDate = new Date();
+      expirationDate.setTime(expirationDate.getTime() + (1 * 60 * 60 * 1000)); // 1 hour
+      document.cookie = "content_urls=" + JSON.stringify(data[0]) + "; expires=" + expirationDate.toUTCString() + "; path=/";
       content_urls = data[0];
+      console.log("Data downloaded from Firebase - Links");
     });
+    console.log("Data downloaded from Firebase");
   }
+}
+
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+
 
   // ---------------------------------------------------------------------------- //
   // ---------------------------------------------------------------------------- //
