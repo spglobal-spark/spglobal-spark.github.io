@@ -366,7 +366,7 @@
           </svg>
         </div>
         <button id="nav-products">Find Products</button>
-        <!-- <button id="nav-collections">Collections</button> -->
+        <button id="nav-collections">Collections</button>
         <button id="nav-thought-leadership">Thought Leadership</button>
         <button id="nav-events">Events</button>
         <!-- <button>Search (AI Powered) -- Explain like I am 5 years old</button> -->
@@ -676,10 +676,10 @@
 
       switch (selectedOption) {
         case "keyword":
-          searchInput.placeholder = "Filter results by Keyword";
+          searchInput.placeholder = "Filter results by Product Name, Division, or Type (Solution / Dataset)";
           break;
         case "tag":
-          searchInput.placeholder = "Filter results by Tag";
+          searchInput.placeholder = "Filter results by Theme or Industry";
           break;
         default:
           searchInput.placeholder = "Filter results";
