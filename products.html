@@ -668,7 +668,8 @@
   var collection_list = [];
   var filtered_collection_list = [];
   var filters_applied = "keyword";
-  var collection_applied = "None";
+  const collection_default = "All";
+  var collection_applied = collection_default;
   var content_urls = {};
 
   // Product list
@@ -680,11 +681,6 @@
     const allProductsContainer = document.createElement("div");
     allProductsContainer.id = "product-list";
     productContainer.appendChild(allProductsContainer);
-
-    // Solutions container
-    const allProductsHeadline = document.createElement("h1");
-    allProductsHeadline.textContent = "Products";
-    allProductsContainer.appendChild(allProductsHeadline);
 
     // Search container
     const searchContainer = document.createElement("div");
@@ -769,7 +765,7 @@
     collectionDropdown.style.marginBottom = "0.5rem";
 
     // Create collection dropdown options
-    let collectionOptions = ["None"];
+    let collectionOptions = [collection_default];
     for (var i = 0; i < collection_list.length; i++) {
       let item = collection_list[i];
       const keys = Object.keys(item);
@@ -795,7 +791,7 @@
     });
 
     // Search results 
-    const searchResults = document.createElement("h2");
+    const searchResults = document.createElement("h1");
     searchResults.id = "search-headline";
     searchResults.textContent = "Search Results (" + product_list.length.toString() + ")";
     searchResults.style.marginTop = "2rem";
@@ -956,7 +952,7 @@
 
         let allTagsFound = true;
 
-        if (keywords.length === 0 && collection_applied == "None") {
+        if (keywords.length === 0 && collection_applied == collection_default) {
           card.style.display = "block"; // Show all cards when search is cleared
           returned_results += 1;
           return;
@@ -1036,7 +1032,7 @@
         }
 
         // Collection filtering
-        if (collection_applied != "None") {
+        if (collection_applied != collection_default) {
           if (show_card == true) {
             show_card = productCollection.includes(collection_applied);
           }
