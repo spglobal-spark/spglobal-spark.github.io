@@ -487,8 +487,15 @@
 
     // Download All Products
     readAllData("Products", [], function (database_name, data) {
-      // console.log(data);
+      console.log(data);
       product_list = data;
+      /*
+      let product_list_string = "";
+      for (var i = 0; i < product_list.length; i++) {
+        product_list_string += "\n" + product_list[i]["Header"]["Product Name"];
+      }
+      console.log(product_list_string);
+      */
       checkCompletion();
     });
 
@@ -790,12 +797,18 @@
       triggerSearch();
     });
 
-    // Search results 
+    // Search results
     const searchResults = document.createElement("h1");
     searchResults.id = "search-headline";
-    searchResults.textContent = "Search Results (" + product_list.length.toString() + ")";
+    searchResults.textContent =
+      "Search Results (" + product_list.length.toString() + ")";
     searchResults.style.marginTop = "2rem";
     allProductsContainer.appendChild(searchResults);
+
+    const exportSummaryButton = document.createElement("button");
+    exportSummaryButton.textContent = "Export Search Results";
+    exportSummaryButton.classList.add("export-summary-button");
+    allProductsContainer.appendChild(exportSummaryButton);
 
     // Solutions container
     const solutionHeadline = document.createElement("h3");
@@ -891,6 +904,7 @@
         product["Industry"]
       );
       productCard.dataset.productCollection = collection_string; // Add all collections they are part of
+      productCard.dataset.visible = "true"; // Add a visible tag
       productCards.push(productCard); // Add to the array
 
       if (product_type == "Dataset") {
@@ -915,10 +929,89 @@
       };
     }
 
+    // Add summary behavior
+    // Add summary behavior
+    exportSummaryButton.onclick = function () {
+      // Export summary logic here
+      console.log("Exporting summary...");
+      // Match visible products to their JSON version
+      let products_found = [];
+      // Go though all the product cards and find the visible ones
+      productCards.forEach((card) => {
+        const product_card = card;
+        // Check if the product card is visible
+        if (product_card.dataset.visible == "true") {
+          // Get the product name from the card
+          const product_name = product_card.dataset.productName;
+          // Find the matching product in the product_list
+          for (var n = 0; n < product_list.length; n++) {
+            const product = product_list[n];
+            const header = product["Header"]["Product Name"];
+            if (header.toLowerCase() == product_name.toLowerCase()) {
+              // Remove special characters from the product name
+              const cleanedProductName = header.replace(/[^a-zA-Z0-9\s]/g, '');
+              let summary = {
+                Name: cleanedProductName,
+                Division: product["Header"]["Division"],
+                Type: product["Header"]["Type"],
+                Description: product["Summary"]["Description"],
+                Source: product["Header"]["Source"],
+              };
+              products_found.push(summary);
+            }
+          }
+        }
+      });
+
+      // Convert products_found to CSV
+      if (products_found.length > 0) {
+        const headers = Object.keys(products_found[0]);
+        const csvRows = [];
+
+        // Add header row
+        csvRows.push(headers.join(','));
+
+        // Add data rows
+        products_found.forEach(product => {
+          const values = headers.map(header => {
+            const value = product[header];
+            // Escape commas and quotes for CSV
+            if (typeof value === 'string') {
+              return `"${value.replace(/"/g, '""')}"`;
+            }
+            return value;
+          });
+          csvRows.push(values.join(','));
+        });
+
+        const csvString = csvRows.join('\n');
+
+        // Create a Blob object with the CSV data
+        const blob = new Blob([csvString], { type: 'text/csv' });
+
+        // Create a download link
+        const a = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        a.href = url;
+        a.download = 'products-summary-result-count-' + products_found.length + '.csv'; // Set the filename
+
+        // Programmatically click the link to trigger the download
+        document.body.appendChild(a);
+        a.click();
+
+        // Clean up the URL object
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      } else {
+        console.log("No products found to export.");
+        // Optionally display a message to the user that no products were found.
+      }
+    };
+
     // Check if the collection did not map to an existing product
     if (found_collection_items.length > 0) {
-    console.log("No collection matches for");
-    console.log(found_collection_items);
+      console.log("No collection matches for");
+      console.log(found_collection_items);
     }
 
     // Function to handle the search filtering
@@ -946,6 +1039,9 @@
         const productIndustry = card.dataset.productIndustry;
 
         const productCollection = card.dataset.productCollection;
+
+        // Default set to visible
+        card.dataset.visible = "true"; // Set visible tag
 
         let productNameFound = true;
         let divisionNameFound = true;
@@ -1043,6 +1139,7 @@
           card.style.display = "block"; // Show card if all keywords are found
         } else {
           card.style.display = "none"; // Hide card if not all keywords are found
+          card.dataset.visible = "false"; // Set visible tag
         }
       });
 
@@ -1050,7 +1147,8 @@
       console.log("Search results: " + returned_results.toString());
       var search_headline = document.getElementById("search-headline");
       if (search_headline) {
-        search_headline.innerText = "Search Results (" + returned_results.toString() + ")";
+        search_headline.innerText =
+          "Search Results (" + returned_results.toString() + ")";
       }
       // Remove duplicates
       const auto_suggestions = removeDuplicates(suggestion_list);
