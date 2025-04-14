@@ -354,6 +354,60 @@
       #product-headline:hover {
         text-decoration: none;
       }
+      .export-summary-button {
+  background-color: #000; /* Black background */
+  color: #fff; /* White text for contrast */
+  font-size: 16px;
+  padding: 12px 24px; /* Adjust padding for size */
+  border: none; /* Remove default button border */
+  border-radius: 5px; /* Add slight rounded corners for attractiveness */
+  cursor: pointer; /* Indicate it's clickable */
+  transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Smooth transition for hover and animation */
+}
+
+.export-summary-button:hover {
+  background-color: #808080; /* Gray background on hover */
+}
+
+/* Optional animation - a slight scale up on hover */
+.export-summary-button:active { /* Style when the button is actively clicked */
+  transform: scale(0.98); /* Slightly scale down on click for feedback */
+}
+
+/* Optional animation - a subtle pulse animation */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* To apply the pulse animation, you can add this class in addition to "export-summary-button" */
+.export-summary-button.animate-pulse {
+  animation: pulse 1s infinite alternate;
+}
+
+/* Optional animation - a subtle slide-in from the side */
+@keyframes slideIn {
+  0% {
+    transform: translateX(-10px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* To apply the slide-in animation (perhaps on page load), you can add this class */
+.export-summary-button.animate-slide-in {
+  animation: slideIn 0.5s ease-out;
+}
     </style>
   </head>
   <body>
@@ -487,7 +541,7 @@
 
     // Download All Products
     readAllData("Products", [], function (database_name, data) {
-      console.log(data);
+      //console.log(data);
       product_list = data;
       /*
       let product_list_string = "";
@@ -805,10 +859,22 @@
     searchResults.style.marginTop = "2rem";
     allProductsContainer.appendChild(searchResults);
 
+    // Container for Summary and All Data
+    const buttonContainer = document.createElement("div");
+    buttonContainer.classList.add("chip-list");
+    allProductsContainer.appendChild(buttonContainer);
+
+    // Export Summary Data
     const exportSummaryButton = document.createElement("button");
-    exportSummaryButton.textContent = "Export Search Results";
+    exportSummaryButton.textContent = "Export Search Results (CSV)";
     exportSummaryButton.classList.add("export-summary-button");
-    allProductsContainer.appendChild(exportSummaryButton);
+    buttonContainer.appendChild(exportSummaryButton);
+
+    // All Data
+    const exportAllDataButton = document.createElement("button");
+    exportAllDataButton.textContent = "Download all Data (JSON)";
+    exportAllDataButton.classList.add("export-summary-button");
+    buttonContainer.appendChild(exportAllDataButton);
 
     // Solutions container
     const solutionHeadline = document.createElement("h3");
@@ -1008,6 +1074,60 @@
       }
     };
 
+    // Export all Data
+    exportAllDataButton.onclick = function () {
+  // Export full data logic here
+  console.log("Exporting full data...");
+  let products_found = [];
+  // Go through all the product cards and find the visible ones
+  productCards.forEach((card) => {
+    const product_card = card;
+    // Check if the product card is visible
+    if (product_card.dataset.visible == "true") {
+      // Get the product name from the card
+      const product_name = product_card.dataset.productName;
+      // Find the matching product in the product_list
+      for (var n = 0; n < product_list.length; n++) {
+        const product = product_list[n];
+        const header = product["Header"]["Product Name"];
+        if (header.toLowerCase() == product_name.toLowerCase()) {
+          products_found.push(product);
+          // Assuming each visible card corresponds to exactly one product in the list,
+          // we can break the inner loop once a match is found for efficiency.
+          break;
+        }
+      }
+    }
+  });
+
+  // Convert products_found to JSON
+  if (products_found.length > 0) {
+    const jsonString = JSON.stringify(products_found, null, 2); // Use null, 2 for pretty printing
+
+    // Create a Blob object with the JSON data
+    const blob = new Blob([jsonString], { type: 'application/json' });
+
+    // Create a download link
+    const a = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    a.href = url;
+    a.download = 'products-full-data-result-count-' + products_found.length + '.json'; // Set the filename
+
+    // Programmatically click the link to trigger the download
+    document.body.appendChild(a);
+    a.click();
+
+    // Clean up the URL object
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  } else {
+    console.log("No products found to export.");
+    // Optionally display a message to the user that no products were found.
+  }
+};
+
+
+    //-------------------------------------- //
     // Check if the collection did not map to an existing product
     if (found_collection_items.length > 0) {
       console.log("No collection matches for");
