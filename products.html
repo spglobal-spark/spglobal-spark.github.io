@@ -365,6 +365,13 @@
   transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Smooth transition for hover and animation */
 }
 
+.productDescription {
+  color: #333; /* Dark text color */
+  font-size: 0.75rem;
+  margin-top: 1rem;
+  line-height: 1.5;
+}
+
 .export-summary-button:hover {
   background-color: #808080; /* Gray background on hover */
 }
@@ -869,6 +876,27 @@
     exportAllDataButton.classList.add("export-summary-button");
     buttonContainer.appendChild(exportAllDataButton);
 
+    // Add Toggle button that turns on and off the Product Card Description visibility
+    const toggleDescriptionButton = document.createElement("button");
+    let toggleDescriptionVisible = false;
+    toggleDescriptionButton.textContent = "Show Description";
+    toggleDescriptionButton.classList.add("export-summary-button");
+    buttonContainer.appendChild(toggleDescriptionButton);
+    toggleDescriptionButton.onclick = function () {
+      const productCards = document.querySelectorAll(".product-card");
+      toggleDescriptionVisible = !toggleDescriptionVisible; // Hide and show
+      toggleDescriptionButton.textContent = toggleDescriptionVisible
+        ? "Hide Description"
+        : "Show Description";
+      productCards.forEach((card) => {
+        const description = card.querySelector(".productDescription");
+        if (description) {
+          description.style.display =
+            description.style.display === "none" ? "block" : "none";
+        }
+      });
+    };
+
     // Solutions container
     const solutionHeadline = document.createElement("h3");
     solutionHeadline.textContent = "Solutions";
@@ -946,6 +974,13 @@
 
       productCard.innerHTML += header_and_type; // Append header and type after the division
 
+      // Add description
+      const descriptionElement = document.createElement("div");
+      descriptionElement.textContent = product["Summary"]["Description"];
+      descriptionElement.classList.add("productDescription");
+      descriptionElement.style.display = "none"; // Hide by default
+      productCard.appendChild(descriptionElement);
+
       const chipContainer = document.createElement("div");
       chipContainer.classList.add("chip-container");
       chipContainer.classList.add("chip-list");
@@ -964,6 +999,8 @@
       );
       productCard.dataset.productCollection = collection_string; // Add all collections they are part of
       productCard.dataset.visible = "true"; // Add a visible tag
+      productCard.dataset.description = product["Summary"]["Description"]; // Add a description tag
+      productCard.dataset.source = product["Header"]["Source"]; // Add a source tag
       productCards.push(productCard); // Add to the array
 
       if (product_type == "Dataset") {
