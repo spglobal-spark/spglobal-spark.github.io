@@ -366,7 +366,7 @@
 }
 
 .productDescription {
-  color: #333; /* Dark text color */
+  color: #555; /* Dark text color */
   font-size: 0.75rem;
   margin-top: 1rem;
   line-height: 1.5;
@@ -1000,7 +1000,6 @@
       productCard.dataset.productCollection = collection_string; // Add all collections they are part of
       productCard.dataset.visible = "true"; // Add a visible tag
       productCard.dataset.description = product["Summary"]["Description"]; // Add a description tag
-      productCard.dataset.source = product["Header"]["Source"]; // Add a source tag
       productCards.push(productCard); // Add to the array
 
       if (product_type == "Dataset") {
