@@ -105,11 +105,13 @@
       }
       .product-card {
         padding: 1.5rem;
-        border: 1px solid #ccc;
+        border: 0;
+        /* border: 1px solid #ccc; */
+        border-radius: 0.25rem;
         background-color: white;
         width: calc(100%);
         text-align: left;
-        margin-bottom: 0.5rem;
+        margin-bottom: 1rem;
         font-size: 1rem;
         box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15); /* Pretty box shadow */
         transition: transform 0.2s ease-in-out,
@@ -117,8 +119,9 @@
       }
 
       .product-card:hover {
-        transform: translateY(-6px); /* Raise the card by 6px */
-        background-color: #deecf0;
+        transform: translateY(-4px); /* Raise the card by 6px */
+        /* background-color: #deecf0; */
+        border-bottom: 1px solid #555;
       }
 
       .product-card:hover b,
