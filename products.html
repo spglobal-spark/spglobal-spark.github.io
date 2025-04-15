@@ -867,18 +867,6 @@
     buttonContainer.classList.add("chip-list");
     allProductsContainer.appendChild(buttonContainer);
 
-    // Export Summary Data
-    const exportSummaryButton = document.createElement("button");
-    exportSummaryButton.textContent = "Export Search Results (CSV)";
-    exportSummaryButton.classList.add("export-summary-button");
-    buttonContainer.appendChild(exportSummaryButton);
-
-    // All Data
-    const exportAllDataButton = document.createElement("button");
-    exportAllDataButton.textContent = "Download all Data (JSON)";
-    exportAllDataButton.classList.add("export-summary-button");
-    buttonContainer.appendChild(exportAllDataButton);
-
     // Add Toggle button that turns on and off the Product Card Description visibility
     const toggleDescriptionButton = document.createElement("button");
     let toggleDescriptionVisible = false;
@@ -899,6 +887,18 @@
         }
       });
     };
+
+    // Export Summary Data
+    const exportSummaryButton = document.createElement("button");
+    exportSummaryButton.textContent = "Export Search Results (CSV)";
+    exportSummaryButton.classList.add("export-summary-button");
+    buttonContainer.appendChild(exportSummaryButton);
+
+    // All Data
+    const exportAllDataButton = document.createElement("button");
+    exportAllDataButton.textContent = "Export All Data (JSON)";
+    exportAllDataButton.classList.add("export-summary-button");
+    buttonContainer.appendChild(exportAllDataButton);
 
     // Solutions container
     const solutionHeadline = document.createElement("h3");
