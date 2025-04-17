@@ -358,66 +358,72 @@
         text-decoration: none;
       }
       .export-summary-button {
-  background-color: #000; /* Black background */
-  color: #fff; /* White text for contrast */
-  font-size: 16px;
-  padding: 12px 24px; /* Adjust padding for size */
-  border: none; /* Remove default button border */
-  border-radius: 5px; /* Add slight rounded corners for attractiveness */
-  cursor: pointer; /* Indicate it's clickable */
-  transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Smooth transition for hover and animation */
-}
+        background-color: #000; /* Black background */
+        color: #fff; /* White text for contrast */
+        font-size: 16px;
+        padding: 12px 24px; /* Adjust padding for size */
+        border: none; /* Remove default button border */
+        border-radius: 5px; /* Add slight rounded corners for attractiveness */
+        cursor: pointer; /* Indicate it's clickable */
+        transition: background-color 0.3s ease-in-out,
+          box-shadow 0.3s ease-in-out; /* Smooth transition for hover and animation */
+      }
 
-.productDescription {
-  color: #555; /* Dark text color */
-  font-size: 0.75rem;
-  margin-top: 1rem;
-  line-height: 1.5;
-}
+      .add-to-list-button {
+        display: block;
+      }
 
-.export-summary-button:hover {
-  background-color: #808080; /* Gray background on hover */
-}
+      .productDescription {
+        color: #555; /* Dark text color */
+        font-size: 0.75rem;
+        margin-top: 1rem;
+        line-height: 1.5;
+      }
 
-/* Optional animation - a slight scale up on hover */
-.export-summary-button:active { /* Style when the button is actively clicked */
-  transform: scale(0.98); /* Slightly scale down on click for feedback */
-}
+      .export-summary-button:hover {
+        background-color: #808080; /* Gray background on hover */
+      }
 
-/* Optional animation - a subtle pulse animation */
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
+      /* Optional animation - a slight scale up on hover */
+      .export-summary-button:active {
+        /* Style when the button is actively clicked */
+        transform: scale(0.98); /* Slightly scale down on click for feedback */
+      }
 
-/* To apply the pulse animation, you can add this class in addition to "export-summary-button" */
-.export-summary-button.animate-pulse {
-  animation: pulse 1s infinite alternate;
-}
+      /* Optional animation - a subtle pulse animation */
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
 
-/* Optional animation - a subtle slide-in from the side */
-@keyframes slideIn {
-  0% {
-    transform: translateX(-10px);
-    opacity: 0;
-  }
-  100% {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
+      /* To apply the pulse animation, you can add this class in addition to "export-summary-button" */
+      .export-summary-button.animate-pulse {
+        animation: pulse 1s infinite alternate;
+      }
 
-/* To apply the slide-in animation (perhaps on page load), you can add this class */
-.export-summary-button.animate-slide-in {
-  animation: slideIn 0.5s ease-out;
-}
+      /* Optional animation - a subtle slide-in from the side */
+      @keyframes slideIn {
+        0% {
+          transform: translateX(-10px);
+          opacity: 0;
+        }
+        100% {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      /* To apply the slide-in animation (perhaps on page load), you can add this class */
+      .export-summary-button.animate-slide-in {
+        animation: slideIn 0.5s ease-out;
+      }
     </style>
   </head>
   <body>
@@ -468,7 +474,10 @@
     getFirestore,
     collection,
     addDoc,
+    getDoc,
+    setDoc,
     getDocs,
+    deleteDoc,
     query,
     where,
     updateDoc,
@@ -565,6 +574,7 @@
     readAllData("Collections", [], function (database_name, data) {
       // console.log(data);
       collection_list = data;
+      console.log("Collection List: ", collection_list);
       checkCompletion();
     });
 
@@ -575,6 +585,15 @@
         createAllProductList();
       }
     }
+  }
+
+  function collectionUpdate() {
+    readAllData("Collections", [], function (database_name, data) {
+      // console.log(data);
+      collection_list = data;
+      console.log("Collections updated:", collection_list);
+      createAllProductList();
+    });
   }
 
   // ---------------------------------------------------------------------------- //
@@ -624,14 +643,140 @@
       });
   }
 
-  function addData(databaseName, json_data) {
-    // Click the send data button
-    const user = auth.currentUser;
-    if (user) {
-      // Create a reference to the Collection and Document
-      const docRef = addDoc(collection(db, databaseName), json_data);
+  // Add data to Firebase
+  async function addCollectionData(databaseName, documentName, productName) {
+  // Click the send data button
+  const user = auth.currentUser;
+  if (user) {
+    // Create a reference to the specific Document
+    const docRef = doc(db, databaseName, documentName);
+    console.log("Collection name: ", databaseName);
+    console.log("Document name: ", documentName);
+    console.log("Data to be added: ", productName);
+    try {
+      // Get the current document data
+      const docSnap = await getDoc(docRef);
+      const newEntries = [productName]; // Ensure newEntries is an array
+      console.log("New product name: ", productName);
+
+      if (docSnap.exists()) {
+        const existingData = docSnap.data();
+        const existingEntries = existingData[documentName] || [];
+        console.log("Existing entries: ", existingEntries);
+
+        const uniqueNewEntries = [];
+
+        for (const newEntry of newEntries) {
+          const isDuplicate = existingEntries.some(
+            (existingEntry) => existingEntry.Name === newEntry
+          );
+          if (!isDuplicate) {
+            uniqueNewEntries.push(newEntry);
+          }
+        }
+
+        console.log("New entries: ", uniqueNewEntries);
+
+        if (uniqueNewEntries.length > 0) {
+          // Create new entry
+          let product_json_data = [{ Name: productName }];
+          // Append the new unique entries to the existing array
+          await updateDoc(docRef, {[documentName]: [...existingEntries, ...product_json_data],});
+          console.log("New unique products appended successfully!");
+          // Update the whole site
+          setTimeout(() => {
+            collectionUpdate();
+          }, 1000);
+        } else {
+          console.log("No new unique products to add.");
+        }
+      } else {
+        // If the document doesn't exist, create it with the new data
+        let product_json_data = {[documentName]:[{ Name: productName }]};
+        await setDoc(docRef, product_json_data);
+        console.log("Document created and product(s) added successfully!");
+        // Update the whole site
+        setTimeout(() => {
+            collectionUpdate();
+          }, 1000);
+      }
+    } catch (error) {
+      if (error.code === 'permission-denied') {
+        alert("Permission denied: User does not have write access.");
+        // Optionally, inform the user about the lack of permission
+      } else {
+        console.error("Error adding/updating data:", error);
+      }
     }
+  } else {
+    console.log("User not authenticated.");
   }
+}
+
+// Remove data
+async function removeCollectionData(databaseName, documentName, productName) {
+  // Check if the user is authenticated
+  const user = auth.currentUser;
+  if (user) {
+    // Create a reference to the specific Document
+    const docRef = doc(db, databaseName, documentName);
+
+    try {
+      // Get the current document data
+      const docSnap = await getDoc(docRef);
+
+      if (docSnap.exists()) {
+        const existingData = docSnap.data();
+        const existingEntries = existingData[documentName] || [];
+        const productsToRemove = [productName];
+
+        // Filter out the products to be removed
+        const updatedEntries = existingEntries.filter(
+          (entry) => !productsToRemove.includes(entry.Name)
+        );
+
+        // Update the document with the filtered array
+        await updateDoc(docRef, {
+          [documentName]: updatedEntries,
+        });
+
+        const numRemoved = existingEntries.length - updatedEntries.length;
+        if (numRemoved > 0) {
+          console.log(`${numRemoved} product(s) removed successfully.`);
+
+          // Check if the array is now empty and delete the document if so
+          const updatedDocSnap = await getDoc(docRef);
+          if (updatedDocSnap.exists()) {
+            const updatedData = updatedDocSnap.data();
+            const currentEntries = updatedData[documentName] || [];
+            if (currentEntries.length === 0) {
+              await deleteDoc(docRef);
+              console.log(`Document "${documentName}" in collection "${databaseName}" has been deleted as it's now empty.`);
+            }
+          }
+
+          // Update the whole site
+          setTimeout(() => {
+            collectionUpdate();
+          }, 1000);
+        } else {
+          console.log("No matching products found to remove.");
+        }
+      } else {
+        console.log(`Document "${documentName}" in collection "${databaseName}" does not exist.`);
+      }
+    } catch (error) {
+      if (error.code === 'permission-denied') {
+        alert("Permission denied: User does not have write access.");
+        // Optionally, inform the user about the lack of permission
+      } else {
+        console.error("Error adding/updating data:", error);
+      }
+    }
+  } else {
+    console.log("User not authenticated.");
+  }
+}
 
   // ---------------------------------------------------------------------------- //
   // ---------------------------------------------------------------------------- //
@@ -735,6 +880,201 @@
   const collection_default = "All";
   var collection_applied = collection_default;
   var content_urls = {};
+
+  // Add to list button
+  function createAddToListButton(product) {
+    const addToListButton = document.createElement("button");
+    addToListButton.classList.add("add-to-list-button");
+    addToListButton.textContent = "+/- Add or Remove from Collection";
+    addToListButton.style.marginTop = "1rem";
+    addToListButton.dataset.productName = product;
+    addToListButton.onclick = function (event) {
+      event.stopPropagation(); // Prevent click from any potential parent button
+      openAddToListModal(product);
+    };
+    return addToListButton;
+  }
+
+  function openAddToListModal(product) {
+    // Create the modal container
+    const modal = document.createElement("div");
+    modal.classList.add("add-to-list-modal");
+    modal.style.position = "fixed";
+    modal.style.top = "50%";
+    modal.style.left = "50%";
+    modal.style.transform = "translate(-50%, -50%)";
+    modal.style.backgroundColor = "white";
+    modal.style.padding = "20px";
+    modal.style.borderRadius = "8px";
+    modal.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.1)";
+    modal.style.zIndex = "1000"; // Ensure it's on top
+    modal.style.display = "flex";
+    modal.style.flexDirection = "column";
+    modal.style.gap = "1rem";
+    modal.style.maxWidth = "90%"; // Mobile-friendly width
+    modal.style.maxHeight = "80vh";
+    modal.style.overflowY = "auto";
+
+    // Close button
+    const closeButton = document.createElement("button");
+    closeButton.textContent = "Close";
+    closeButton.onclick = closeModal;
+    closeButton.style.alignSelf = "flex-end";
+
+    // Title
+    const title = document.createElement("h2");
+    title.textContent = "Add / Remove from Collection";
+    title.style.marginBottom = "0";
+
+    // Product name
+    const productName = document.createElement("p");
+    productName.style.margin = "0";
+    productName.style.color = "#333";
+    productName.innerHTML = `<b>Selected:</b> ${product}`;
+
+    // Add to existing collection section
+    const existingCollectionDiv = document.createElement("div");
+    const existingLabel = document.createElement("label");
+    existingLabel.textContent = "Add to Collection:";
+    const collectionDropdown = document.createElement("select");
+    collectionDropdown.id = "existing-collection";
+
+    // Populate the dropdown with existing collections
+    let collectionOptions = [collection_default];
+    for (var i = 0; i < collection_list.length; i++) {
+      let item = collection_list[i];
+      const keys = Object.keys(item);
+      collectionOptions.push(keys[0]);
+    }
+
+    collectionOptions.forEach((collection) => {
+      const option = document.createElement("option");
+      option.value = collection;
+      option.textContent = collection;
+      collectionDropdown.appendChild(option);
+    });
+
+    // Add product
+    const addToExistingButton = document.createElement("button");
+    addToExistingButton.textContent = "Add to Selected";
+    addToExistingButton.onclick = function () {
+      const selectedCollection = collectionDropdown.value;
+      if (selectedCollection != "All") {
+        console.log(`Adding "${product}" to collection: ${selectedCollection}`);
+        // Add to Collection
+        addCollectionData("Collections", selectedCollection.toString(), product.toString());
+        // Close the modal
+        closeModal();
+      } else {
+        alert("Please select a collection.");
+      }
+    };
+
+    // Remove product
+    const removeFromExistingButton = document.createElement("button");
+    removeFromExistingButton.textContent = "Remove from Collection";
+    removeFromExistingButton.onclick = function () {
+      const selectedCollection = collectionDropdown.value;
+      if (selectedCollection != "All") {
+        console.log(
+          `Removing "${product}" from collection: ${selectedCollection}`
+        );
+        // Remove from Collection
+        removeCollectionData("Collections", selectedCollection.toString(), product.toString());
+        // Close the modal
+        closeModal();
+        // Implement your logic to remove from the selected collection
+      } else {
+        alert("Please select a collection.");
+      }
+    };
+
+    // Append elements to the existing collection section
+    existingCollectionDiv.appendChild(existingLabel);
+    existingCollectionDiv.appendChild(collectionDropdown);
+    existingCollectionDiv.appendChild(addToExistingButton);
+    existingCollectionDiv.appendChild(removeFromExistingButton);
+
+    // Create new collection section
+    const newCollectionDiv = document.createElement("div");
+    const newLabel = document.createElement("label");
+    newLabel.textContent = "Create New:";
+    const newCollectionInput = document.createElement("input");
+    newCollectionInput.type = "text";
+    newCollectionInput.placeholder = "Enter collection name";
+    newCollectionInput.id = "new-collection-name";
+    const createCollectionButton = document.createElement("button");
+    createCollectionButton.textContent = "Create New Collection";
+    createCollectionButton.onclick = function () {
+      const newCollectionName = newCollectionInput.value.trim();
+      if (newCollectionName) {
+        console.log(
+          `Creating new collection: ${newCollectionName} and adding "${product}"`
+        );
+        // Add to Collection
+        addCollectionData("Collections", newCollectionName.toString(), product.toString());
+        // Close the modal
+        closeModal();
+        // Implement your logic to create a new collection and add the product
+      } else {
+        alert("Please enter a name for the new collection.");
+      }
+    };
+    newCollectionDiv.appendChild(newLabel);
+    newCollectionDiv.appendChild(newCollectionInput);
+    newCollectionDiv.appendChild(createCollectionButton);
+
+    modal.appendChild(closeButton);
+    modal.appendChild(title);
+    modal.appendChild(productName);
+    modal.appendChild(existingCollectionDiv);
+    modal.appendChild(newCollectionDiv);
+
+    // Create a backdrop to handle clicks outside the modal
+    const modalBackdrop = document.createElement("div");
+    modalBackdrop.classList.add("modal-backdrop");
+    modalBackdrop.style.position = "fixed";
+    modalBackdrop.style.top = "0";
+    modalBackdrop.style.left = "0";
+    modalBackdrop.style.width = "100%";
+    modalBackdrop.style.height = "100%";
+    modalBackdrop.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+    modalBackdrop.style.zIndex = "999"; // Below the modal
+    modalBackdrop.onclick = closeModal;
+
+    document.body.appendChild(modalBackdrop);
+    document.body.appendChild(modal);
+  }
+
+  function closeModal() {
+    const modal = document.querySelector(".add-to-list-modal");
+    const backdrop = document.querySelector(".modal-backdrop");
+    if (modal) {
+      document.body.removeChild(modal);
+    }
+    if (backdrop) {
+      document.body.removeChild(backdrop);
+    }
+  }
+
+  // Create Cookies
+  function setCookie(name, value, days) {
+  const date = new Date();
+  date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+  const expires = "expires=" + date.toUTCString();
+  document.cookie = name + "=" + value + ";" + expires + ";path=/";
+}
+
+function getCookie(name) {
+  const nameEQ = name + "=";
+  const ca = document.cookie.split(';');
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+  }
+  return null;
+}
 
   // Product list
   function createAllProductList() {
@@ -867,26 +1207,39 @@
     buttonContainer.classList.add("chip-list");
     allProductsContainer.appendChild(buttonContainer);
 
-    // Add Toggle button that turns on and off the Product Card Description visibility
-    const toggleDescriptionButton = document.createElement("button");
-    let toggleDescriptionVisible = false;
-    toggleDescriptionButton.textContent = "Show Description";
-    toggleDescriptionButton.classList.add("export-summary-button");
-    buttonContainer.appendChild(toggleDescriptionButton);
-    toggleDescriptionButton.onclick = function () {
-      const productCards = document.querySelectorAll(".product-card");
-      toggleDescriptionVisible = !toggleDescriptionVisible; // Hide and show
-      toggleDescriptionButton.textContent = toggleDescriptionVisible
-        ? "Hide Description"
-        : "Show Description";
-      productCards.forEach((card) => {
-        const description = card.querySelector(".productDescription");
-        if (description) {
-          description.style.display =
-            description.style.display === "none" ? "block" : "none";
-        }
-      });
-    };
+// Add Toggle button that turns on and off the Product Card Description visibility
+const toggleDescriptionButton = document.createElement("button");
+let toggleDescriptionVisible = getCookie("productDescriptionVisible") === "true"; // Read cookie
+let descriptionCopy = "Card Details";
+toggleDescriptionButton.textContent = toggleDescriptionVisible
+  ? "Hide " + descriptionCopy
+  : "Show " + descriptionCopy;
+toggleDescriptionButton.classList.add("export-summary-button");
+buttonContainer.appendChild(toggleDescriptionButton);
+
+// Initially set the visibility based on the cookie
+const initialProductCards = document.querySelectorAll(".product-card");
+initialProductCards.forEach((card) => {
+  const description = card.querySelector(".productDescription");
+  if (description) {
+    description.style.display = toggleDescriptionVisible ? "block" : "none";
+  }
+});
+
+toggleDescriptionButton.onclick = function () {
+  const productCards = document.querySelectorAll(".product-card");
+  toggleDescriptionVisible = !toggleDescriptionVisible; // Hide and show
+  setCookie("productDescriptionVisible", toggleDescriptionVisible, 30); // Update cookie (expires in 30 days)
+  toggleDescriptionButton.textContent = toggleDescriptionVisible
+    ? "Hide " + descriptionCopy
+    : "Show " + descriptionCopy;
+  productCards.forEach((card) => {
+    const description = card.querySelector(".productDescription");
+    if (description) {
+      description.style.display = toggleDescriptionVisible ? "block" : "none";
+    }
+  });
+};
 
     // Export Summary Data
     const exportSummaryButton = document.createElement("button");
@@ -984,6 +1337,10 @@
       descriptionElement.style.display = "none"; // Hide by default
       productCard.appendChild(descriptionElement);
 
+      // Add to list
+      const addListButton = createAddToListButton(header);
+      descriptionElement.appendChild(addListButton);
+
       const chipContainer = document.createElement("div");
       chipContainer.classList.add("chip-container");
       chipContainer.classList.add("chip-list");
@@ -1047,7 +1404,7 @@
             const header = product["Header"]["Product Name"];
             if (header.toLowerCase() == product_name.toLowerCase()) {
               // Remove special characters from the product name
-              const cleanedProductName = header.replace(/[^a-zA-Z0-9\s]/g, '');
+              const cleanedProductName = header.replace(/[^a-zA-Z0-9\s]/g, "");
               let summary = {
                 Name: cleanedProductName,
                 Division: product["Header"]["Division"],
@@ -1067,31 +1424,32 @@
         const csvRows = [];
 
         // Add header row
-        csvRows.push(headers.join(','));
+        csvRows.push(headers.join(","));
 
         // Add data rows
-        products_found.forEach(product => {
-          const values = headers.map(header => {
+        products_found.forEach((product) => {
+          const values = headers.map((header) => {
             const value = product[header];
             // Escape commas and quotes for CSV
-            if (typeof value === 'string') {
+            if (typeof value === "string") {
               return `"${value.replace(/"/g, '""')}"`;
             }
             return value;
           });
-          csvRows.push(values.join(','));
+          csvRows.push(values.join(","));
         });
 
-        const csvString = csvRows.join('\n');
+        const csvString = csvRows.join("\n");
 
         // Create a Blob object with the CSV data
-        const blob = new Blob([csvString], { type: 'text/csv' });
+        const blob = new Blob([csvString], { type: "text/csv" });
 
         // Create a download link
-        const a = document.createElement('a');
+        const a = document.createElement("a");
         const url = URL.createObjectURL(blob);
         a.href = url;
-        a.download = 'products-summary-result-count-' + products_found.length + '.csv'; // Set the filename
+        a.download =
+          "products-summary-result-count-" + products_found.length + ".csv"; // Set the filename
 
         // Programmatically click the link to trigger the download
         document.body.appendChild(a);
@@ -1108,56 +1466,56 @@
 
     // Export all Data
     exportAllDataButton.onclick = function () {
-  // Export full data logic here
-  console.log("Exporting full data...");
-  let products_found = [];
-  // Go through all the product cards and find the visible ones
-  productCards.forEach((card) => {
-    const product_card = card;
-    // Check if the product card is visible
-    if (product_card.dataset.visible == "true") {
-      // Get the product name from the card
-      const product_name = product_card.dataset.productName;
-      // Find the matching product in the product_list
-      for (var n = 0; n < product_list.length; n++) {
-        const product = product_list[n];
-        const header = product["Header"]["Product Name"];
-        if (header.toLowerCase() == product_name.toLowerCase()) {
-          products_found.push(product);
-          // Assuming each visible card corresponds to exactly one product in the list,
-          // we can break the inner loop once a match is found for efficiency.
-          break;
+      // Export full data logic here
+      console.log("Exporting full data...");
+      let products_found = [];
+      // Go through all the product cards and find the visible ones
+      productCards.forEach((card) => {
+        const product_card = card;
+        // Check if the product card is visible
+        if (product_card.dataset.visible == "true") {
+          // Get the product name from the card
+          const product_name = product_card.dataset.productName;
+          // Find the matching product in the product_list
+          for (var n = 0; n < product_list.length; n++) {
+            const product = product_list[n];
+            const header = product["Header"]["Product Name"];
+            if (header.toLowerCase() == product_name.toLowerCase()) {
+              products_found.push(product);
+              // Assuming each visible card corresponds to exactly one product in the list,
+              // we can break the inner loop once a match is found for efficiency.
+              break;
+            }
+          }
         }
+      });
+
+      // Convert products_found to JSON
+      if (products_found.length > 0) {
+        const jsonString = JSON.stringify(products_found, null, 2); // Use null, 2 for pretty printing
+
+        // Create a Blob object with the JSON data
+        const blob = new Blob([jsonString], { type: "application/json" });
+
+        // Create a download link
+        const a = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        a.href = url;
+        a.download =
+          "products-full-data-result-count-" + products_found.length + ".json"; // Set the filename
+
+        // Programmatically click the link to trigger the download
+        document.body.appendChild(a);
+        a.click();
+
+        // Clean up the URL object
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      } else {
+        console.log("No products found to export.");
+        // Optionally display a message to the user that no products were found.
       }
-    }
-  });
-
-  // Convert products_found to JSON
-  if (products_found.length > 0) {
-    const jsonString = JSON.stringify(products_found, null, 2); // Use null, 2 for pretty printing
-
-    // Create a Blob object with the JSON data
-    const blob = new Blob([jsonString], { type: 'application/json' });
-
-    // Create a download link
-    const a = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    a.href = url;
-    a.download = 'products-full-data-result-count-' + products_found.length + '.json'; // Set the filename
-
-    // Programmatically click the link to trigger the download
-    document.body.appendChild(a);
-    a.click();
-
-    // Clean up the URL object
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  } else {
-    console.log("No products found to export.");
-    // Optionally display a message to the user that no products were found.
-  }
-};
-
+    };
 
     //-------------------------------------- //
     // Check if the collection did not map to an existing product
