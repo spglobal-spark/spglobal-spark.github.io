@@ -1336,7 +1336,7 @@ toggleDescriptionButton.onclick = function () {
       const descriptionElement = document.createElement("div");
       descriptionElement.textContent = product["Summary"]["Description"];
       descriptionElement.classList.add("productDescription");
-      descriptionElement.style.display = "none"; // Hide by default
+      descriptionElement.style.display = toggleDescriptionVisible ? "block" : "none"; // Set initial visibility based on the cookie
       productCard.appendChild(descriptionElement);
 
       // Add to list
