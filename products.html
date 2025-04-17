@@ -1219,13 +1219,13 @@ buttonContainer.appendChild(toggleDescriptionButton);
 
 // Initially set the visibility based on the cookie
 const initialProductCards = document.querySelectorAll(".product-card");
-document.addEventListener('DOMContentLoaded', function() {
 initialProductCards.forEach((card) => {
   const description = card.querySelector(".productDescription");
   if (description) {
+    cnsole.log("toggleDescriptionVisible", toggleDescriptionVisible);
+    // Set the display property based on the cookie value
     description.style.display = toggleDescriptionVisible ? "block" : "none";
   }
-});
 });
 
 toggleDescriptionButton.onclick = function () {
