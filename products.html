@@ -587,12 +587,17 @@
     }
   }
 
-  function collectionUpdate() {
+  function collectionUpdate(product_card_id) {
     readAllData("Collections", [], function (database_name, data) {
       // console.log(data);
       collection_list = data;
       console.log("Collections updated:", collection_list);
       createAllProductList();
+      // Jump tp the product card
+      const productCard = document.getElementById(product_card_id);
+      if (productCard) {
+        productCard.scrollIntoView({ behavior: "smooth" });
+      }
     });
   }
 
@@ -644,139 +649,145 @@
   }
 
   // Add data to Firebase
-  async function addCollectionData(databaseName, documentName, productName) {
-  // Click the send data button
-  const user = auth.currentUser;
-  if (user) {
-    // Create a reference to the specific Document
-    const docRef = doc(db, databaseName, documentName);
-    console.log("Collection name: ", databaseName);
-    console.log("Document name: ", documentName);
-    console.log("Data to be added: ", productName);
-    try {
-      // Get the current document data
-      const docSnap = await getDoc(docRef);
-      const newEntries = [productName]; // Ensure newEntries is an array
-      console.log("New product name: ", productName);
+  async function addCollectionData(databaseName, documentName, productName, product_card_id) {
+    // Click the send data button
+    const user = auth.currentUser;
+    if (user) {
+      // Create a reference to the specific Document
+      const docRef = doc(db, databaseName, documentName);
+      console.log("Collection name: ", databaseName);
+      console.log("Document name: ", documentName);
+      console.log("Data to be added: ", productName);
+      try {
+        // Get the current document data
+        const docSnap = await getDoc(docRef);
+        const newEntries = [productName]; // Ensure newEntries is an array
+        console.log("New product name: ", productName);
 
-      if (docSnap.exists()) {
-        const existingData = docSnap.data();
-        const existingEntries = existingData[documentName] || [];
-        console.log("Existing entries: ", existingEntries);
+        if (docSnap.exists()) {
+          const existingData = docSnap.data();
+          const existingEntries = existingData[documentName] || [];
+          console.log("Existing entries: ", existingEntries);
 
-        const uniqueNewEntries = [];
+          const uniqueNewEntries = [];
 
-        for (const newEntry of newEntries) {
-          const isDuplicate = existingEntries.some(
-            (existingEntry) => existingEntry.Name === newEntry
-          );
-          if (!isDuplicate) {
-            uniqueNewEntries.push(newEntry);
-          }
-        }
-
-        console.log("New entries: ", uniqueNewEntries);
-
-        if (uniqueNewEntries.length > 0) {
-          // Create new entry
-          let product_json_data = [{ Name: productName }];
-          // Append the new unique entries to the existing array
-          await updateDoc(docRef, {[documentName]: [...existingEntries, ...product_json_data],});
-          console.log("New unique products appended successfully!");
-          // Update the whole site
-          setTimeout(() => {
-            collectionUpdate();
-          }, 1000);
-        } else {
-          console.log("No new unique products to add.");
-        }
-      } else {
-        // If the document doesn't exist, create it with the new data
-        let product_json_data = {[documentName]:[{ Name: productName }]};
-        await setDoc(docRef, product_json_data);
-        console.log("Document created and product(s) added successfully!");
-        // Update the whole site
-        setTimeout(() => {
-            collectionUpdate();
-          }, 1000);
-      }
-    } catch (error) {
-      if (error.code === 'permission-denied') {
-        alert("Permission denied: User does not have write access.");
-        // Optionally, inform the user about the lack of permission
-      } else {
-        console.error("Error adding/updating data:", error);
-      }
-    }
-  } else {
-    console.log("User not authenticated.");
-  }
-}
-
-// Remove data
-async function removeCollectionData(databaseName, documentName, productName) {
-  // Check if the user is authenticated
-  const user = auth.currentUser;
-  if (user) {
-    // Create a reference to the specific Document
-    const docRef = doc(db, databaseName, documentName);
-
-    try {
-      // Get the current document data
-      const docSnap = await getDoc(docRef);
-
-      if (docSnap.exists()) {
-        const existingData = docSnap.data();
-        const existingEntries = existingData[documentName] || [];
-        const productsToRemove = [productName];
-
-        // Filter out the products to be removed
-        const updatedEntries = existingEntries.filter(
-          (entry) => !productsToRemove.includes(entry.Name)
-        );
-
-        // Update the document with the filtered array
-        await updateDoc(docRef, {
-          [documentName]: updatedEntries,
-        });
-
-        const numRemoved = existingEntries.length - updatedEntries.length;
-        if (numRemoved > 0) {
-          console.log(`${numRemoved} product(s) removed successfully.`);
-
-          // Check if the array is now empty and delete the document if so
-          const updatedDocSnap = await getDoc(docRef);
-          if (updatedDocSnap.exists()) {
-            const updatedData = updatedDocSnap.data();
-            const currentEntries = updatedData[documentName] || [];
-            if (currentEntries.length === 0) {
-              await deleteDoc(docRef);
-              console.log(`Document "${documentName}" in collection "${databaseName}" has been deleted as it's now empty.`);
+          for (const newEntry of newEntries) {
+            const isDuplicate = existingEntries.some(
+              (existingEntry) => existingEntry.Name === newEntry
+            );
+            if (!isDuplicate) {
+              uniqueNewEntries.push(newEntry);
             }
           }
 
+          console.log("New entries: ", uniqueNewEntries);
+
+          if (uniqueNewEntries.length > 0) {
+            // Create new entry
+            let product_json_data = [{ Name: productName }];
+            // Append the new unique entries to the existing array
+            await updateDoc(docRef, {
+              [documentName]: [...existingEntries, ...product_json_data],
+            });
+            console.log("New unique products appended successfully!");
+            // Update the whole site
+            setTimeout(() => {
+              collectionUpdate(product_card_id);
+            }, 1000);
+          } else {
+            console.log("No new unique products to add.");
+          }
+        } else {
+          // If the document doesn't exist, create it with the new data
+          let product_json_data = { [documentName]: [{ Name: productName }] };
+          await setDoc(docRef, product_json_data);
+          console.log("Document created and product(s) added successfully!");
           // Update the whole site
           setTimeout(() => {
-            collectionUpdate();
+            collectionUpdate(product_card_id);
           }, 1000);
-        } else {
-          console.log("No matching products found to remove.");
         }
-      } else {
-        console.log(`Document "${documentName}" in collection "${databaseName}" does not exist.`);
+      } catch (error) {
+        if (error.code === "permission-denied") {
+          alert("Permission denied: User does not have write access.");
+          // Optionally, inform the user about the lack of permission
+        } else {
+          console.error("Error adding/updating data:", error);
+        }
       }
-    } catch (error) {
-      if (error.code === 'permission-denied') {
-        alert("Permission denied: User does not have write access.");
-        // Optionally, inform the user about the lack of permission
-      } else {
-        console.error("Error adding/updating data:", error);
-      }
+    } else {
+      console.log("User not authenticated.");
     }
-  } else {
-    console.log("User not authenticated.");
   }
-}
+
+  // Remove data
+  async function removeCollectionData(databaseName, documentName, productName, product_card_id) {
+    // Check if the user is authenticated
+    const user = auth.currentUser;
+    if (user) {
+      // Create a reference to the specific Document
+      const docRef = doc(db, databaseName, documentName);
+
+      try {
+        // Get the current document data
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const existingData = docSnap.data();
+          const existingEntries = existingData[documentName] || [];
+          const productsToRemove = [productName];
+
+          // Filter out the products to be removed
+          const updatedEntries = existingEntries.filter(
+            (entry) => !productsToRemove.includes(entry.Name)
+          );
+
+          // Update the document with the filtered array
+          await updateDoc(docRef, {
+            [documentName]: updatedEntries,
+          });
+
+          const numRemoved = existingEntries.length - updatedEntries.length;
+          if (numRemoved > 0) {
+            console.log(`${numRemoved} product(s) removed successfully.`);
+
+            // Check if the array is now empty and delete the document if so
+            const updatedDocSnap = await getDoc(docRef);
+            if (updatedDocSnap.exists()) {
+              const updatedData = updatedDocSnap.data();
+              const currentEntries = updatedData[documentName] || [];
+              if (currentEntries.length === 0) {
+                await deleteDoc(docRef);
+                console.log(
+                  `Document "${documentName}" in collection "${databaseName}" has been deleted as it's now empty.`
+                );
+              }
+            }
+
+            // Update the whole site
+            setTimeout(() => {
+              collectionUpdate(product_card_id);
+            }, 1000);
+          } else {
+            console.log("No matching products found to remove.");
+          }
+        } else {
+          console.log(
+            `Document "${documentName}" in collection "${databaseName}" does not exist.`
+          );
+        }
+      } catch (error) {
+        if (error.code === "permission-denied") {
+          alert("Permission denied: User does not have write access.");
+          // Optionally, inform the user about the lack of permission
+        } else {
+          console.error("Error adding/updating data:", error);
+        }
+      }
+    } else {
+      console.log("User not authenticated.");
+    }
+  }
 
   // ---------------------------------------------------------------------------- //
   // ---------------------------------------------------------------------------- //
@@ -882,20 +893,21 @@ async function removeCollectionData(databaseName, documentName, productName) {
   var content_urls = {};
 
   // Add to list button
-  function createAddToListButton(product) {
+  function createAddToListButton(product, product_card_id) {
     const addToListButton = document.createElement("button");
+    addToListButton.id = product_card_id;
     addToListButton.classList.add("add-to-list-button");
     addToListButton.textContent = "+/- Add or Remove from Collection";
     addToListButton.style.marginTop = "1rem";
     addToListButton.dataset.productName = product;
     addToListButton.onclick = function (event) {
       event.stopPropagation(); // Prevent click from any potential parent button
-      openAddToListModal(product);
+      openAddToListModal(product, product_card_id);
     };
     return addToListButton;
   }
 
-  function openAddToListModal(product) {
+  function openAddToListModal(product, product_card_id) {
     // Create the modal container
     const modal = document.createElement("div");
     modal.classList.add("add-to-list-modal");
@@ -962,7 +974,12 @@ async function removeCollectionData(databaseName, documentName, productName) {
       if (selectedCollection != "All") {
         console.log(`Adding "${product}" to collection: ${selectedCollection}`);
         // Add to Collection
-        addCollectionData("Collections", selectedCollection.toString(), product.toString());
+        addCollectionData(
+          "Collections",
+          selectedCollection.toString(),
+          product.toString(),
+          product_card_id
+        );
         // Close the modal
         closeModal();
       } else {
@@ -980,7 +997,12 @@ async function removeCollectionData(databaseName, documentName, productName) {
           `Removing "${product}" from collection: ${selectedCollection}`
         );
         // Remove from Collection
-        removeCollectionData("Collections", selectedCollection.toString(), product.toString());
+        removeCollectionData(
+          "Collections",
+          selectedCollection.toString(),
+          product.toString(),
+          product_card_id
+        );
         // Close the modal
         closeModal();
         // Implement your logic to remove from the selected collection
@@ -1012,7 +1034,12 @@ async function removeCollectionData(databaseName, documentName, productName) {
           `Creating new collection: ${newCollectionName} and adding "${product}"`
         );
         // Add to Collection
-        addCollectionData("Collections", newCollectionName.toString(), product.toString());
+        addCollectionData(
+          "Collections",
+          newCollectionName.toString(),
+          product.toString(),
+          product_card_id
+        );
         // Close the modal
         closeModal();
         // Implement your logic to create a new collection and add the product
@@ -1059,22 +1086,22 @@ async function removeCollectionData(databaseName, documentName, productName) {
 
   // Create Cookies
   function setCookie(name, value, days) {
-  const date = new Date();
-  date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-  const expires = "expires=" + date.toUTCString();
-  document.cookie = name + "=" + value + ";" + expires + ";path=/";
-}
-
-function getCookie(name) {
-  const nameEQ = name + "=";
-  const ca = document.cookie.split(';');
-  for (let i = 0; i < ca.length; i++) {
-    let c = ca[i];
-    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+    const date = new Date();
+    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+    const expires = "expires=" + date.toUTCString();
+    document.cookie = name + "=" + value + ";" + expires + ";path=/";
   }
-  return null;
-}
+
+  function getCookie(name) {
+    const nameEQ = name + "=";
+    const ca = document.cookie.split(";");
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) === " ") c = c.substring(1, c.length);
+      if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+  }
 
   // Product list
   function createAllProductList() {
@@ -1207,41 +1234,44 @@ function getCookie(name) {
     buttonContainer.classList.add("chip-list");
     allProductsContainer.appendChild(buttonContainer);
 
-// Add Toggle button that turns on and off the Product Card Description visibility
-const toggleDescriptionButton = document.createElement("button");
-let toggleDescriptionVisible = getCookie("productDescriptionVisible") === "true"; // Read cookie
-let descriptionCopy = "Card Details";
-toggleDescriptionButton.textContent = toggleDescriptionVisible
-  ? "Hide " + descriptionCopy
-  : "Show " + descriptionCopy;
-toggleDescriptionButton.classList.add("export-summary-button");
-buttonContainer.appendChild(toggleDescriptionButton);
+    // Add Toggle button that turns on and off the Product Card Description visibility
+    const toggleDescriptionButton = document.createElement("button");
+    let toggleDescriptionVisible =
+      getCookie("productDescriptionVisible") === "true"; // Read cookie
+    let descriptionCopy = "Card Details";
+    toggleDescriptionButton.textContent = toggleDescriptionVisible
+      ? "Hide " + descriptionCopy
+      : "Show " + descriptionCopy;
+    toggleDescriptionButton.classList.add("export-summary-button");
+    buttonContainer.appendChild(toggleDescriptionButton);
 
-// Initially set the visibility based on the cookie
-const initialProductCards = document.querySelectorAll(".product-card");
-initialProductCards.forEach((card) => {
-  const description = card.querySelector(".productDescription");
-  if (description) {
-    cnsole.log("toggleDescriptionVisible", toggleDescriptionVisible);
-    // Set the display property based on the cookie value
-    description.style.display = toggleDescriptionVisible ? "block" : "none";
-  }
-});
+    // Initially set the visibility based on the cookie
+    const initialProductCards = document.querySelectorAll(".product-card");
+    initialProductCards.forEach((card) => {
+      const description = card.querySelector(".productDescription");
+      if (description) {
+        cnsole.log("toggleDescriptionVisible", toggleDescriptionVisible);
+        // Set the display property based on the cookie value
+        description.style.display = toggleDescriptionVisible ? "block" : "none";
+      }
+    });
 
-toggleDescriptionButton.onclick = function () {
-  const productCards = document.querySelectorAll(".product-card");
-  toggleDescriptionVisible = !toggleDescriptionVisible; // Hide and show
-  setCookie("productDescriptionVisible", toggleDescriptionVisible, 30); // Update cookie (expires in 30 days)
-  toggleDescriptionButton.textContent = toggleDescriptionVisible
-    ? "Hide " + descriptionCopy
-    : "Show " + descriptionCopy;
-  productCards.forEach((card) => {
-    const description = card.querySelector(".productDescription");
-    if (description) {
-      description.style.display = toggleDescriptionVisible ? "block" : "none";
-    }
-  });
-};
+    toggleDescriptionButton.onclick = function () {
+      const productCards = document.querySelectorAll(".product-card");
+      toggleDescriptionVisible = !toggleDescriptionVisible; // Hide and show
+      setCookie("productDescriptionVisible", toggleDescriptionVisible, 30); // Update cookie (expires in 30 days)
+      toggleDescriptionButton.textContent = toggleDescriptionVisible
+        ? "Hide " + descriptionCopy
+        : "Show " + descriptionCopy;
+      productCards.forEach((card) => {
+        const description = card.querySelector(".productDescription");
+        if (description) {
+          description.style.display = toggleDescriptionVisible
+            ? "block"
+            : "none";
+        }
+      });
+    };
 
     // Export Summary Data
     const exportSummaryButton = document.createElement("button");
@@ -1336,11 +1366,13 @@ toggleDescriptionButton.onclick = function () {
       const descriptionElement = document.createElement("div");
       descriptionElement.textContent = product["Summary"]["Description"];
       descriptionElement.classList.add("productDescription");
-      descriptionElement.style.display = toggleDescriptionVisible ? "block" : "none"; // Set initial visibility based on the cookie
+      descriptionElement.style.display = toggleDescriptionVisible
+        ? "block"
+        : "none"; // Set initial visibility based on the cookie
       productCard.appendChild(descriptionElement);
 
       // Add to list
-      const addListButton = createAddToListButton(header);
+      const addListButton = createAddToListButton(header, "product-card-" + String(i));
       descriptionElement.appendChild(addListButton);
 
       const chipContainer = document.createElement("div");
