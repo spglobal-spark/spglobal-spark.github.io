@@ -143,6 +143,48 @@
         color: #333;
         margin-bottom: 0.25rem;
       }
+      .collectuion-input {
+        width: calc(100% - 2rem);
+        padding: 0.5rem;
+        font-size: 1rem;
+        border-radius: 0.25rem;
+        background-color: #deecf0;
+      }
+      .collection-dropdown {
+        width: calc(100% - 1rem);
+        padding: 0.5rem;
+        font-size: 1rem;
+        border-radius: 0.25rem;
+        background-color: #deecf0;
+      }
+      .modal-button {
+        background-color: #000;
+        color: #fff;
+        font-size: 1rem;
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 0.25rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease-in-out,
+          box-shadow 0.3s ease-in-out; /* Smooth transition for hover and animation */
+      }
+      .close-button {
+        width: 32px;
+border: none;
+cursor: pointer;
+border-radius: 0.25rem;
+transition: background-color 0.3s ease-in-out;
+      }
+      .close-button:hover {
+        background-color: #808080; /* Gray background on hover */
+      }
+      .close-button svg {
+        fill: #000;
+      }
+      .modal-button:hover {
+        background-color: #333; /* Gray background on hover */
+      }
+
       .spacer-small {
         height: 1rem;
       }
@@ -929,7 +971,9 @@
 
     // Close button
     const closeButton = document.createElement("button");
-    closeButton.textContent = "Close";
+    // Set the innerHTML to the SVG code
+    closeButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>';
+    closeButton.classList.add("close-button");
     closeButton.onclick = closeModal;
     closeButton.style.alignSelf = "flex-end";
 
@@ -947,8 +991,11 @@
     // Add to existing collection section
     const existingCollectionDiv = document.createElement("div");
     const existingLabel = document.createElement("label");
+    existingLabel.classList.add("overline");
     existingLabel.textContent = "Add to Collection:";
+
     const collectionDropdown = document.createElement("select");
+    collectionDropdown.classList.add("collection-dropdown");
     collectionDropdown.id = "existing-collection";
 
     // Populate the dropdown with existing collections
@@ -966,9 +1013,16 @@
       collectionDropdown.appendChild(option);
     });
 
+    // Button container
+    const buttonContainer = document.createElement("div");
+    buttonContainer.classList.add("chip-list");
+    buttonContainer.style.marginTop = "1rem";
+
+
     // Add product
     const addToExistingButton = document.createElement("button");
     addToExistingButton.textContent = "Add to Selected";
+    addToExistingButton.classList.add("modal-button");
     addToExistingButton.onclick = function () {
       const selectedCollection = collectionDropdown.value;
       if (selectedCollection != "All") {
@@ -990,6 +1044,7 @@
     // Remove product
     const removeFromExistingButton = document.createElement("button");
     removeFromExistingButton.textContent = "Remove from Collection";
+    removeFromExistingButton.classList.add("modal-button");
     removeFromExistingButton.onclick = function () {
       const selectedCollection = collectionDropdown.value;
       if (selectedCollection != "All") {
@@ -1014,18 +1069,25 @@
     // Append elements to the existing collection section
     existingCollectionDiv.appendChild(existingLabel);
     existingCollectionDiv.appendChild(collectionDropdown);
-    existingCollectionDiv.appendChild(addToExistingButton);
-    existingCollectionDiv.appendChild(removeFromExistingButton);
+    existingCollectionDiv.appendChild(buttonContainer);
+    buttonContainer.appendChild(addToExistingButton);
+    buttonContainer.appendChild(removeFromExistingButton);
 
     // Create new collection section
     const newCollectionDiv = document.createElement("div");
     const newLabel = document.createElement("label");
     newLabel.textContent = "Create New:";
+    newLabel.classList.add("overline");
+
     const newCollectionInput = document.createElement("input");
     newCollectionInput.type = "text";
+    newCollectionInput.classList.add("collectuion-input");
     newCollectionInput.placeholder = "Enter collection name";
     newCollectionInput.id = "new-collection-name";
+
     const createCollectionButton = document.createElement("button");
+    createCollectionButton.classList.add("modal-button");
+    createCollectionButton.style.marginTop = "1rem";
     createCollectionButton.textContent = "Create New Collection";
     createCollectionButton.onclick = function () {
       const newCollectionName = newCollectionInput.value.trim();
