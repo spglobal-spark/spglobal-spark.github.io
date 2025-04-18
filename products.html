@@ -1281,10 +1281,12 @@ transition: background-color 0.3s ease-in-out;
     }
 
     collectionContainer.appendChild(collectionDropdown);
-    
+
     // Set the selected value
     collectionDropdown.value = collectionSelectedValue; // Set the selected value
-    triggerSearch();
+    setTimeout(() => {
+      collectionDropdown.dispatchEvent(new Event("change")); // Trigger change event
+    }, 100); // Delay to ensure the dropdown is populated
 
     // Update placeholder based on dropdown selection
     collectionDropdown.addEventListener("change", function () {
