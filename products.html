@@ -1271,12 +1271,26 @@ transition: background-color 0.3s ease-in-out;
       option.textContent = optionText;
       collectionDropdown.appendChild(option);
     });
+
+    // Set filter based on cookie
+    let collectionSelectedValue =
+      getCookie("collectionFilter") || collection_default; // Read cookie
+    // Check if selection value is in the list
+    if (!collectionOptions.includes(collectionSelectedValue)) {
+      collectionSelectedValue = collection_default; // Set to default if not found
+    }
+    // Set the selected value
+    collectionDropdown.value = collectionSelectedValue; // Set the selected value
+
     collectionContainer.appendChild(collectionDropdown);
 
     // Update placeholder based on dropdown selection
     collectionDropdown.addEventListener("change", function () {
+      
       const selectedOption = this.value;
       collection_applied = selectedOption;
+
+      setCookie("collectionFilter", collection_applied, 30); // Update cookie (expires in 30 days)
 
       // Trigger an update
       console.log("Collection selected:", collection_applied);
