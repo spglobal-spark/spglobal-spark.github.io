@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.1.0"></script> --> <!-- Fuzzy Matching -- https://www.fusejs.io/getting-started/installation.html#yarn -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Product Database</title>
@@ -635,11 +636,13 @@ transition: background-color 0.3s ease-in-out;
       collection_list = data;
       console.log("Collections updated:", collection_list);
       createAllProductList();
+      /*
       // Jump tp the product card
       const productCard = document.getElementById(product_card_id);
       if (productCard) {
         productCard.scrollIntoView({ behavior: "smooth" });
       }
+        */
     });
   }
 
