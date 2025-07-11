@@ -3910,10 +3910,7 @@
         }
 
         // Hide logo if it is none
-        if (logo_name == "none") {
-          logo_container.style.display = "none";
-          logo_height = 0;
-          logo_width = 0;
+        if (logo_name.toLowerCase().includes("none")) {
           svgSponsorElement = undefined; // No sponsor logo
 
           // Default bottom left
