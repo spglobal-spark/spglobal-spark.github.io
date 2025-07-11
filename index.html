@@ -2878,6 +2878,7 @@
           add_button_to_inside_tools_container("Commodity Insights");
           add_button_to_inside_tools_container("Market Intelligence");
           add_button_to_inside_tools_container("Mobility");
+          add_button_to_inside_tools_container("None");
           
           //add_button_to_inside_tools_container("Seek And Prosper");
 
@@ -4037,13 +4038,24 @@
         let sp_ratio =
           logo_name == "spg_corporate" ? 0.6857142857 : 0.2948717949;
 
+        // Hide logo if it is none
+        if (logo_name == "none") {
+          logo_container.style.display = "none";
+          logo_height = 0;
+          logo_width = 0;
+          svgSponsorElement = undefined; // No sponsor logo
+        }
+
         // Load as an image
-        let image = new Image();
+        if (logo_name != "none") {
+          let image = new Image();
         image.onload = () => {
           // Draw logo
           ctx.drawImage(image, position.x, position.y, logo_width, logo_height);
         };
         image.src = blobURL;
+        }
+        
 
         // Store dynamic information about the logo
         canvas_content.logo = {
