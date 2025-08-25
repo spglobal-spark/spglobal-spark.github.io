@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.1.0"></script> -->
+    <!-- Fuzzy Matching -- https://www.fusejs.io/getting-started/installation.html#yarn -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Product Database</title>
+    <style>
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: Helvetica, sans-serif;
+        background-color: #ffffff;
+        padding: 2rem 2rem 2rem 2rem;
+        margin: 0;
+      }
+      p {
+        color: #333;
+        line-height: 150%;
+      }
+      .section-container {
+        display: grid;
+        grid-template-columns: 1fr; /* 1 column by default */
+        gap: 48px; /* Gap between grid items */
+        padding: 2rem; /* Padding around the container */
+        width: 100%; /* Take full width */
+        max-width: 1408px; /* Max width for the container */
+        box-sizing: border-box; /* Include padding in element's total width and height */
+
+        border-radius: 0;
+        margin-bottom: 1rem;
+        background-color: #f0f0f0; /* #ffffff; */
+        /* border: 1px solid rgb(230, 230, 230); /* Light border for separation */
+        /* box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15); /* Pretty box shadow */
+      }
+      .searchContainer {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+
+      .filter-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+      }
+      .filter-column {
+        width: 100%;
+        padding: 1rem;
+        border-radius: 0;
+        background-color: white;
+        /* box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15); /* Pretty box shadow */
+      }
+      .filterProducts {
+        width: calc(100% - 13.5rem);
+        padding: 1rem;
+        font-size: 1.5rem;
+        display: inline-flex;
+      }
+      .filterDropdown {
+        width: 10rem;
+        font-size: 1rem;
+        font-weight: bold;
+        display: inline-flex;
+        padding: 0.75rem;
+        height: 4rem;
+        background-color: #f0f0f0;
+        border: 1px solid #ccc; /* Add a border for better visibility */
+      }
+
+      .collectionContainer {
+        width: 100%;
+      }
+      .collectionDropdown {
+        align-items: center; /* Vertically center within the parent */
+        padding: 0.75rem;
+        width: 100%;
+        font-size: 1.25rem;
+        background-color: #deecf0;
+      }
+      .collectionTitle {
+        align-items: center; /* Vertically center within the parent */
+        margin: 0; /* Optional: Remove default margin that might affect alignment */
+        margin-bottom: 1rem;
+      }
+
+      .divisionDropdown {
+        width: 18rem;
+        font-size: 1rem;
+        font-weight: bold;
+        display: inline-flex;
+        padding: 0.75rem;
+        height: 4rem;
+      }
+      h1 {
+        font-size: 2.5rem;
+      }
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        margin: 0;
+        margin-bottom: 1rem;
+      }
+      .product-card {
+        display: flex;
+        flex-direction: column; /* Stacks children vertically */
+        justify-content: top; /* Vertically centers content */
+
+        padding: 1.5rem;
+        border: 0;
+        /* border: 1px solid #ccc; */
+        border-radius: 0;
+        background-color: #deecf0;
+        width: calc(100%);
+        text-align: left;
+        vertical-align: top;
+        /* margin-bottom: 1rem; */
+        font-size: 1.375rem;
+        /* box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15); /* Pretty box shadow */
+        transition: transform 0.2s ease-in-out,
+          background-color 0.2s ease-in-out; /* Add transition for background-color */
+      }
+
+      .product-card:hover {
+        transform: translateY(-4px); /* Raise the card by 6px */
+        /* background-color: #deecf0; */
+        /* border-bottom: 1px solid #555; */
+      }
+
+      .product-card:hover b,
+      .product-card:hover strong {
+        text-decoration: underline;
+      }
+      .division-title {
+        font-size: 0.75rem;
+        color: #555;
+        margin-bottom: 0.25rem;
+      }
+      select {
+        padding: 0.25rem;
+        width: 8rem;
+      }
+      .overline {
+        display: block;
+        font-size: 0.75rem;
+        color: #d6002a; /* rgb(69, 69, 69); */
+        margin-bottom: 0.25rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 1rem;
+      }
+      .collectuion-input {
+        width: calc(100% - 2rem);
+        padding: 0.5rem;
+        font-size: 1rem;
+        border-radius: 0;
+        background-color: #deecf0;
+      }
+      .collection-dropdown {
+        width: calc(100% - 1rem);
+        padding: 0.5rem;
+        font-size: 1rem;
+        border-radius: 0;
+        background-color: #deecf0;
+      }
+      .modal-button {
+        background-color: #000;
+        color: #fff;
+        font-size: 1rem;
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 0;
+        cursor: pointer;
+        transition: background-color 0.3s ease-in-out;
+        /* box-shadow 0.3s ease-in-out; /* Smooth transition for hover and animation */
+      }
+      .close-button {
+        width: 32px;
+        border: none;
+        cursor: pointer;
+        border-radius: 0;
+        transition: background-color 0.3s ease-in-out;
+      }
+      .close-button:hover {
+        background-color: #808080; /* Gray background on hover */
+      }
+      .close-button svg {
+        fill: #000;
+      }
+      .modal-button:hover {
+        background-color: #333; /* Gray background on hover */
+      }
+
+      .spacer-small {
+        height: 1rem;
+      }
+      .spacer-medium {
+        height: 2.5rem;
+      }
+      hr {
+        border: none;
+        border-top: 1px solid #ccc;
+      }
+      .margin-top-spacer-small {
+        margin-top: 1rem;
+      }
+      .margin-spacer-small {
+        margin: 1.5rem 0;
+      }
+      .filter-input {
+        height: 2rem;
+        width: calc(100% - 2rem);
+        box-sizing: border-box; /* Important for inner border to work as expected */
+        padding: 0 0.5rem; /* Shorthand for padding-top, -right, -bottom, -left */
+      }
+      textarea {
+        padding: 0.5rem !important;
+      }
+      .clear-filter-button {
+        height: 2rem;
+        width: 2rem;
+      }
+      .suggestions-dropdown {
+        position: absolute;
+        border: 1px solid #ccc;
+        border-top: none;
+        z-index: 10;
+        background-color: #fff;
+        width: calc(
+          100% - 5.5rem
+        ); /* Adjust as needed, same as input width or wider */
+        max-height: 8rem; /* For 8 options, adjust as needed */
+        overflow-y: auto;
+        display: none; /* Hidden by default */
+      }
+      .suggestions-dropdown div {
+        padding: 1rem;
+        cursor: pointer;
+      }
+      .suggestions-dropdown div:hover {
+        background-color: #f0f0f0;
+      }
+      .chip-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .filter-chip-section {
+        margin-bottom: 1rem;
+      }
+      .chip-container {
+        margin-top: 1rem;
+      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 6px 12px;
+        border-radius: 1.5rem;
+        background-color: #ffffff;
+        color: #333;
+        border: none;
+        cursor: pointer;
+        font-size: 0.875rem;
+        transition: background-color 0.2s;
+      }
+      .chip.category {
+        background-color: #edf86f;
+      }
+      .summary-row {
+        display: flex;
+        padding: 2rem 0;
+        border-bottom: 1px solid #ccc; /* Add a border between rows */
+      }
+
+      .title-column {
+        flex: 0 0 33.33%; /* 1/3 width */
+        padding-right: 10px; /* Add some spacing between columns */
+      }
+
+      .title-column h4 {
+        font-weight: bold;
+        margin-top: 0;
+      }
+
+      .description-column {
+        flex: 0 0 66.66%; /* 2/3 width */
+      }
+      .description-column p {
+        margin: 0;
+      }
+
+      /* Media query for screens below 768px */
+      @media (max-width: 767.98px) {
+        .summary-row {
+          display: block; /* Change to block for single column */
+        }
+
+        .title-column {
+          flex: 0 0 100%; /* Take full width */
+          padding-right: 0; /* Remove right padding */
+          margin-bottom: 0.5rem; /* Add some bottom margin for spacing */
+        }
+
+        .description-column {
+          flex: 0 0 100%; /* Take full width */
+        }
+      }
+      .product-link {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: black;
+        display: block;
+        text-decoration: underline;
+        margin-bottom: 0.5rem;
+      }
+      nav {
+        max-width: 32rem;
+        width: 18rem; /* Ensure it takes the full width of its grid cell */
+        height: 100%;
+        padding: 0;
+        padding-top: 2rem;
+      }
+      .navigation {
+        width: 100%;
+        grid-area: nav;
+        padding: 1.5rem;
+        border-radius: 0;
+        background-color: white;
+        text-align: left;
+        margin-bottom: 0; /* Remove bottom margin as it's in its own column */
+        /* box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15); /* Pretty box shadow */
+        position: sticky;
+        top: 2rem;
+        overflow-y: auto; /* Add scroll if the nav content overflows */
+      }
+      .navigation button {
+        font-size: 1rem;
+        width: calc(100%);
+        border: 0;
+        text-align: left;
+        font-weight: bold;
+        border-radius: 0;
+        margin-bottom: 0.5rem;
+        padding: 1rem;
+        transition: transform 0.2s ease-in-out,
+          background-color 0.2s ease-in-out; /* Add transition for background-color */
+        position: relative; /* Needed for absolute positioning of ::after */
+        padding-right: 1.5rem; /* Make space for the arrow */
+      }
+      .navigation button:hover {
+        background-color: #deecf0;
+        /* text-decoration: underline; */
+      }
+      .navigation button:hover::after {
+        font-family: sans-serif;
+        content: "→";
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+      }
+      main {
+        grid-area: main;
+        width: 100%;
+        max-width: 1408px; /* Remove max-width to fill the remaining space */
+        /* Center the main element */
+        margin-left: auto;
+        margin-right: auto;
+        /* padding-top: 2rem; */
+      }
+      /* Media query for screens below 1024px width */
+      @media (max-width: 1023px) {
+        body {
+          grid-template-columns: 1fr; /* Single column */
+          grid-template-rows: auto auto; /* Adjust rows for single column layout */
+          grid-template-areas:
+            "nav"
+            "main";
+          grid-gap: 2rem; /* Adjust gap for single column */
+        }
+
+        nav {
+          width: calc(
+            100% - 3rem
+          ); /* Make nav take full width in single column */
+          max-width: none; /* Remove max-width restriction */
+        }
+
+        .navigation {
+          margin-bottom: 1rem; /* Add some bottom margin when stacked */
+          position: static; /* Remove sticky positioning in single column layout if desired */
+        }
+      }
+
+      .main-logo {
+        width: auto;
+        height: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .main-logo svg {
+        width: auto;
+        height: 2rem;
+      }
+      #product-headline {
+        color: #000000;
+      }
+      #product-headline:hover {
+        text-decoration: none;
+      }
+      #product-description {
+        line-height: 1.5;
+        font-size: 1.25rem;
+        font-weight: 300;
+      }
+      .export-summary-button {
+        background-color: #000; /* Black background */
+        color: #fff; /* White text for contrast */
+        font-size: 16px;
+        padding: 12px 24px; /* Adjust padding for size */
+        border: none; /* Remove default button border */
+        border-radius: 0; /* Add slight rounded corners for attractiveness */
+        cursor: pointer; /* Indicate it's clickable */
+        transition: background-color 0.3s ease-in-out;
+        /* box-shadow 0.3s ease-in-out; /* Smooth transition for hover and animation */
+      }
+
+      .add-to-list-button {
+        display: block;
+      }
+
+      .productDescription {
+        color: #555; /* Dark text color */
+        font-size: 0.75rem;
+        margin-top: 1rem;
+        line-height: 1.5;
+      }
+
+      .limit-text {
+        display: -webkit-box !important;
+        -webkit-line-clamp: 5; /* Limits the text to 5 lines */
+        -webkit-box-orient: vertical;
+        overflow: hidden; /* Hides any overflowing content */
+        text-overflow: ellipsis; /* Adds an ellipsis (...) at the end if content is truncated */
+      }
+
+      .export-summary-button:hover {
+        background-color: #808080; /* Gray background on hover */
+      }
+
+      /* Optional animation - a slight scale up on hover */
+      .export-summary-button:active {
+        /* Style when the button is actively clicked */
+        transform: scale(0.98); /* Slightly scale down on click for feedback */
+      }
+
+      /* Optional animation - a subtle pulse animation */
+      @keyframes pulse {
+        0% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.05);
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+
+      /* To apply the pulse animation, you can add this class in addition to "export-summary-button" */
+      .export-summary-button.animate-pulse {
+        animation: pulse 1s infinite alternate;
+      }
+
+      /* Optional animation - a subtle slide-in from the side */
+      @keyframes slideIn {
+        0% {
+          transform: translateX(-10px);
+          opacity: 0;
+        }
+        100% {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      /* To apply the slide-in animation (perhaps on page load), you can add this class */
+      .export-summary-button.animate-slide-in {
+        animation: slideIn 0.5s ease-out;
+      }
+
+      .button-grid-container {
+        /* Base styles for mobile (1 column) */
+        display: grid;
+        grid-template-columns: 1fr; /* 1 column by default */
+        gap: 32px; /* Gap between grid items */
+        padding: 0; /* Padding around the container */
+        width: 100%; /* Take full width */
+        max-width: 1408px; /* Max width for the container */
+        box-sizing: border-box; /* Include padding in element's total width and height */
+      }
+
+      .features-overline {
+        margin-top: 0;
+      }
+
+      /* Tablet breakpoint (768px and up): 2 columns */
+      @media (min-width: 768px) {
+        .button-grid-container {
+          grid-template-columns: repeat(2, 1fr); /* 2 columns */
+        }
+      }
+
+      /* Desktop breakpoint (1024px and up): 4 columns */
+      @media (min-width: 1024px) {
+        .button-grid-container {
+          grid-template-columns: repeat(4, 1fr); /* 4 columns */
+        }
+        .section-container {
+          grid-template-columns: repeat(2, 1fr); /* 2 columns */
+        }
+        .features-overline {
+          margin-top: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main id="body-container"></main>
+  </body>
+</html>
+
+<script type="module">
+  // ---------------------------------------------------------------------------- //
+  // ---------------------------------------------------------------------------- //
+  // Run program ---------------------------------------------------------------- //
+  function runProgram() {
+    // Assign buttons to navigation
+    createAllProductList();
+  }
+
+  // ---------------------------------------------------------------------------- //
+  // ---------------------------------------------------------------------------- //
+  // Chip functions ------------------------------------------------------------- //
+  function createChip(label) {
+    const chipButton = document.createElement("button");
+    chipButton.classList.add("chip");
+    chipButton.textContent = label;
+    chipButton.onclick = function () {
+      //console.log(label); // Default behavior: log the button text / label
+    };
+    return chipButton;
+  }
+
+  function removeChip(label) {
+    const chips = filterChipList.querySelectorAll(".chip");
+    chips.forEach((chip) => {
+      if (chip.textContent === label) {
+        chip.remove();
+      }
+    });
+  }
+
+  // ---------------------------------------------------------------------------- //
+  // ---------------------------------------------------------------------------- //
+  // Product Dom Elements ------------------------------------------------------------- //
+  var product_index = 0;
+  var product_list = get_products();
+  var collection_list = [];
+  var filtered_collection_list = [];
+  var filters_applied = "keyword";
+  const collection_default = "All";
+  var collection_applied = collection_default;
+  var content_urls = {};
+
+  // Run project
+  runProgram();
+
+  // Add to list button
+  function createAddToListButton(product, product_card_id) {
+    const addToListButton = document.createElement("button");
+    addToListButton.id = product_card_id;
+    addToListButton.classList.add("add-to-list-button");
+    addToListButton.textContent = "+/- Add or Remove from Collection";
+    addToListButton.style.marginTop = "1rem";
+    addToListButton.dataset.productName = product;
+    addToListButton.onclick = function (event) {
+      event.stopPropagation(); // Prevent click from any potential parent button
+      openAddToListModal(product, product_card_id);
+    };
+    return addToListButton;
+  }
+
+  function openAddToListModal(product, product_card_id) {
+    // Create the modal container
+    const modal = document.createElement("div");
+    modal.classList.add("add-to-list-modal");
+    modal.style.position = "fixed";
+    modal.style.top = "50%";
+    modal.style.left = "50%";
+    modal.style.transform = "translate(-50%, -50%)";
+    modal.style.backgroundColor = "white";
+    modal.style.padding = "20px";
+    modal.style.borderRadius = "8px";
+    modal.style.boxShadow = "0 4px 8px rgba(0, 0, 0, 0.1)";
+    modal.style.zIndex = "1000"; // Ensure it's on top
+    modal.style.display = "flex";
+    modal.style.flexDirection = "column";
+    modal.style.gap = "1rem";
+    modal.style.maxWidth = "90%"; // Mobile-friendly width
+    modal.style.maxHeight = "80vh";
+    modal.style.overflowY = "auto";
+
+    // Close button
+    const closeButton = document.createElement("button");
+    // Set the innerHTML to the SVG code
+    closeButton.innerHTML =
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>';
+    closeButton.classList.add("close-button");
+    closeButton.onclick = closeModal;
+    closeButton.style.alignSelf = "flex-end";
+
+    // Title
+    const title = document.createElement("h2");
+    title.textContent = "Add / Remove from Collection";
+    title.style.marginBottom = "0";
+
+    // Product name
+    const productName = document.createElement("p");
+    productName.style.margin = "0";
+    productName.style.color = "#333";
+    productName.innerHTML = `<b>Selected:</b> ${product}`;
+
+    // Add to existing collection section
+    const existingCollectionDiv = document.createElement("div");
+    const existingLabel = document.createElement("label");
+    existingLabel.classList.add("overline");
+    existingLabel.textContent = "Add to Collection:";
+
+    const collectionDropdown = document.createElement("select");
+    collectionDropdown.classList.add("collection-dropdown");
+    collectionDropdown.id = "existing-collection";
+
+    // Populate the dropdown with existing collections
+    let collectionOptions = [collection_default];
+    for (var i = 0; i < collection_list.length; i++) {
+      let item = collection_list[i];
+      const keys = Object.keys(item);
+      collectionOptions.push(keys[0]);
+    }
+
+    collectionOptions.forEach((collection) => {
+      const option = document.createElement("option");
+      option.value = collection;
+      option.textContent = collection;
+      collectionDropdown.appendChild(option);
+    });
+
+    // Button container
+    const buttonContainer = document.createElement("div");
+    buttonContainer.classList.add("chip-list");
+    buttonContainer.style.marginTop = "1rem";
+
+    // Add product
+    const addToExistingButton = document.createElement("button");
+    addToExistingButton.textContent = "Add to Selected";
+    addToExistingButton.classList.add("modal-button");
+    addToExistingButton.onclick = function () {
+      const selectedCollection = collectionDropdown.value;
+      if (selectedCollection != "All") {
+        console.log(`Adding "${product}" to collection: ${selectedCollection}`);
+        // Add to Collection
+        addCollectionData(
+          "Collections",
+          selectedCollection.toString(),
+          product.toString(),
+          product_card_id
+        );
+        // Close the modal
+        closeModal();
+      } else {
+        alert("Please select a collection.");
+      }
+    };
+
+    // Remove product
+    const removeFromExistingButton = document.createElement("button");
+    removeFromExistingButton.textContent = "Remove from Collection";
+    removeFromExistingButton.classList.add("modal-button");
+    removeFromExistingButton.onclick = function () {
+      const selectedCollection = collectionDropdown.value;
+      if (selectedCollection != "All") {
+        console.log(
+          `Removing "${product}" from collection: ${selectedCollection}`
+        );
+        // Remove from Collection
+        removeCollectionData(
+          "Collections",
+          selectedCollection.toString(),
+          product.toString(),
+          product_card_id
+        );
+        // Close the modal
+        closeModal();
+        // Implement your logic to remove from the selected collection
+      } else {
+        alert("Please select a collection.");
+      }
+    };
+
+    // Append elements to the existing collection section
+    existingCollectionDiv.appendChild(existingLabel);
+    existingCollectionDiv.appendChild(collectionDropdown);
+    existingCollectionDiv.appendChild(buttonContainer);
+    buttonContainer.appendChild(addToExistingButton);
+    buttonContainer.appendChild(removeFromExistingButton);
+
+    // Create new collection section
+    const newCollectionDiv = document.createElement("div");
+    const newLabel = document.createElement("label");
+    newLabel.textContent = "Create New:";
+    newLabel.classList.add("overline");
+
+    const newCollectionInput = document.createElement("input");
+    newCollectionInput.type = "text";
+    newCollectionInput.classList.add("collectuion-input");
+    newCollectionInput.placeholder = "Enter collection name";
+    newCollectionInput.id = "new-collection-name";
+
+    const createCollectionButton = document.createElement("button");
+    createCollectionButton.classList.add("modal-button");
+    createCollectionButton.style.marginTop = "1rem";
+    createCollectionButton.textContent = "Create New Collection";
+    createCollectionButton.onclick = function () {
+      const newCollectionName = newCollectionInput.value.trim();
+      if (newCollectionName) {
+        console.log(
+          `Creating new collection: ${newCollectionName} and adding "${product}"`
+        );
+        // Add to Collection
+        addCollectionData(
+          "Collections",
+          newCollectionName.toString(),
+          product.toString(),
+          product_card_id
+        );
+        // Close the modal
+        closeModal();
+        // Implement your logic to create a new collection and add the product
+      } else {
+        alert("Please enter a name for the new collection.");
+      }
+    };
+    newCollectionDiv.appendChild(newLabel);
+    newCollectionDiv.appendChild(newCollectionInput);
+    newCollectionDiv.appendChild(createCollectionButton);
+
+    modal.appendChild(closeButton);
+    modal.appendChild(title);
+    modal.appendChild(productName);
+    modal.appendChild(existingCollectionDiv);
+    modal.appendChild(newCollectionDiv);
+
+    // Create a backdrop to handle clicks outside the modal
+    const modalBackdrop = document.createElement("div");
+    modalBackdrop.classList.add("modal-backdrop");
+    modalBackdrop.style.position = "fixed";
+    modalBackdrop.style.top = "0";
+    modalBackdrop.style.left = "0";
+    modalBackdrop.style.width = "100%";
+    modalBackdrop.style.height = "100%";
+    modalBackdrop.style.backgroundColor = "rgba(0, 0, 0, 0.5)";
+    modalBackdrop.style.zIndex = "999"; // Below the modal
+    modalBackdrop.onclick = closeModal;
+
+    document.body.appendChild(modalBackdrop);
+    document.body.appendChild(modal);
+  }
+
+  function closeModal() {
+    const modal = document.querySelector(".add-to-list-modal");
+    const backdrop = document.querySelector(".modal-backdrop");
+    if (modal) {
+      document.body.removeChild(modal);
+    }
+    if (backdrop) {
+      document.body.removeChild(backdrop);
+    }
+  }
+
+  // Create Cookies
+  function setCookie(name, value, days) {
+    const date = new Date();
+    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+    const expires = "expires=" + date.toUTCString();
+    document.cookie = name + "=" + value + ";" + expires + ";path=/";
+  }
+
+  function getCookie(name) {
+    const nameEQ = name + "=";
+    const ca = document.cookie.split(";");
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) === " ") c = c.substring(1, c.length);
+      if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+  }
+
+  // Product list
+  function createAllProductList() {
+    // Show a list of products
+    const productContainer = document.getElementById("body-container");
+    productContainer.innerHTML = ""; // Clear existing content
+
+    const allProductsContainer = document.createElement("div");
+    allProductsContainer.id = "product-list";
+    productContainer.appendChild(allProductsContainer);
+
+    // Search container
+    const searchContainer = document.createElement("div");
+    searchContainer.classList.add("searchContainer");
+    allProductsContainer.appendChild(searchContainer);
+
+    // Create dropdown menu
+    const filterDropdown = document.createElement("select");
+    filterDropdown.classList.add("filterDropdown");
+    filterDropdown.style.marginBottom = "0.5rem";
+
+    const options = ["Product Name", "Division", "Tag"];
+    options.forEach((optionText) => {
+      const option = document.createElement("option");
+      option.value = optionText.toLowerCase(); // Use lowercase for easier handling
+      option.textContent = optionText;
+      filterDropdown.appendChild(option);
+    });
+    searchContainer.appendChild(filterDropdown);
+
+    // Update placeholder based on dropdown selection
+    filterDropdown.addEventListener("change", function () {
+      const selectedOption = this.value;
+      filters_applied = selectedOption;
+
+      switch (selectedOption) {
+        case "keyword":
+          searchInput.placeholder = default_filter_placeholder_text;
+          break;
+        case "tag":
+          searchInput.placeholder = "Filter results by Theme or Industry";
+          break;
+        case "division":
+          searchInput.placeholder = "Filter results by Division";
+          break;
+        default:
+          searchInput.placeholder = "Filter results by Product Name";
+      }
+      // You would likely trigger a filtering function here based on the
+      // selectedOption and the searchInput.value
+      console.log("Filtering by:", selectedOption);
+      console.log("Search term:", searchInput.value);
+
+      triggerSearch();
+    });
+
+    function triggerSearch() {
+      console.log("Search event");
+      // Trigger event
+      const event = new Event("input", {
+        bubbles: true,
+        cancelable: true,
+      });
+
+      // Trigger event
+      document.getElementById("search-input").dispatchEvent(event);
+    }
+
+    // Create search input
+    const default_filter_placeholder_text = "Filter results by Product Name";
+    const searchInput = document.createElement("input");
+    searchInput.id = "search-input";
+    searchInput.type = "text";
+    searchInput.placeholder = default_filter_placeholder_text; // Default placeholder
+    searchInput.classList.add("filterProducts");
+    searchInput.style.marginBottom = "1rem";
+    searchContainer.appendChild(searchInput);
+
+    // Search results
+    const searchResults = document.createElement("h1");
+    searchResults.id = "search-headline";
+    searchResults.textContent =
+      "Search Results (" + product_list.length.toString() + ")";
+    searchResults.style.marginTop = "2rem";
+    allProductsContainer.appendChild(searchResults);
+
+    // Container for Summary and All Data
+    const buttonContainer = document.createElement("div");
+    buttonContainer.classList.add("chip-list");
+    allProductsContainer.appendChild(buttonContainer);
+
+    // Initially set the visibility based on the cookie
+    const initialProductCards = document.querySelectorAll(".product-card");
+    initialProductCards.forEach((card) => {
+      const description = card.querySelector(".productDescription");
+      if (description) {
+        // Set the display property based on the cookie value
+        description.style.display = "block";
+      }
+    });
+
+    // Container for Summary and All Data
+    const buttonContainerSummary = document.createElement("div");
+    buttonContainerSummary.classList.add("chip-list");
+    allProductsContainer.appendChild(buttonContainerSummary);
+
+    // Export Summary Data
+    const exportSummaryButton = document.createElement("button");
+    exportSummaryButton.textContent = "Export Search Results (CSV)";
+    exportSummaryButton.classList.add("export-summary-button");
+    buttonContainerSummary.appendChild(exportSummaryButton);
+
+    // All Data
+    const exportAllDataButton = document.createElement("button");
+    exportAllDataButton.textContent = "Export All Data (JSON)";
+    exportAllDataButton.classList.add("export-summary-button");
+    buttonContainerSummary.appendChild(exportAllDataButton);
+
+    // Add summary behavior
+    exportSummaryButton.onclick = function () {
+      // Export summary logic here
+      console.log("Exporting summary...");
+      // Match visible products to their JSON version
+      let products_found = [];
+      // Go though all the product cards and find the visible ones
+      productCards.forEach((card) => {
+        const product_card = card;
+        // Check if the product card is visible
+        if (product_card.dataset.visible == "true") {
+          // Get the product name from the card
+          const product_name = product_card.dataset.productName;
+          // Find the matching product in the product_list
+          for (var n = 0; n < product_list.length; n++) {
+            const product = product_list[n];
+            const header = product["Header"]["Product Name"];
+            if (header.toLowerCase() == product_name.toLowerCase()) {
+              // Remove special characters from the product name
+              const cleanedProductName = header.replace(/[^a-zA-Z0-9\s]/g, "");
+              let summary = {
+                Name: cleanedProductName,
+                Division: product["Header"]["Division"],
+                Type: product["Header"]["Type"],
+                Description: product["Summary"]["Description"],
+                Source: product["Header"]["Source"],
+              };
+              products_found.push(summary);
+            }
+          }
+        }
+      });
+
+      // Convert products_found to CSV
+      if (products_found.length > 0) {
+        const headers = Object.keys(products_found[0]);
+        const csvRows = [];
+
+        // Add header row
+        csvRows.push(headers.join(","));
+
+        // Add data rows
+        products_found.forEach((product) => {
+          const values = headers.map((header) => {
+            const value = product[header];
+            // Escape commas and quotes for CSV
+            if (typeof value === "string") {
+              return `"${value.replace(/"/g, '""')}"`;
+            }
+            return value;
+          });
+          csvRows.push(values.join(","));
+        });
+
+        const csvString = csvRows.join("\n");
+
+        // Create a Blob object with the CSV data
+        const blob = new Blob([csvString], { type: "text/csv" });
+
+        // Create a download link
+        const a = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        a.href = url;
+        a.download =
+          "products-summary-result-count-" + products_found.length + ".csv"; // Set the filename
+
+        // Programmatically click the link to trigger the download
+        document.body.appendChild(a);
+        a.click();
+
+        // Clean up the URL object
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      } else {
+        console.log("No products found to export.");
+        // Optionally display a message to the user that no products were found.
+      }
+    };
+
+    // Export all Data
+    exportAllDataButton.onclick = function () {
+      // Export full data logic here
+      console.log("Exporting full data...");
+      let products_found = [];
+      // Go through all the product cards and find the visible ones
+      productCards.forEach((card) => {
+        const product_card = card;
+        // Check if the product card is visible
+        if (product_card.dataset.visible == "true") {
+          // Get the product name from the card
+          const product_name = product_card.dataset.productName;
+          // Find the matching product in the product_list
+          for (var n = 0; n < product_list.length; n++) {
+            const product = product_list[n];
+            const header = product["Header"]["Product Name"];
+            if (header.toLowerCase() == product_name.toLowerCase()) {
+              products_found.push(product);
+              // Assuming each visible card corresponds to exactly one product in the list,
+              // we can break the inner loop once a match is found for efficiency.
+              break;
+            }
+          }
+        }
+      });
+
+      // Convert products_found to JSON
+      if (products_found.length > 0) {
+        const jsonString = JSON.stringify(products_found, null, 2); // Use null, 2 for pretty printing
+
+        // Create a Blob object with the JSON data
+        const blob = new Blob([jsonString], { type: "application/json" });
+
+        // Create a download link
+        const a = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        a.href = url;
+        a.download =
+          "products-full-data-result-count-" + products_found.length + ".json"; // Set the filename
+
+        // Programmatically click the link to trigger the download
+        document.body.appendChild(a);
+        a.click();
+
+        // Clean up the URL object
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      } else {
+        console.log("No products found to export.");
+        // Optionally display a message to the user that no products were found.
+      }
+    };
+
+    // Solutions container
+    const solutionHeadline = document.createElement("h3");
+    solutionHeadline.textContent = "Solutions";
+    solutionHeadline.style.marginTop = "2rem";
+    allProductsContainer.appendChild(solutionHeadline);
+
+    const solutionList = document.createElement("div");
+    solutionList.classList.add("button-grid-container");
+    allProductsContainer.appendChild(solutionList);
+
+    // DataFeed container
+    const datafeedHeadline = document.createElement("h3");
+    datafeedHeadline.textContent = "Datasets";
+    datafeedHeadline.style.marginTop = "4rem";
+    allProductsContainer.appendChild(datafeedHeadline);
+
+    const datafeedList = document.createElement("div");
+    datafeedList.classList.add("button-grid-container");
+    allProductsContainer.appendChild(datafeedList);
+
+    const productCards = []; // Array to store all product cards for filtering
+
+    // Find all items
+    let found_collection_items = [];
+    for (var q = 0; q < collection_list.length; q++) {
+      // Get the collection data
+      let collection_item = collection_list[q];
+      const collection_name = Object.keys(collection_item)[0]; // Private Markets, Energy Transition, etc
+      const collection_product_list = collection_item[collection_name];
+      for (var n = 0; n < collection_product_list.length; n++) {
+        const product_name = collection_product_list[n]; // Name of the Product
+        found_collection_items.push(product_name["Name"]);
+      }
+    }
+
+    // Create all Product Cards
+    for (let i = 0; i < product_list.length; i++) {
+      const product = product_list[i];
+      const header = product["Header"]["Product Name"];
+      const product_type = product["Header"]["Type"];
+      const header_and_type = "<b>" + header + "</b>"; //"</b>  | " + product_type;
+      const header_division = product["Header"]["Division"];
+
+      // Check all collections and tag the Product Cards
+      let collection_string = "";
+      for (var q = 0; q < collection_list.length; q++) {
+        // Get the collection data
+        let collection_item = collection_list[q];
+        const collection_name = Object.keys(collection_item)[0]; // Private Markets, Energy Transition, etc
+        const collection_product_list = collection_item[collection_name];
+
+        // Go through all the product names in the collection and tag the item
+        for (var n = 0; n < collection_product_list.length; n++) {
+          const product_name = collection_product_list[n]; // Name of the Product we are looking for
+          // If the Product Names match -- Then add it.
+          if (header.toLowerCase() == product_name["Name"].toLowerCase()) {
+            collection_string += collection_name + ",";
+            // Remove entry from total list
+            let index = found_collection_items.indexOf(header);
+            if (index > -1) {
+              // Check if the string exists in the array
+              found_collection_items.splice(index, 1); // Remove 1 element at the found index
+            }
+          }
+        }
+      }
+
+      // Add Cards
+      const productCard = document.createElement("button");
+      productCard.classList.add("product-card");
+      if (header_division) {
+        const divisionElement = document.createElement("div");
+        divisionElement.textContent = header_division;
+        divisionElement.classList.add("division-title");
+        productCard.appendChild(divisionElement);
+      }
+
+      productCard.innerHTML += header_and_type; // Append header and type after the division
+
+      // Add description
+      const descriptionElement = document.createElement("div");
+      descriptionElement.textContent = product["Summary"]["Description"];
+      descriptionElement.classList.add("productDescription");
+      descriptionElement.classList.add("limit-text"); // Limit text to 5 lines
+      descriptionElement.style.display = "block";
+      productCard.appendChild(descriptionElement);
+
+      const chipContainer = document.createElement("div");
+      chipContainer.classList.add("chip-container");
+      chipContainer.classList.add("chip-list");
+      chipContainer.style.display = "none";
+      productCard.append(chipContainer);
+
+      productCard.id = "product-card-" + String(i);
+      productCard.dataset.productName = header.toLowerCase(); // Store lowercase for filtering
+      productCard.dataset.productType = product_type.toLowerCase(); // Store lowercase for filtering
+      productCard.dataset.productDivision = header_division
+        ? header_division.toLowerCase()
+        : ""; // Store lowercase division for filtering
+      productCard.dataset.productTheme = mergeObjectToString(product["Themes"]);
+      productCard.dataset.productIndustry = mergeObjectToString(
+        product["Industry"]
+      );
+      productCard.dataset.productCollection = collection_string; // Add all collections they are part of
+      productCard.dataset.visible = "true"; // Add a visible tag
+      productCard.dataset.description = product["Summary"]["Description"]; // Add a description tag
+      productCards.push(productCard); // Add to the array
+
+      if (product_type == "Dataset") {
+        datafeedList.appendChild(productCard);
+      } else {
+        solutionList.appendChild(productCard);
+      }
+
+      productCard.onclick = function () {
+        window.location.hash = "";
+        // Clear the product container
+        const summaryContainer = document.getElementById("summary_container");
+        if (summaryContainer) {
+          summaryContainer.innerHTML = "";
+        }
+        // Create the product summary
+        const numericIdString = this.id.substring("product-card-".length);
+        console.log(parseInt(numericIdString));
+        // Product Detail Page
+        createProductSummary(parseInt(numericIdString));
+        window.location.hash = "body-container";
+      };
+    }
+
+    //-------------------------------------- //
+    // Check if the collection did not map to an existing product
+    if (found_collection_items.length > 0) {
+      console.log("No collection matches for");
+      console.log(found_collection_items);
+    }
+
+    // Function to handle the search filtering
+    searchInput.addEventListener("input", function () {
+      let suggestion_list = []; // Autosuggestions
+      let returned_results = 0;
+
+      const searchTerm = this.value.toLowerCase();
+      const keywords = searchTerm
+        .split(" ")
+        .filter((keyword) => keyword.length > 0); // Split by spaces and remove empty strings
+
+      productCards.forEach((card) => {
+        // Find and clear chip container
+        const chipcontainer = card.querySelector(".chip-container.chip-list");
+        if (chipcontainer) {
+          chipcontainer.innerHTML = "";
+          chipcontainer.style.display = "none";
+        }
+
+        const productName = card.dataset.productName;
+        const productDivision = card.dataset.productDivision;
+
+        const productTheme = card.dataset.productTheme;
+        const productIndustry = card.dataset.productIndustry;
+
+        const productCollection = card.dataset.productCollection;
+
+        // Default set to visible
+        card.dataset.visible = "true"; // Set visible tag
+
+        let productNameFound = true;
+        let divisionNameFound = true;
+
+        let allTagsFound = true;
+
+        if (keywords.length === 0 && collection_applied == collection_default) {
+          card.style.display = "block"; // Show all cards when search is cleared
+          returned_results += 1;
+          return;
+        }
+
+        for (const keyword of keywords) {
+          const foundInName = productName.includes(keyword);
+          const foundInDivision = productDivision.includes(keyword);
+
+          if (!foundInName) {
+            productNameFound = false;
+          }
+          if (!foundInDivision) {
+            divisionNameFound = false;
+          }
+          if (!foundInName && !foundInDivision) {
+            break; // No need to check further keywords for this card
+          }
+        }
+
+        // Check Tags
+        let showChip = false;
+        const foundInTheme = productTheme.toLowerCase().includes(searchTerm);
+        const foundInIndustry = productIndustry
+          .toLowerCase()
+          .includes(searchTerm);
+        if (!foundInIndustry && !foundInTheme) {
+          allTagsFound = false;
+        }
+
+        let found_keywords = [];
+        if ((foundInIndustry || foundInTheme) && filters_applied == "tag") {
+          const chipList = (productTheme + productIndustry).split(",");
+          // console.log(productName);
+          chipList.forEach((chipString) => {
+            chipcontainer.style.display = "flex";
+            // Create Auto-Suggetions -- And Chips
+            if (chipString.toLowerCase().includes(searchTerm)) {
+              suggestion_list.push(chipString);
+              found_keywords.push(chipString);
+              // Create chips
+              const chipTag = createChip(chipString);
+              chipcontainer.appendChild(chipTag);
+              // Find exact matches
+              if (chipString.toLowerCase() == searchTerm) {
+                chipTag.style.backgroundColor = "pink";
+                chipTag.innerText = "Match — " + chipString;
+              }
+            }
+          });
+        }
+
+        if (found_keywords.length > 0) {
+          showChip = true;
+        }
+
+        let show_card = false;
+        switch (filters_applied) {
+          case "keyword":
+            if (productNameFound) {
+              show_card = true;
+            }
+            break;
+          case "division":
+            if (divisionNameFound) {
+              show_card = true;
+            }
+            break;
+          case "tag":
+            if (showChip) {
+              show_card = true;
+            }
+            break;
+          default:
+            show_card = false;
+            console.log("Filter failed");
+        }
+
+        // Collection filtering
+        if (collection_applied != collection_default) {
+          if (show_card == true) {
+            show_card = productCollection.includes(collection_applied);
+          }
+        }
+
+        if (show_card) {
+          returned_results += 1;
+          card.style.display = "block"; // Show card if all keywords are found
+        } else {
+          card.style.display = "none"; // Hide card if not all keywords are found
+          card.dataset.visible = "false"; // Set visible tag
+        }
+      });
+
+      // Returned results
+      console.log("Search results: " + returned_results.toString());
+      var search_headline = document.getElementById("search-headline");
+      if (search_headline) {
+        search_headline.innerText =
+          "Search Results (" + returned_results.toString() + ")";
+      }
+      // Remove duplicates
+      const auto_suggestions = removeDuplicates(suggestion_list);
+      //console.log(auto_suggestions);
+      function removeDuplicates(arr) {
+        return [...new Set(arr)];
+      }
+    });
+  }
+
+  function removeLeadingColonSpace(text) {
+    if (typeof text !== "string") {
+      return text; // Or throw an error, depending on desired behavior for non-string input
+    }
+    if (text.startsWith(": ")) {
+      return text.substring(2);
+    }
+    return text;
+  }
+
+  function mergeObjectToString(arrOfObjects) {
+    const result = [];
+    for (const obj of arrOfObjects) {
+      for (const key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          result.push(key);
+          if (Array.isArray(obj[key])) {
+            result.push(...obj[key]);
+          }
+        }
+      }
+    }
+    return result.join(",");
+  }
+
+  // ---------------------------------------------------------------------------- //
+  // ---------------------------------------------------------------------------- //
+  // Product Detail Page ------------------------------------------------------------- //
+  function createProductSummary(product_index) {
+    // Product Index
+    const product = product_list[product_index];
+    // console.log(product);
+    const productContainer = document.getElementById("body-container");
+
+    let summaryContainer = document.getElementById("summary_container");
+    if (!summaryContainer) {
+      summaryContainer = document.createElement("div");
+      summaryContainer.id = "summary_container";
+      summaryContainer.classList.add("section-container");
+      summaryContainer.style.marginBottom = "4rem";
+      productContainer.prepend(summaryContainer);
+    }
+
+    const column_left = document.createElement("div");
+    column_left.classList.add("column-left");
+    summaryContainer.appendChild(column_left);
+
+    const column_right = document.createElement("div");
+    column_right.classList.add("column-right");
+    summaryContainer.appendChild(column_right);
+
+    // Add Tags
+    const divisionTitle = document.createElement("div");
+    divisionTitle.innerHTML =
+      "<b>" +
+      product["Header"]["Division"] +
+      "</b> | " +
+      product["Header"]["Type"];
+    divisionTitle.className = "overline";
+    divisionTitle.style.marginBottom = "0.5rem";
+    column_left.appendChild(divisionTitle);
+
+    // Product Name
+    const productHeadlineLink = document.createElement("h1");
+    productHeadlineLink.id = "product-headline"; // Keep the original ID for potential styling
+    //productHeadlineLink.classList.add("product-link"); // Add the product-link class for consistency
+    productHeadlineLink.innerText = product["Header"]["Product Name"];
+    //productHeadlineLink.style.textDecoration = "none"; // Remove underline
+    column_left.appendChild(productHeadlineLink);
+
+    // Product Description
+    const productDescription = document.createElement("p");
+    productDescription.id = "product-description";
+    productDescription.innerText = product["Summary"]["Description"];
+    column_left.appendChild(productDescription);
+
+    // Learn more
+    const learnMoreLink = document.createElement("a");
+    learnMoreLink.href = product["Header"]["Source"];
+    learnMoreLink.target = "_blank"; // Open in a new tab
+    learnMoreLink.className = "learn-more-link";
+    learnMoreLink.innerText = "Learn more";
+    learnMoreLink.style.fontWeight = "bold";
+    learnMoreLink.style.color = "#d6002a";
+    learnMoreLink.style.marginTop = "1rem";
+    column_left.appendChild(learnMoreLink);
+
+    // Add Features & Benefits
+    const aiFeatures = document.createElement("h2");
+    aiFeatures.textContent = "Features & Benefits";
+    aiFeatures.style.marginBottom = "0";
+    aiFeatures.className = "overline features-overline";
+    column_right.appendChild(aiFeatures);
+
+    // List
+    createSummaryElements(product["Summary"]["Features"], column_right);
+
+    function createSummaryElements(dataArray, parentContainer) {
+      dataArray.forEach((item) => {
+        const rowDiv = document.createElement("div");
+        //rowDiv.classList.add("summary-row");
+
+        const titleColumn = document.createElement("div");
+        //titleColumn.classList.add("title-column");
+        const titleHeader = document.createElement("h3");
+        titleColumn.style.marginTop = "2rem";
+        titleHeader.textContent = item.Title;
+        titleColumn.appendChild(titleHeader);
+
+        const descriptionColumn = document.createElement("div");
+        //descriptionColumn.classList.add("description-column");
+        const descriptionParagraph = document.createElement("p");
+        descriptionParagraph.textContent = removeLeadingColonSpace(
+          item.Description
+        );
+        descriptionColumn.appendChild(descriptionParagraph);
+
+        rowDiv.appendChild(titleColumn);
+        rowDiv.appendChild(descriptionColumn);
+        parentContainer.appendChild(rowDiv);
+      });
+    }
+
+    function createChipSection(sectionTitle, data) {
+      const lowercaseTitle = sectionTitle.toLowerCase();
+      // Add Tags
+      const chipTitle = document.createElement("div");
+      chipTitle.id = `${lowercaseTitle}-chip-title`;
+      chipTitle.textContent = sectionTitle;
+      chipTitle.className = "overline";
+      chipTitle.style.marginBottom = "0.5rem";
+      column_right.appendChild(chipTitle);
+
+      const chipContainer = document.createElement("div");
+      chipContainer.id = `${lowercaseTitle}-chip-container`;
+      chipContainer.className = "chip-list";
+      column_right.appendChild(chipContainer);
+
+      for (var i = 0; i < data.length; i++) {
+        const item = data[i];
+
+        if (typeof item === "string") {
+          // Process string array entries
+          const chip = document.createElement("div");
+          chip.classList.add("chip");
+          chip.innerText = item;
+          chipContainer.appendChild(chip);
+        } else if (typeof item === "object" && item !== null) {
+          // Process JSON array entries
+          for (const key in item) {
+            if (item.hasOwnProperty(key)) {
+              // Add the key as a category chip
+              const categoryChip = document.createElement("div");
+              categoryChip.classList.add("chip", "category");
+              categoryChip.innerText = key;
+              chipContainer.appendChild(categoryChip);
+
+              // Add the values as regular chips
+              const values = item[key];
+              if (Array.isArray(values)) {
+                values.forEach((value) => {
+                  const chip = document.createElement("div");
+                  chip.classList.add("chip");
+                  chip.innerText = value;
+                  chipContainer.appendChild(chip);
+                });
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  function get_products() {
+    return ["replace-with-products-json"];
+  }
+</script>
