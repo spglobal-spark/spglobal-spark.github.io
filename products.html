@@ -15,11 +15,7 @@
         padding: 0rem 2rem 2rem 2rem;
         margin: 0;
 
-        display: grid;
-        grid-template-columns: auto 1fr; /* Two columns: auto width for nav, remaining for main */
-        grid-template-rows: auto 1fr; /* Auto height for nav row, remaining for main row */
-        grid-template-areas: "nav main";
-        grid-gap: 5rem;
+        display: block;
       }
       p {
         color: #333;
@@ -355,27 +351,16 @@ transition: background-color 0.3s ease-in-out;
         transform: translateY(-50%);
       }
       main {
-        grid-area: main;
         width: 100%;
-        max-width: none; /* Remove max-width to fill the remaining space */
+        max-width: 1408px;
         padding-top: 2rem;
+        margin-left: auto;
+        margin-right: auto;
       }
       /* Media query for screens below 1024px width */
       @media (max-width: 1023px) {
         body {
-          grid-template-columns: 1fr; /* Single column */
-          grid-template-rows: auto auto; /* Adjust rows for single column layout */
-          grid-template-areas:
-            "nav"
-            "main";
-          grid-gap: 2rem; /* Adjust gap for single column */
-        }
-
-        nav {
-          width: calc(
-            100% - 3rem
-          ); /* Make nav take full width in single column */
-          max-width: none; /* Remove max-width restriction */
+          padding: 32px;
         }
 
         .navigation {
@@ -470,9 +455,9 @@ transition: background-color 0.3s ease-in-out;
     </style>
   </head>
   <body>
+    <!--
     <nav id="navigation">
       <div class="navigation">
-        <!-- Logo -->
         <div class="main-logo">
           <svg
             id="spglobal-logo"
@@ -498,9 +483,8 @@ transition: background-color 0.3s ease-in-out;
         <button id="nav-products">Products</button>
         <button id="nav-thought-leadership">Thought Leadership</button>
         <button id="nav-events">Events</button>
-        <!-- <button>Search (AI Powered) -- Explain like I am 5 years old</button> -->
       </div>
-    </nav>
+    </nav>  -->
     <main id="body-container"></main>
   </body>
 </html>
@@ -1319,14 +1303,13 @@ transition: background-color 0.3s ease-in-out;
 
     // Add Toggle button that turns on and off the Product Card Description visibility
     const toggleDescriptionButton = document.createElement("button");
-    let toggleDescriptionVisible =
-      getCookie("productDescriptionVisible") === "true"; // Read cookie
+    let toggleDescriptionVisible = true; //getCookie("productDescriptionVisible") === "true"; // Read cookie
     let descriptionCopy = "Card Details";
     toggleDescriptionButton.textContent = toggleDescriptionVisible
       ? "Hide " + descriptionCopy
       : "Show " + descriptionCopy;
     toggleDescriptionButton.classList.add("export-summary-button");
-    buttonContainer.appendChild(toggleDescriptionButton);
+    //buttonContainer.appendChild(toggleDescriptionButton);
 
     // Initially set the visibility based on the cookie
     const initialProductCards = document.querySelectorAll(".product-card");
