@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.1.0"></script> --> <!-- Fuzzy Matching -- https://www.fusejs.io/getting-started/installation.html#yarn -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.1.0"></script> -->
+    <!-- Fuzzy Matching -- https://www.fusejs.io/getting-started/installation.html#yarn -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Product Database</title>
@@ -167,10 +168,10 @@
       }
       .close-button {
         width: 32px;
-border: none;
-cursor: pointer;
-border-radius: 0.25rem;
-transition: background-color 0.3s ease-in-out;
+        border: none;
+        cursor: pointer;
+        border-radius: 0.25rem;
+        transition: background-color 0.3s ease-in-out;
       }
       .close-button:hover {
         background-color: #808080; /* Gray background on hover */
@@ -455,7 +456,8 @@ transition: background-color 0.3s ease-in-out;
     </style>
   </head>
   <body>
-   <button style='display: none;' id="download">Download PowerPoint</button>
+    <button style='display: none;' id="download">Download PowerPoint</button>
+    <!-- style='display: none;' -->
     <!--
     <nav id="navigation">
       <div class="navigation">
@@ -489,24 +491,30 @@ transition: background-color 0.3s ease-in-out;
     <main id="body-container"></main>
   </body>
 </html>
-    <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs/dist/pptxgen.bundle.js"></script> <!-- https://gitbrent.github.io/PptxGenJS/ Powerpoint Generator -->
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs/dist/pptxgen.bundle.js"></script>
+<!-- https://gitbrent.github.io/PptxGenJS/ Powerpoint Generator -->
 <script type="module">
-
-// Measure Presentation Text Size
-function measureTextSize(inputString, fontSize, fontWeight, pptLineHeight, pptTextboxWidth) {
+  // Measure Presentation Text Size
+  function measureTextSize(
+    inputString,
+    fontSize,
+    fontWeight,
+    pptLineHeight,
+    pptTextboxWidth
+  ) {
     let fontFamily = "Arial";
-    let lineSpacing = pptLineHeight * 1.24; // Line height multiplier (e.g., 1.2 for 20% extra spacing)
+    let lineSpacing = pptLineHeight; // * 1.24; // Line height multiplier (e.g., 1.2 for 20% extra spacing)
     let maxWidth = Math.floor(pptTextboxWidth * 72.0); // Convert inches to pixels (1 inch = 72 pixels)
 
     // Create a new canvas element
-    const canvas = document.createElement('canvas');
-    const context = canvas.getContext('2d');
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
 
     // Set the font properties
     context.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
 
     // Split the input string into words
-    const words = inputString.split(' ');
+    const words = inputString.split(" ");
     let maxLineWidth = 0;
     let totalHeight = 0;
     let currentLineWidth = 0;
@@ -515,19 +523,19 @@ function measureTextSize(inputString, fontSize, fontWeight, pptLineHeight, pptTe
     let line_number = 1;
 
     for (let word of words) {
-        const wordWidth = context.measureText(word).width;
-        // Check if adding the word exceeds the max width
-        if (currentLineWidth + wordWidth > maxWidth) {
-            // Update the max line width if the current line is wider
-            maxLineWidth = Math.max(maxLineWidth, currentLineWidth);
-            // Move to the next line
-            currentLineWidth = wordWidth + context.measureText(' ').width; // Start new line with the current word
-            // Add line number
-            line_number += 1;
-        } else {
-            // Add the word to the current line
-            currentLineWidth += wordWidth + context.measureText(' ').width; // Adding space width
-        }
+      const wordWidth = context.measureText(word).width;
+      // Check if adding the word exceeds the max width
+      if (currentLineWidth + wordWidth > maxWidth) {
+        // Update the max line width if the current line is wider
+        maxLineWidth = Math.max(maxLineWidth, currentLineWidth);
+        // Move to the next line
+        currentLineWidth = wordWidth + context.measureText(" ").width; // Start new line with the current word
+        // Add line number
+        line_number += 1;
+      } else {
+        // Add the word to the current line
+        currentLineWidth += wordWidth + context.measureText(" ").width; // Adding space width
+      }
     }
 
     // Add the last line's width and height
@@ -535,83 +543,222 @@ function measureTextSize(inputString, fontSize, fontWeight, pptLineHeight, pptTe
     totalHeight = line_number * currentLineHeight;
 
     return {
-        width: maxLineWidth / 72.0, // Convert to inches
-        height: totalHeight / 72.0  // Convert to inches
+      width: maxLineWidth / 72.0, // Convert to inches
+      height: totalHeight / 72.0, // Convert to inches
     };
-}
+  }
 
-// Example usage
-const textSize = measureTextSize("RiskGauge Desktop Capabilities and chickens and y", 36, 'bold', 0.9, 4.8);
-console.log(`Width: ${textSize.width}, Height: ${textSize.height}`);
+  // Example usage
+  const textSize = measureTextSize(
+    "RiskGauge Desktop Capabilities and chickens and y",
+    36,
+    "bold",
+    0.9,
+    4.8
+  );
+  console.log(`Width: ${textSize.width}, Height: ${textSize.height}`);
 
-  document.getElementById('download').addEventListener('click', function() {
+  document.getElementById("download").addEventListener("click", function () {
+    console.log("CLICKED");
+    let pptx = new PptxGenJS();
+    let slide = pptx.addSlide();
 
-  console.log("CLICKED")
-            let pptx = new PptxGenJS();
-            let slide = pptx.addSlide();
+    pptx.layout = "LAYOUT_WIDE";
+    pptx.theme = { bodyFontFace: "Arial" };
 
-            pptx.layout = 'LAYOUT_WIDE';
-            pptx.theme = { bodyFontFace: "Arial" };
+    let margin_left = 0.62;
 
-            let margin_left = 0.62;
-            
-            // Division Title
-            let division_title = "S&P Global Market Intelligence";
-            let divisionTitleSize = measureTextSize(division_title, 14, 'bold', 1.0, 12.1);
+    // Division Title
+    let division_title = "S&P Global Market Intelligence";
+    let divisionTitleSize = measureTextSize(
+      division_title,
+      14,
+      "bold",
+      1.0,
+      12.1
+    );
 
-            slide.addText(division_title, {
-                x: margin_left,
-                y: 0.51,
-                w: (divisionTitleSize.width + 0.2).toString(),
-                h: "0.34",
-                align: "left",
-                color: "000000",
-                bold: true,
-                /* autoFit: 'shrinkTextOnOverflow', */
-                fontSize: 14,
-            });
-            
+    slide.addText(division_title, {
+      x: margin_left,
+      y: 0.51,
+      w: (divisionTitleSize.width + 0.2).toString(),
+      h: "0.34",
+      align: "left",
+      valign: "top",
+      color: "000000",
+      bold: true,
+      fontSize: 14,
+    });
 
-            // Our Capabilities
-            slide.addText("  |  Our Capabilities", {
-                x: margin_left + divisionTitleSize.width,
-                y: 0.51,
-                w: (12.1 - divisionTitleSize.width - 0.1).toString(),
-                h: "0.34",
-                align: "left",
-                color: "555555",
-                bold: false,
-                fontSize: 14,
-            });
+    // Our Capabilities
+    slide.addText("  |  Our Capabilities", {
+      x: margin_left + divisionTitleSize.width,
+      y: 0.51,
+      w: (12.1 - divisionTitleSize.width - 0.1).toString(),
+      h: "0.34",
+      align: "left",
+      valign: "top",
+      color: "555555",
+      bold: false,
+      fontSize: 14,
+    });
 
-            // Product Name
-            let product_name = "RiskGauge Desktop";
-            let productNameSize = measureTextSize(product_name, 36, 'bold', 1.0, 5.46);
-            slide.addText(product_name, {
-                x: margin_left,
-                y: 1.0,
-                w: 5.46,
-                h: (productNameSize.height + 0.2).toString(),
-                align: "left",
-                color: "d6002a",
-                bold: true,
-                fontSize: 36,
-            });
+    let spacer = 0.3;
 
-            // Description
+    // Product Name
+    let left_column_width = 5.46;
+    let product_name = "RiskGauge Desktop";
+    let productNameSize = measureTextSize(
+      product_name,
+      36,
+      "bold",
+      1.0,
+      left_column_width
+    );
+    slide.addText(product_name, {
+      x: margin_left,
+      y: 1.0,
+      w: left_column_width,
+      h: (productNameSize.height + spacer).toString(),
+      align: "left",
+      valign: "top",
+      color: "d6002a",
+      bold: true,
+      fontSize: 36,
+    });
 
-            // Learn more link
+    // Description
+    let description =
+      "RiskGauge™ Desktop is a streamlined platform designed to provide a clear and comprehensive view of customer credit risk. It empowers organizations to assess, monitor, and manage credit risk for over 400 million companies globally through powerful analytical tools accessible in a single platform. By offering features like portfolio dashboards, company comparisons, and RiskGauge Scores and Reports, RiskGauge™ Desktop accelerates credit workflows, delivers pre-calculated risk metrics, and provides early warning alerts, enabling users to anticipate risks and opportunities across their entire customer base.";
+    let descriptionSize = measureTextSize(
+      description,
+      14,
+      "normal",
+      1.5,
+      left_column_width
+    );
+    slide.addText(description, {
+      x: margin_left,
+      y: 1.0 + productNameSize.height + spacer,
+      w: left_column_width,
+      h: (descriptionSize.height + spacer).toString(),
+      align: "left",
+      valign: "top",
+      color: "555555",
+      bold: false,
+      fontSize: 14,
+      lineSpacing: 14 * 1.5,
+    });
 
-            // Key Features & Benefits
+    // Learn more link
+    slide.addText(
+      [
+        {
+          text: "Learn more online",
+          options: {
+            hyperlink: {
+              url: "https://github.com/gitbrent/pptxgenjs",
+              tooltip: "PptxGenJS GitHub Repository",
+            },
+          },
+        },
+      ],
+      {
+        x: margin_left,
+        y:
+          1.0 +
+          productNameSize.height +
+          spacer +
+          descriptionSize.height +
+          spacer,
+        w: left_column_width,
+        h: 0.6,
+        align: "left",
+        valign: "top",
+        color: "d6002a",
+        bold: true,
+        fontSize: 14,
+        lineHeight: 1.0,
+      }
+    );
 
-            // Loop for each feature
+    // ----------------- KEY FEATURES & BENEFITS ----------------- //
+    // Loop for each feature
 
-            // S&P Global Logo
+    let margin_left_column_two = 6.82;
+    let right_column_width = 5.66;
 
-            pptx.writeFile({ fileName: "PptxGenJS-Demo" });
-        });
+    // Key Features & Benefits
+    let featuredHeadline = "Key Features & Benefits";
+    let featuredHeadlineSize = measureTextSize(
+      featuredHeadline,
+      16,
+      "bold",
+      1.0,
+      right_column_width
+    );
+
+    slide.addText("Key Features & Benefits", {
+      x: margin_left_column_two,
+      y: 1.0,
+      w: right_column_width,
+      h: featuredHeadlineSize.height + 0.1,
+      align: "left",
+      valign: "top",
+      color: "d6002a",
+      bold: true,
+      fontSize: 16,
+    });
+
+    // Loop for each feature
+    let subheaderFeature = "Credit Risk Dashboard";
+    let subheaderFeatureSize = measureTextSize(
+      subheaderFeature,
+      18,
+      "bold",
+      1.0,
+      right_column_width
+    );
+
+    slide.addText(subheaderFeature, {
+      x: margin_left_column_two,
+      y: 1.0 + featuredHeadlineSize.height + spacer,
+      w: right_column_width,
+      h: subheaderFeatureSize.height + 0.1,
+      align: "left",
+      valign: "top",
+      color: "000000",
+      bold: true,
+      fontSize: 18,
+    });
+
+    let descriptionFeature =
+      "Visualize and monitor your portfolio's credit risk with customizable dashboards that provide real-time insights and trends.";
+    let descriptionFeatureSize = measureTextSize(
+      descriptionFeature,
+      10,
+      "normal",
+      1.0,
+      right_column_width
+    );
+
+    slide.addText(descriptionFeature, {
+      x: margin_left_column_two,
+      y: 1.0 + featuredHeadlineSize.height + spacer + subheaderFeatureSize.height + 0.2,
+      w: right_column_width,
+      h: descriptionFeatureSize.height + 0.1,
+      align: "left",
+      valign: "top",
+      color: "555555",
+      bold: false,
+      fontSize: 10,
+    });
 
 
+    // S&P Global Logo
+
+    pptx.writeFile({ fileName: "PptxGenJS-Demo" });
+  });
 
   createLoginForm();
 
@@ -801,7 +948,12 @@ console.log(`Width: ${textSize.width}, Height: ${textSize.height}`);
   }
 
   // Add data to Firebase
-  async function addCollectionData(databaseName, documentName, productName, product_card_id) {
+  async function addCollectionData(
+    databaseName,
+    documentName,
+    productName,
+    product_card_id
+  ) {
     // Click the send data button
     const user = auth.currentUser;
     if (user) {
@@ -873,7 +1025,12 @@ console.log(`Width: ${textSize.width}, Height: ${textSize.height}`);
   }
 
   // Remove data
-  async function removeCollectionData(databaseName, documentName, productName, product_card_id) {
+  async function removeCollectionData(
+    databaseName,
+    documentName,
+    productName,
+    product_card_id
+  ) {
     // Check if the user is authenticated
     const user = auth.currentUser;
     if (user) {
@@ -1082,7 +1239,8 @@ console.log(`Width: ${textSize.width}, Height: ${textSize.height}`);
     // Close button
     const closeButton = document.createElement("button");
     // Set the innerHTML to the SVG code
-    closeButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>';
+    closeButton.innerHTML =
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>';
     closeButton.classList.add("close-button");
     closeButton.onclick = closeModal;
     closeButton.style.alignSelf = "flex-end";
@@ -1127,7 +1285,6 @@ console.log(`Width: ${textSize.width}, Height: ${textSize.height}`);
     const buttonContainer = document.createElement("div");
     buttonContainer.classList.add("chip-list");
     buttonContainer.style.marginTop = "1rem";
-
 
     // Add product
     const addToExistingButton = document.createElement("button");
@@ -1400,7 +1557,6 @@ console.log(`Width: ${textSize.width}, Height: ${textSize.height}`);
 
     // Update placeholder based on dropdown selection
     collectionDropdown.addEventListener("change", function () {
-      
       const selectedOption = this.value;
       collection_applied = selectedOption;
 
@@ -1561,7 +1717,10 @@ console.log(`Width: ${textSize.width}, Height: ${textSize.height}`);
       productCard.appendChild(descriptionElement);
 
       // Add to list
-      const addListButton = createAddToListButton(header, "product-card-" + String(i));
+      const addListButton = createAddToListButton(
+        header,
+        "product-card-" + String(i)
+      );
       descriptionElement.appendChild(addListButton);
 
       const chipContainer = document.createElement("div");
