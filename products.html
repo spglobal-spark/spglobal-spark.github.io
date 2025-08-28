@@ -455,6 +455,7 @@ transition: background-color 0.3s ease-in-out;
     </style>
   </head>
   <body>
+   <button style='display: none;' id="download">Download PowerPoint</button>
     <!--
     <nav id="navigation">
       <div class="navigation">
@@ -488,8 +489,130 @@ transition: background-color 0.3s ease-in-out;
     <main id="body-container"></main>
   </body>
 </html>
-
+    <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs/dist/pptxgen.bundle.js"></script> <!-- https://gitbrent.github.io/PptxGenJS/ Powerpoint Generator -->
 <script type="module">
+
+// Measure Presentation Text Size
+function measureTextSize(inputString, fontSize, fontWeight, pptLineHeight, pptTextboxWidth) {
+    let fontFamily = "Arial";
+    let lineSpacing = pptLineHeight * 1.24; // Line height multiplier (e.g., 1.2 for 20% extra spacing)
+    let maxWidth = Math.floor(pptTextboxWidth * 72.0); // Convert inches to pixels (1 inch = 72 pixels)
+
+    // Create a new canvas element
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+
+    // Set the font properties
+    context.font = `${fontWeight} ${fontSize}px ${fontFamily}`;
+
+    // Split the input string into words
+    const words = inputString.split(' ');
+    let maxLineWidth = 0;
+    let totalHeight = 0;
+    let currentLineWidth = 0;
+    let currentLineHeight = fontSize * lineSpacing;
+
+    let line_number = 1;
+
+    for (let word of words) {
+        const wordWidth = context.measureText(word).width;
+        // Check if adding the word exceeds the max width
+        if (currentLineWidth + wordWidth > maxWidth) {
+            // Update the max line width if the current line is wider
+            maxLineWidth = Math.max(maxLineWidth, currentLineWidth);
+            // Move to the next line
+            currentLineWidth = wordWidth + context.measureText(' ').width; // Start new line with the current word
+            // Add line number
+            line_number += 1;
+        } else {
+            // Add the word to the current line
+            currentLineWidth += wordWidth + context.measureText(' ').width; // Adding space width
+        }
+    }
+
+    // Add the last line's width and height
+    maxLineWidth = Math.max(maxLineWidth, currentLineWidth);
+    totalHeight = line_number * currentLineHeight;
+
+    return {
+        width: maxLineWidth / 72.0, // Convert to inches
+        height: totalHeight / 72.0  // Convert to inches
+    };
+}
+
+// Example usage
+const textSize = measureTextSize("RiskGauge Desktop Capabilities and chickens and y", 36, 'bold', 0.9, 4.8);
+console.log(`Width: ${textSize.width}, Height: ${textSize.height}`);
+
+  document.getElementById('download').addEventListener('click', function() {
+
+  console.log("CLICKED")
+            let pptx = new PptxGenJS();
+            let slide = pptx.addSlide();
+
+            pptx.layout = 'LAYOUT_WIDE';
+            pptx.theme = { bodyFontFace: "Arial" };
+
+            let margin_left = 0.62;
+            
+            // Division Title
+            let division_title = "S&P Global Market Intelligence";
+            let divisionTitleSize = measureTextSize(division_title, 14, 'bold', 1.0, 12.1);
+
+            slide.addText(division_title, {
+                x: margin_left,
+                y: 0.51,
+                w: (divisionTitleSize.width + 0.2).toString(),
+                h: "0.34",
+                align: "left",
+                color: "000000",
+                bold: true,
+                /* autoFit: 'shrinkTextOnOverflow', */
+                fontSize: 14,
+            });
+            
+
+            // Our Capabilities
+            slide.addText("  |  Our Capabilities", {
+                x: margin_left + divisionTitleSize.width,
+                y: 0.51,
+                w: (12.1 - divisionTitleSize.width - 0.1).toString(),
+                h: "0.34",
+                align: "left",
+                color: "555555",
+                bold: false,
+                fontSize: 14,
+            });
+
+            // Product Name
+            let product_name = "RiskGauge Desktop";
+            let productNameSize = measureTextSize(product_name, 36, 'bold', 1.0, 5.46);
+            slide.addText(product_name, {
+                x: margin_left,
+                y: 1.0,
+                w: 5.46,
+                h: (productNameSize.height + 0.2).toString(),
+                align: "left",
+                color: "d6002a",
+                bold: true,
+                fontSize: 36,
+            });
+
+            // Description
+
+            // Learn more link
+
+            // Key Features & Benefits
+
+            // Loop for each feature
+
+            // S&P Global Logo
+
+            pptx.writeFile({ fileName: "PptxGenJS-Demo" });
+        });
+
+
+
   createLoginForm();
 
   // ---------------------------------------------------------------------------- //
