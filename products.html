@@ -456,7 +456,7 @@
     </style>
   </head>
   <body>
-    <button style='display: none;' id="download">Download PowerPoint</button>
+    <button id="download">Download PowerPoint</button>
     <!-- style='display: none;' -->
     <!--
     <nav id="navigation">
@@ -559,11 +559,15 @@
   console.log(`Width: ${textSize.width}, Height: ${textSize.height}`);
 
   document.getElementById("download").addEventListener("click", function () {
-    console.log("CLICKED");
+    createPowerpointSlides();
+  });
+
+  function createPowerpointSlides() {
+    // Create a new presentation
     let pptx = new PptxGenJS();
     let slide = pptx.addSlide();
 
-    pptx.layout = "LAYOUT_WIDE";
+    pptx.layout = "LAYOUT_WIDE"; //
     pptx.theme = { bodyFontFace: "Arial" };
 
     let margin_left = 0.62;
@@ -607,7 +611,8 @@
 
     // Product Name
     let left_column_width = 5.46;
-    let product_name = "RiskGauge Desktop";
+    let product_name =
+      "RiskGauge Desktop empowers organizations to assess, monitor.";
     let productNameSize = measureTextSize(
       product_name,
       36,
@@ -625,11 +630,12 @@
       color: "d6002a",
       bold: true,
       fontSize: 36,
+      lineSpacing: 36 * 1.0,
     });
 
     // Description
     let description =
-      "RiskGauge™ Desktop is a streamlined platform designed to provide a clear and comprehensive view of customer credit risk. It empowers organizations to assess, monitor, and manage credit risk for over 400 million companies globally through powerful analytical tools accessible in a single platform. By offering features like portfolio dashboards, company comparisons, and RiskGauge Scores and Reports, RiskGauge™ Desktop accelerates credit workflows, delivers pre-calculated risk metrics, and provides early warning alerts, enabling users to anticipate risks and opportunities across their entire customer base.";
+      "RiskGauge™ Desktop is a streamlined platform designed to provide a clear and comprehensive view of customer credit risk.";
     let descriptionSize = measureTextSize(
       description,
       14,
@@ -678,7 +684,6 @@
         color: "d6002a",
         bold: true,
         fontSize: 14,
-        lineHeight: 1.0,
       }
     );
 
@@ -710,55 +715,83 @@
       fontSize: 16,
     });
 
-    // Loop for each feature
-    let subheaderFeature = "Credit Risk Dashboard";
-    let subheaderFeatureSize = measureTextSize(
-      subheaderFeature,
-      18,
-      "bold",
-      1.0,
-      right_column_width
-    );
+    let feature_count = 10;
+    let feature_y_position = 1.0;
 
-    slide.addText(subheaderFeature, {
-      x: margin_left_column_two,
-      y: 1.0 + featuredHeadlineSize.height + spacer,
-      w: right_column_width,
-      h: subheaderFeatureSize.height + 0.1,
-      align: "left",
-      valign: "top",
-      color: "000000",
-      bold: true,
-      fontSize: 18,
-    });
+    for (let i = 0; i < feature_count; i++) {
+      // Loop for each feature
+      let subheaderFeature = "Credit Risk Dashboard";
+      let subheaderFeatureSize = measureTextSize(
+        subheaderFeature,
+        18,
+        "bold",
+        1.0,
+        right_column_width
+      );
 
-    let descriptionFeature =
-      "Visualize and monitor your portfolio's credit risk with customizable dashboards that provide real-time insights and trends.";
-    let descriptionFeatureSize = measureTextSize(
-      descriptionFeature,
-      10,
-      "normal",
-      1.0,
-      right_column_width
-    );
+      let descriptionFeature =
+        "Visualize and monitor your portfolio's credit risk with customizable dashboards that provide real-time insights and trends.";
+      let descriptionFeatureSize = measureTextSize(
+        descriptionFeature,
+        10,
+        "normal",
+        1.0,
+        right_column_width
+      );
 
-    slide.addText(descriptionFeature, {
-      x: margin_left_column_two,
-      y: 1.0 + featuredHeadlineSize.height + spacer + subheaderFeatureSize.height + 0.2,
-      w: right_column_width,
-      h: descriptionFeatureSize.height + 0.1,
-      align: "left",
-      valign: "top",
-      color: "555555",
-      bold: false,
-      fontSize: 10,
-    });
+      // Check size of the feature copy
+      // Check the slides
+      let totalFeatureHeight = feature_y_position +
+        featuredHeadlineSize.height +
+        spacer +
+        subheaderFeatureSize.height +
+        0.2 +
+        descriptionFeatureSize.height +
+        spacer;
 
+      if (totalFeatureHeight < 7.1) {
+        // Add the slides
+        slide.addText(subheaderFeature, {
+          x: margin_left_column_two,
+          y: feature_y_position + featuredHeadlineSize.height + spacer,
+          w: right_column_width,
+          h: subheaderFeatureSize.height + 0.1,
+          align: "left",
+          valign: "top",
+          color: "000000",
+          bold: true,
+          fontSize: 18,
+        });
+
+        slide.addText(descriptionFeature, {
+          x: margin_left_column_two,
+          y:
+            feature_y_position +
+            featuredHeadlineSize.height +
+            spacer +
+            subheaderFeatureSize.height +
+            0.2,
+          w: right_column_width,
+          h: descriptionFeatureSize.height + 0.1,
+          align: "left",
+          valign: "top",
+          color: "555555",
+          bold: false,
+          fontSize: 10,
+        });
+
+        feature_y_position +=
+          featuredHeadlineSize.height +
+          spacer +
+          subheaderFeatureSize.height +
+          0.2;
+      }
+    }
 
     // S&P Global Logo
 
     pptx.writeFile({ fileName: "PptxGenJS-Demo" });
-  });
+  }
 
   createLoginForm();
 
