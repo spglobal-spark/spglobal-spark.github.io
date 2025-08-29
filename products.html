@@ -456,7 +456,6 @@
     </style>
   </head>
   <body>
-    <button id="download">Download PowerPoint</button>
     <!-- style='display: none;' -->
     <!--
     <nav id="navigation">
@@ -504,7 +503,8 @@
   ) {
     let fontFamily = "Arial";
     let lineSpacing = pptLineHeight; // * 1.24; // Line height multiplier (e.g., 1.2 for 20% extra spacing)
-    let maxWidth = Math.floor(pptTextboxWidth * 72.0); // Convert inches to pixels (1 inch = 72 pixels)
+    let x_offset = 8; // Helps the text box width be more accurately representing what happens in powerpoint
+    let maxWidth = Math.floor(pptTextboxWidth * 72.0) - x_offset; // Convert inches to pixels (1 inch = 72 pixels)
 
     // Create a new canvas element
     const canvas = document.createElement("canvas");
@@ -525,7 +525,7 @@
     for (let word of words) {
       const wordWidth = context.measureText(word).width;
       // Check if adding the word exceeds the max width
-      if (currentLineWidth + wordWidth > maxWidth) {
+      if (currentLineWidth + wordWidth + context.measureText(" ").width > maxWidth) {
         // Update the max line width if the current line is wider
         maxLineWidth = Math.max(maxLineWidth, currentLineWidth);
         // Move to the next line
@@ -548,21 +548,17 @@
     };
   }
 
-  // Example usage
-  const textSize = measureTextSize(
-    "RiskGauge Desktop Capabilities and chickens and y",
-    36,
-    "bold",
-    0.9,
-    4.8
-  );
-  console.log(`Width: ${textSize.width}, Height: ${textSize.height}`);
+  function createPowerpointSlides(product_index) {
+    // Set product
+    let current_index = 0 | product_index;
 
-  document.getElementById("download").addEventListener("click", function () {
-    createPowerpointSlides();
-  });
+    // Product Information
+    let current_product;
+    if (product_list.length > 0) {
+      current_product = product_list[current_index];
+      console.log(current_product);
+    }
 
-  function createPowerpointSlides() {
     // Create a new presentation
     let pptx = new PptxGenJS();
     let slide = pptx.addSlide();
@@ -573,7 +569,7 @@
     let margin_left = 0.62;
 
     // Division Title
-    let division_title = "S&P Global Market Intelligence";
+    let division_title = current_product.Header.Division;
     let divisionTitleSize = measureTextSize(
       division_title,
       14,
@@ -611,8 +607,7 @@
 
     // Product Name
     let left_column_width = 5.46;
-    let product_name =
-      "RiskGauge Desktop empowers organizations to assess, monitor.";
+    let product_name = current_product.Header["Product Name"];
     let productNameSize = measureTextSize(
       product_name,
       36,
@@ -634,8 +629,7 @@
     });
 
     // Description
-    let description =
-      "RiskGauge™ Desktop is a streamlined platform designed to provide a clear and comprehensive view of customer credit risk.";
+    let description = current_product.Summary.Description;
     let descriptionSize = measureTextSize(
       description,
       14,
@@ -643,6 +637,7 @@
       1.5,
       left_column_width
     );
+
     slide.addText(description, {
       x: margin_left,
       y: 1.0 + productNameSize.height + spacer,
@@ -663,8 +658,8 @@
           text: "Learn more online",
           options: {
             hyperlink: {
-              url: "https://github.com/gitbrent/pptxgenjs",
-              tooltip: "PptxGenJS GitHub Repository",
+              url: current_product.Header.Source,
+              tooltip: current_product.Header.Source,
             },
           },
         },
@@ -715,12 +710,12 @@
       fontSize: 16,
     });
 
-    let feature_count = 10;
+    let feature_count = current_product.Summary.Features.length;
     let feature_y_position = 1.0;
 
     for (let i = 0; i < feature_count; i++) {
       // Loop for each feature
-      let subheaderFeature = "Credit Risk Dashboard";
+      let subheaderFeature = current_product.Summary.Features[i].Title;
       let subheaderFeatureSize = measureTextSize(
         subheaderFeature,
         18,
@@ -729,8 +724,7 @@
         right_column_width
       );
 
-      let descriptionFeature =
-        "Visualize and monitor your portfolio's credit risk with customizable dashboards that provide real-time insights and trends.";
+      let descriptionFeature = current_product.Summary.Features[i].Description;
       let descriptionFeatureSize = measureTextSize(
         descriptionFeature,
         10,
@@ -781,16 +775,16 @@
         });
 
         feature_y_position +=
-          featuredHeadlineSize.height +
-          spacer +
           subheaderFeatureSize.height +
+          spacer +
+          descriptionFeatureSize.height +
           0.2;
       }
     }
 
     // S&P Global Logo
 
-    pptx.writeFile({ fileName: "PptxGenJS-Demo" });
+    pptx.writeFile({ fileName: current_product.Header["Product Name"] + ".pptx" });
   }
 
   createLoginForm();
@@ -2144,6 +2138,18 @@
     productType.id = "product-type";
     productType.innerHTML = "<b>Type: </b>" + product["Header"]["Type"];
     summaryContainer.appendChild(productType);
+
+    const downloadPowerpoint = document.createElement("button");
+    downloadPowerpoint.textContent = "Download as PowerPoint";
+    downloadPowerpoint.classList.add("export-summary-button");
+    downloadPowerpoint.style.marginBottom = "1rem";
+    // Download as powerpoint using the pptxgenjs function
+    downloadPowerpoint.onclick = function () {
+      console.log("Downloading as PowerPoint...");
+      // Convert the product summary to PowerPoint
+      createPowerpointSlides(product_index);
+    };
+    summaryContainer.appendChild(downloadPowerpoint);
 
     // Add Features & Benefits
     const aiTitle = document.createElement("div");
