@@ -40,10 +40,20 @@
           if (found_product) {
             console.log("Found product:", found_product);
             // You can now use found_product as needed
+            document.getElementById("download_buttons").innerHTML +=
+              '<button onclick="createPowerpointSlides(' +
+              product_list.indexOf(found_product) +
+              ')">Download ' +
+              found_product.Product["Product Name"] +
+              ' PowerPoint</button><br/><br/>';
           } else {
             console.log("Product not found:", product_name);
           }
         }
+
+        // Update status
+        document.getElementById("status").innerText =
+          "Your presentation(s) are ready. Click the button(s) below to download.";
 
       } catch (error) {
         // Catch any errors that occurred during the fetch or parsing
@@ -60,14 +70,307 @@
               .replace(/\s+/g, ' '); // Replace multiple spaces with a single space
 }
 
+// Measure Presentation Text Size
+  function measureTextSize(
+    inputString,
+    fontSize,
+    fontWeight,
+    pptLineHeight,
+    pptTextboxWidth
+  ) {
+    let fontFamily = "Arial";
+    let lineSpacing = pptLineHeight; // * 1.24; // Line height multiplier (e.g., 1.2 for 20% extra spacing)
+    let x_offset = 10; // Helps the text box width be more accurately representing what happens in powerpoint
+    let maxWidth = Math.floor(pptTextboxWidth * 72.0) - x_offset; // Convert inches to pixels (1 inch = 72 pixels)
+
+    // Create a new canvas element
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+
+    // Set the font properties
+    context.font = fontWeight + " " + fontSize + "px " + fontFamily;
+
+    // Split the input string into words
+    const words = inputString.split(" ");
+    let maxLineWidth = 0;
+    let totalHeight = 0;
+    let currentLineWidth = 0;
+    let currentLineHeight = fontSize * lineSpacing;
+
+    let line_number = 1;
+
+    for (let word of words) {
+      const wordWidth = context.measureText(word).width;
+      // Check if adding the word exceeds the max width
+      if (currentLineWidth + wordWidth + context.measureText(" ").width > maxWidth) {
+        // Update the max line width if the current line is wider
+        maxLineWidth = Math.max(maxLineWidth, currentLineWidth);
+        // Move to the next line
+        currentLineWidth = wordWidth + context.measureText(" ").width; // Start new line with the current word
+        // Add line number
+        line_number += 1;
+      } else {
+        // Add the word to the current line
+        currentLineWidth += wordWidth + context.measureText(" ").width; // Adding space width
+      }
+    }
+
+    // Add the last line's width and height
+    maxLineWidth = Math.max(maxLineWidth, currentLineWidth);
+    totalHeight = line_number * currentLineHeight;
+
+    return {
+      width: maxLineWidth / 72.0, // Convert to inches
+      height: totalHeight / 72.0, // Convert to inches
+    };
+  }
+
+  function createPowerpointSlides(product_index) {
+    // Set product
+    let current_index = 0 | product_index;
+
+    // Product Information
+    let current_product;
+    if (product_list.length > 0) {
+      current_product = product_list[current_index];
+      console.log(current_product);
+    }
+
+    // Create a new presentation
+    let pptx = new PptxGenJS();
+    let slide = pptx.addSlide();
+
+    pptx.layout = "LAYOUT_WIDE"; //
+    pptx.theme = { bodyFontFace: "Arial" };
+
+    let margin_left = 0.62;
+
+    // Division Title
+    let division_title = current_product.Product.Division;
+    let divisionTitleSize = measureTextSize(
+      division_title,
+      14,
+      "bold",
+      1.0,
+      12.1
+    );
+
+    slide.addText(division_title, {
+      x: margin_left,
+      y: 0.51,
+      w: (divisionTitleSize.width + 0.2).toString(),
+      h: "0.34",
+      align: "left",
+      valign: "top",
+      color: "000000",
+      bold: true,
+      fontSize: 14,
+    });
+
+    // Our Capabilities
+    slide.addText("  |  Our Capabilities", {
+      x: margin_left + divisionTitleSize.width,
+      y: 0.51,
+      w: (12.1 - divisionTitleSize.width - 0.1).toString(),
+      h: "0.34",
+      align: "left",
+      valign: "top",
+      color: "555555",
+      bold: false,
+      fontSize: 14,
+    });
+
+    let spacer = 0.3;
+
+    // Product Name
+    let left_column_width = 5.46;
+    let product_name = current_product.Product["Product Name"];
+    let productNameSize = measureTextSize(
+      product_name,
+      36,
+      "bold",
+      1.0,
+      left_column_width
+    );
+    slide.addText(product_name, {
+      x: margin_left,
+      y: 1.0,
+      w: left_column_width,
+      h: (productNameSize.height + spacer).toString(),
+      align: "left",
+      valign: "top",
+      color: "d6002a",
+      bold: true,
+      fontSize: 36,
+      lineSpacing: 36 * 1.0,
+    });
+
+    // Description
+    let description = current_product["Product Overview"].Overview;
+    let descriptionSize = measureTextSize(
+      description,
+      14,
+      "normal",
+      1.5,
+      left_column_width
+    );
+
+    slide.addText(description, {
+      x: margin_left,
+      y: 1.0 + productNameSize.height + spacer,
+      w: left_column_width,
+      h: (descriptionSize.height + spacer).toString(),
+      align: "left",
+      valign: "top",
+      color: "555555",
+      bold: false,
+      fontSize: 14,
+      lineSpacing: 14 * 1.5,
+    });
+
+    // Learn more link
+    slide.addText(
+      [
+        {
+          text: "Learn more online",
+          options: {
+            hyperlink: {
+              url: current_product.Product.Source,
+              tooltip: current_product.Product.Source,
+            },
+          },
+        },
+      ],
+      {
+        x: margin_left,
+        y:
+          1.0 +
+          productNameSize.height +
+          spacer +
+          descriptionSize.height +
+          spacer,
+        w: left_column_width,
+        h: 0.6,
+        align: "left",
+        valign: "top",
+        color: "d6002a",
+        bold: true,
+        fontSize: 14,
+      }
+    );
+
+    // ----------------- KEY FEATURES & BENEFITS ----------------- //
+    // Loop for each feature
+
+    let margin_left_column_two = 6.82;
+    let right_column_width = 5.66;
+
+    // Key Features & Benefits
+    let featuredHeadline = "Key Features & Benefits";
+    let featuredHeadlineSize = measureTextSize(
+      featuredHeadline,
+      16,
+      "bold",
+      1.0,
+      right_column_width
+    );
+
+    slide.addText("Key Features & Benefits", {
+      x: margin_left_column_two,
+      y: 1.0,
+      w: right_column_width,
+      h: featuredHeadlineSize.height + 0.1,
+      align: "left",
+      valign: "top",
+      color: "d6002a",
+      bold: true,
+      fontSize: 16,
+    });
+
+    let feature_count = current_product["Product Overview"]["Key Features"].length;
+    let feature_y_position = 1.0;
+
+    for (let i = 0; i < feature_count; i++) {
+      // Loop for each feature
+      let subheaderFeature = current_product["Product Overview"]["Key Features"][i].Feature;
+      let subheaderFeatureSize = measureTextSize(
+        subheaderFeature,
+        18,
+        "bold",
+        1.0,
+        right_column_width
+      );
+
+      let descriptionFeature = current_product["Product Overview"]["Key Features"][i].Description;
+      let descriptionFeatureSize = measureTextSize(
+        descriptionFeature,
+        10,
+        "normal",
+        1.0,
+        right_column_width
+      );
+
+      // Check size of the feature copy
+      // Check the slides
+      let totalFeatureHeight = feature_y_position +
+        featuredHeadlineSize.height +
+        spacer +
+        subheaderFeatureSize.height +
+        0.2 +
+        descriptionFeatureSize.height +
+        spacer;
+
+      if (totalFeatureHeight < 7.1) {
+        // Add the slides
+        slide.addText(subheaderFeature, {
+          x: margin_left_column_two,
+          y: feature_y_position + featuredHeadlineSize.height + spacer,
+          w: right_column_width,
+          h: subheaderFeatureSize.height + 0.1,
+          align: "left",
+          valign: "top",
+          color: "000000",
+          bold: true,
+          fontSize: 18,
+        });
+
+        slide.addText(descriptionFeature, {
+          x: margin_left_column_two,
+          y:
+            feature_y_position +
+            featuredHeadlineSize.height +
+            spacer +
+            subheaderFeatureSize.height +
+            0.2,
+          w: right_column_width,
+          h: descriptionFeatureSize.height + 0.1,
+          align: "left",
+          valign: "top",
+          color: "555555",
+          bold: false,
+          fontSize: 10,
+        });
+
+        feature_y_position +=
+          subheaderFeatureSize.height +
+          spacer +
+          descriptionFeatureSize.height +
+          0.2;
+      }
+    }
+
+    // S&P Global Logo
+
+    pptx.writeFile({ fileName: current_product.Product["Product Name"] + ".pptx" });
+  }
+
     // Find my_products in the product_list
   </script>
   <body>
     <div class="container">
-      <h1>PowerPoint Generator</h1>
-      <p>Your presentation is ready!</p>
-      <button onclick="generatePPT()">Download PowerPoint</button>
-      <div class="status" id="status"></div>
+      <h1 id="headline">PowerPoint Generator</h1>
+      <p id="status">Your presentation(s) are generating ... please wait.</p>
+      <div id="download_buttons"></div>
     </div>
   </body>
 </html>
