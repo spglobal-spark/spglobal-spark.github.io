@@ -43,9 +43,9 @@
             document.getElementById("download_buttons").innerHTML +=
               '<button onclick="createPowerpointSlides(' +
               product_list.indexOf(found_product) +
-              ')">Download ' +
+              ')">Download: ' +
               found_product.Product["Product Name"] +
-              ' PowerPoint</button><br/><br/>';
+              '</button><br/><br/>';
           } else {
             console.log("Product not found:", product_name);
           }
@@ -369,7 +369,7 @@
   <body>
     <div class="container">
       <h1 id="headline">PowerPoint Generator</h1>
-      <p id="status">Your presentation(s) are generating ... please wait.</p>
+      <p id="status">Generating ... please wait.</p>
       <div id="download_buttons"></div>
     </div>
   </body>
