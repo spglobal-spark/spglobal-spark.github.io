@@ -8,6 +8,7 @@
   <script>
     // Define the URL of the JSON file
     const url = "https://spglobal-spark.github.io/spark-product-list.json";
+    var product_list = [];
 
     // Create an async function to fetch the data
     async function getProductList() {
@@ -21,10 +22,29 @@
         }
 
         // Await the parsing of the response body as JSON
-        const data = await response.json();
+        product_list = await response.json();
 
         // Log the resulting JSON data to the console
-        console.log("Successfully fetched data:", data);
+        console.log("Successfully fetched product data");
+
+        // Latest Product JSON data
+        const my_products = ${step_extractNames_output}
+        console.log("Product Slides:", my_products);
+
+        // Show all the products in the console
+        for (var i = 0; i < my_products.length; i++) {
+          const product_name = removeSpecialCharacters(my_products[i]);
+          const found_product = product_list.find(
+            (product) => removeSpecialCharacters(product.Product["Product Name"]) === product_name
+          );
+          if (found_product) {
+            console.log("Found product:", found_product);
+            // You can now use found_product as needed
+          } else {
+            console.log("Product not found:", product_name);
+          }
+        }
+
       } catch (error) {
         // Catch any errors that occurred during the fetch or parsing
         console.error("Could not fetch the product list:", error);
@@ -34,9 +54,11 @@
     // Call the function to execute it
     getProductList();
 
-    // Latest Product JSON data
-    //const my_products = ${step_extractNames_output}
-    //console.log("my_products:", my_products);
+    // Convert to unicode
+    function removeSpecialCharacters(str) {
+    return str.replace(/[^\w\s]|_/g, '') // Remove special characters
+              .replace(/\s+/g, ' '); // Replace multiple spaces with a single space
+}
 
     // Find my_products in the product_list
   </script>
