@@ -6,10 +6,37 @@
   </head>
   <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs/dist/pptxgen.bundle.js"></script>
   <script>
+    // Define the URL of the JSON file
+    const url = "https://spglobal-spark.github.io/spark-product-list.json";
+
+    // Create an async function to fetch the data
+    async function getProductList() {
+      try {
+        // Await the fetch call to the URL
+        const response = await fetch(url);
+
+        // Check if the response was successful (status code 200-299)
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        // Await the parsing of the response body as JSON
+        const data = await response.json();
+
+        // Log the resulting JSON data to the console
+        console.log("Successfully fetched data:", data);
+      } catch (error) {
+        // Catch any errors that occurred during the fetch or parsing
+        console.error("Could not fetch the product list:", error);
+      }
+    }
+
+    // Call the function to execute it
+    getProductList();
+
     // Latest Product JSON data
-    const product_list = ${step_productJSON_output}
-    const my_products = ${step_extractNames_output}
-    console.log("my_products:", my_products);
+    //const my_products = ${step_extractNames_output}
+    //console.log("my_products:", my_products);
 
     // Find my_products in the product_list
   </script>
