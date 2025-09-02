@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs/dist/pptxgen.bundle.js"></script>
+  <script>
+    // Latest Product JSON data
+    const product_list = ${step_productJSON_output}
+    const my_products = ${step_extractNames_output}
+    console.log("my_products:", my_products);
+
+    // Find my_products in the product_list
+  </script>
+  <body>
+    <div class="container">
+      <h1>PowerPoint Generator</h1>
+      <p>Your presentation is ready!</p>
+      <button onclick="generatePPT()">Download PowerPoint</button>
+      <div class="status" id="status"></div>
+    </div>
+  </body>
+</html>
