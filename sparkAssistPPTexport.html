@@ -3,368 +3,443 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PowerPoint Generator</title>
+    <style>
+      body {
+        font-family: Helvetica, Arial, sans-serif;
+        display: flex;
+        justify-content: center; /* Horizontally center */
+        align-items: center; /* Vertically center */
+        min-height: 100vh; /* Ensure body takes full viewport height */
+        margin: 0;
+        background-color: #f0f2f5; /* A light background for a cleaner look */
+      }
+
+      .container {
+        text-align: center;
+        background-color: #ffffff;
+        padding: 40px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      #headline {
+        color: #333333;
+      }
+
+      #status {
+        color: #555555;
+        margin-bottom: 20px;
+      }
+
+      #download_buttons button {
+        background-color: #d6002a; /* S&P Global Red */
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: background-color 0.2s ease-in-out; /* Smooth hover effect */
+      }
+
+      #download_buttons button:hover {
+        background-color: #000000; /* Black fill on hover */
+      }
+    </style>
   </head>
   <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs/dist/pptxgen.bundle.js"></script>
   <script>
-    // Define the URL of the JSON file
-    const url = "https://spglobal-spark.github.io/spark-product-list.json";
-    var product_list = [];
+        // Define the URL of the JSON file
+        const url = "https://spglobal-spark.github.io/spark-product-list.json";
+        var product_list = [];
 
-    // Create an async function to fetch the data
-    async function getProductList() {
-      try {
-        // Await the fetch call to the URL
-        const response = await fetch(url);
+        // Create an async function to fetch the data
+        async function getProductList() {
+          try {
+            // Await the fetch call to the URL
+            const response = await fetch(url);
 
-        // Check if the response was successful (status code 200-299)
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
+            // Check if the response was successful (status code 200-299)
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            // Await the parsing of the response body as JSON
+            product_list = await response.json();
+
+            // Log the resulting JSON data to the console
+            console.log("Successfully fetched product data");
+
+            // Latest Product JSON data
+            const my_products = ${step_extractNames_output}
+            console.log("Product Slides:", my_products);
+
+
+    // Iterate through the products you are searching for
+    for (var i = 0; i < my_products.length; i++) {
+      const searchTermRaw = my_products[i];
+      // Prepare the search term: remove special characters, convert to lower case, and split into words.
+      // Filtering out empty strings handles cases with multiple spaces.
+      const searchWords = removeSpecialCharacters(searchTermRaw)
+        .toLowerCase()
+        .split(' ')
+        .filter(word => word.length > 0);
+
+      let bestMatch = null;
+      let highestScore = 0;
+      let bestMatchIndex = -1;
+
+      // Iterate through the entire product list to score each one against the search term
+      product_list.forEach((product, index) => {
+        const productName = removeSpecialCharacters(product.Product["Product Name"]).toLowerCase();
+        let currentScore = 0;
+
+        // Increase score for each search word found in the product name
+        searchWords.forEach(word => {
+          if (productName.includes(word)) {
+            currentScore++;
+          }
+        });
+
+        // If the current product has a better score, it becomes the new best match
+        if (currentScore > highestScore) {
+          highestScore = currentScore;
+          bestMatch = product;
+          bestMatchIndex = index;
         }
+      });
 
-        // Await the parsing of the response body as JSON
-        product_list = await response.json();
+      // A match is only considered valid if at least one word matched (score > 0)
+      if (bestMatch) {
+        console.log("Found best match for '" + searchTermRaw + "':", bestMatch.Product["Product Name"] + " (Score: " + highestScore + ")");
+        // You can now use bestMatch as needed
+        document.getElementById("download_buttons").innerHTML +=
+          '<button onclick="createPowerpointSlides(' +
+          bestMatchIndex +
+          ')">Download: ' +
+          bestMatch.Product["Product Name"] +
+          '</button><br/><br/>';
+      } else {
+        console.log("Product not found for:", searchTermRaw);
+      }
+    }
 
-        // Log the resulting JSON data to the console
-        console.log("Successfully fetched product data");
+            // Update status
+            document.getElementById("status").innerText =
+              "Your presentation(s) are ready. Click the button(s) below to download.";
 
-        // Latest Product JSON data
-        const my_products = ${step_extractNames_output}
-        console.log("Product Slides:", my_products);
-
-        // Show all the products in the console
-        for (var i = 0; i < my_products.length; i++) {
-          const product_name = removeSpecialCharacters(my_products[i]);
-          const found_product = product_list.find(
-            (product) => removeSpecialCharacters(product.Product["Product Name"]) === product_name
-          );
-          if (found_product) {
-            console.log("Found product:", found_product);
-            // You can now use found_product as needed
-            document.getElementById("download_buttons").innerHTML +=
-              '<button onclick="createPowerpointSlides(' +
-              product_list.indexOf(found_product) +
-              ')">Download: ' +
-              found_product.Product["Product Name"] +
-              '</button><br/><br/>';
-          } else {
-            console.log("Product not found:", product_name);
+          } catch (error) {
+            // Catch any errors that occurred during the fetch or parsing
+            console.error("Could not fetch the product list:", error);
           }
         }
 
-        // Update status
-        document.getElementById("status").innerText =
-          "Your presentation(s) are ready. Click the button(s) below to download.";
+        // Call the function to execute it
+        getProductList();
 
-      } catch (error) {
-        // Catch any errors that occurred during the fetch or parsing
-        console.error("Could not fetch the product list:", error);
-      }
+        // Convert to unicode
+        function removeSpecialCharacters(str) {
+        return str.replace(/[^\w\s]|_/g, '') // Remove special characters
+                  .replace(/\s+/g, ' '); // Replace multiple spaces with a single space
     }
 
-    // Call the function to execute it
-    getProductList();
+    // Measure Presentation Text Size
+      function measureTextSize(
+        inputString,
+        fontSize,
+        fontWeight,
+        pptLineHeight,
+        pptTextboxWidth
+      ) {
+        let fontFamily = "Arial";
+        let lineSpacing = pptLineHeight; // * 1.24; // Line height multiplier (e.g., 1.2 for 20% extra spacing)
+        let x_offset = 10; // Helps the text box width be more accurately representing what happens in powerpoint
+        let maxWidth = Math.floor(pptTextboxWidth * 72.0) - x_offset; // Convert inches to pixels (1 inch = 72 pixels)
 
-    // Convert to unicode
-    function removeSpecialCharacters(str) {
-    return str.replace(/[^\w\s]|_/g, '') // Remove special characters
-              .replace(/\s+/g, ' '); // Replace multiple spaces with a single space
-}
+        // Create a new canvas element
+        const canvas = document.createElement("canvas");
+        const context = canvas.getContext("2d");
 
-// Measure Presentation Text Size
-  function measureTextSize(
-    inputString,
-    fontSize,
-    fontWeight,
-    pptLineHeight,
-    pptTextboxWidth
-  ) {
-    let fontFamily = "Arial";
-    let lineSpacing = pptLineHeight; // * 1.24; // Line height multiplier (e.g., 1.2 for 20% extra spacing)
-    let x_offset = 10; // Helps the text box width be more accurately representing what happens in powerpoint
-    let maxWidth = Math.floor(pptTextboxWidth * 72.0) - x_offset; // Convert inches to pixels (1 inch = 72 pixels)
+        // Set the font properties
+        context.font = fontWeight + " " + fontSize + "px " + fontFamily;
 
-    // Create a new canvas element
-    const canvas = document.createElement("canvas");
-    const context = canvas.getContext("2d");
+        // Split the input string into words
+        const words = inputString.split(" ");
+        let maxLineWidth = 0;
+        let totalHeight = 0;
+        let currentLineWidth = 0;
+        let currentLineHeight = fontSize * lineSpacing;
 
-    // Set the font properties
-    context.font = fontWeight + " " + fontSize + "px " + fontFamily;
+        let line_number = 1;
 
-    // Split the input string into words
-    const words = inputString.split(" ");
-    let maxLineWidth = 0;
-    let totalHeight = 0;
-    let currentLineWidth = 0;
-    let currentLineHeight = fontSize * lineSpacing;
+        for (let word of words) {
+          const wordWidth = context.measureText(word).width;
+          // Check if adding the word exceeds the max width
+          if (currentLineWidth + wordWidth + context.measureText(" ").width > maxWidth) {
+            // Update the max line width if the current line is wider
+            maxLineWidth = Math.max(maxLineWidth, currentLineWidth);
+            // Move to the next line
+            currentLineWidth = wordWidth + context.measureText(" ").width; // Start new line with the current word
+            // Add line number
+            line_number += 1;
+          } else {
+            // Add the word to the current line
+            currentLineWidth += wordWidth + context.measureText(" ").width; // Adding space width
+          }
+        }
 
-    let line_number = 1;
-
-    for (let word of words) {
-      const wordWidth = context.measureText(word).width;
-      // Check if adding the word exceeds the max width
-      if (currentLineWidth + wordWidth + context.measureText(" ").width > maxWidth) {
-        // Update the max line width if the current line is wider
+        // Add the last line's width and height
         maxLineWidth = Math.max(maxLineWidth, currentLineWidth);
-        // Move to the next line
-        currentLineWidth = wordWidth + context.measureText(" ").width; // Start new line with the current word
-        // Add line number
-        line_number += 1;
-      } else {
-        // Add the word to the current line
-        currentLineWidth += wordWidth + context.measureText(" ").width; // Adding space width
+        totalHeight = line_number * currentLineHeight;
+
+        return {
+          width: maxLineWidth / 72.0, // Convert to inches
+          height: totalHeight / 72.0, // Convert to inches
+        };
       }
-    }
 
-    // Add the last line's width and height
-    maxLineWidth = Math.max(maxLineWidth, currentLineWidth);
-    totalHeight = line_number * currentLineHeight;
+      function createPowerpointSlides(product_index) {
+        // Set product
+        let current_index = 0 | product_index;
 
-    return {
-      width: maxLineWidth / 72.0, // Convert to inches
-      height: totalHeight / 72.0, // Convert to inches
-    };
-  }
+        // Product Information
+        let current_product;
+        if (product_list.length > 0) {
+          current_product = product_list[current_index];
+          console.log(current_product);
+        }
 
-  function createPowerpointSlides(product_index) {
-    // Set product
-    let current_index = 0 | product_index;
+        // Create a new presentation
+        let pptx = new PptxGenJS();
+        let slide = pptx.addSlide();
 
-    // Product Information
-    let current_product;
-    if (product_list.length > 0) {
-      current_product = product_list[current_index];
-      console.log(current_product);
-    }
+        pptx.layout = "LAYOUT_WIDE"; //
+        pptx.theme = { bodyFontFace: "Arial" };
 
-    // Create a new presentation
-    let pptx = new PptxGenJS();
-    let slide = pptx.addSlide();
+        let margin_left = 0.62;
 
-    pptx.layout = "LAYOUT_WIDE"; //
-    pptx.theme = { bodyFontFace: "Arial" };
+        // Division Title
+        let division_title = current_product.Product.Division;
+        let divisionTitleSize = measureTextSize(
+          division_title,
+          14,
+          "bold",
+          1.0,
+          12.1
+        );
 
-    let margin_left = 0.62;
-
-    // Division Title
-    let division_title = current_product.Product.Division;
-    let divisionTitleSize = measureTextSize(
-      division_title,
-      14,
-      "bold",
-      1.0,
-      12.1
-    );
-
-    slide.addText(division_title, {
-      x: margin_left,
-      y: 0.51,
-      w: (divisionTitleSize.width + 0.2).toString(),
-      h: "0.34",
-      align: "left",
-      valign: "top",
-      color: "000000",
-      bold: true,
-      fontSize: 14,
-    });
-
-    // Our Capabilities
-    slide.addText("  |  Our Capabilities", {
-      x: margin_left + divisionTitleSize.width,
-      y: 0.51,
-      w: (12.1 - divisionTitleSize.width - 0.1).toString(),
-      h: "0.34",
-      align: "left",
-      valign: "top",
-      color: "555555",
-      bold: false,
-      fontSize: 14,
-    });
-
-    let spacer = 0.3;
-
-    // Product Name
-    let left_column_width = 5.46;
-    let product_name = current_product.Product["Product Name"];
-    let productNameSize = measureTextSize(
-      product_name,
-      36,
-      "bold",
-      1.0,
-      left_column_width
-    );
-    slide.addText(product_name, {
-      x: margin_left,
-      y: 1.0,
-      w: left_column_width,
-      h: (productNameSize.height + spacer).toString(),
-      align: "left",
-      valign: "top",
-      color: "d6002a",
-      bold: true,
-      fontSize: 36,
-      lineSpacing: 36 * 1.0,
-    });
-
-    // Description
-    let description = current_product["Product Overview"].Overview;
-    let descriptionSize = measureTextSize(
-      description,
-      14,
-      "normal",
-      1.5,
-      left_column_width
-    );
-
-    slide.addText(description, {
-      x: margin_left,
-      y: 1.0 + productNameSize.height + spacer,
-      w: left_column_width,
-      h: (descriptionSize.height + spacer).toString(),
-      align: "left",
-      valign: "top",
-      color: "555555",
-      bold: false,
-      fontSize: 14,
-      lineSpacing: 14 * 1.5,
-    });
-
-    // Learn more link
-    slide.addText(
-      [
-        {
-          text: "Learn more online",
-          options: {
-            hyperlink: {
-              url: current_product.Product.Source,
-              tooltip: current_product.Product.Source,
-            },
-          },
-        },
-      ],
-      {
-        x: margin_left,
-        y:
-          1.0 +
-          productNameSize.height +
-          spacer +
-          descriptionSize.height +
-          spacer,
-        w: left_column_width,
-        h: 0.6,
-        align: "left",
-        valign: "top",
-        color: "d6002a",
-        bold: true,
-        fontSize: 14,
-      }
-    );
-
-    // ----------------- KEY FEATURES & BENEFITS ----------------- //
-    // Loop for each feature
-
-    let margin_left_column_two = 6.82;
-    let right_column_width = 5.66;
-
-    // Key Features & Benefits
-    let featuredHeadline = "Key Features & Benefits";
-    let featuredHeadlineSize = measureTextSize(
-      featuredHeadline,
-      16,
-      "bold",
-      1.0,
-      right_column_width
-    );
-
-    slide.addText("Key Features & Benefits", {
-      x: margin_left_column_two,
-      y: 1.0,
-      w: right_column_width,
-      h: featuredHeadlineSize.height + 0.1,
-      align: "left",
-      valign: "top",
-      color: "d6002a",
-      bold: true,
-      fontSize: 16,
-    });
-
-    let feature_count = current_product["Product Overview"]["Key Features"].length;
-    let feature_y_position = 1.0;
-
-    for (let i = 0; i < feature_count; i++) {
-      // Loop for each feature
-      let subheaderFeature = current_product["Product Overview"]["Key Features"][i].Feature;
-      let subheaderFeatureSize = measureTextSize(
-        subheaderFeature,
-        18,
-        "bold",
-        1.0,
-        right_column_width
-      );
-
-      let descriptionFeature = current_product["Product Overview"]["Key Features"][i].Description;
-      let descriptionFeatureSize = measureTextSize(
-        descriptionFeature,
-        10,
-        "normal",
-        1.0,
-        right_column_width
-      );
-
-      // Check size of the feature copy
-      // Check the slides
-      let totalFeatureHeight = feature_y_position +
-        featuredHeadlineSize.height +
-        spacer +
-        subheaderFeatureSize.height +
-        0.2 +
-        descriptionFeatureSize.height +
-        spacer;
-
-      if (totalFeatureHeight < 7.1) {
-        // Add the slides
-        slide.addText(subheaderFeature, {
-          x: margin_left_column_two,
-          y: feature_y_position + featuredHeadlineSize.height + spacer,
-          w: right_column_width,
-          h: subheaderFeatureSize.height + 0.1,
+        slide.addText(division_title, {
+          x: margin_left,
+          y: 0.51,
+          w: (divisionTitleSize.width + 0.2).toString(),
+          h: "0.34",
           align: "left",
           valign: "top",
           color: "000000",
           bold: true,
-          fontSize: 18,
+          fontSize: 14,
         });
 
-        slide.addText(descriptionFeature, {
-          x: margin_left_column_two,
-          y:
-            feature_y_position +
-            featuredHeadlineSize.height +
-            spacer +
-            subheaderFeatureSize.height +
-            0.2,
-          w: right_column_width,
-          h: descriptionFeatureSize.height + 0.1,
+        // Our Capabilities
+        slide.addText("  |  Our Capabilities", {
+          x: margin_left + divisionTitleSize.width,
+          y: 0.51,
+          w: (12.1 - divisionTitleSize.width - 0.1).toString(),
+          h: "0.34",
           align: "left",
           valign: "top",
           color: "555555",
           bold: false,
-          fontSize: 10,
+          fontSize: 14,
         });
 
-        feature_y_position +=
-          subheaderFeatureSize.height +
-          spacer +
-          descriptionFeatureSize.height +
-          0.2;
+        let spacer = 0.3;
+
+        // Product Name
+        let left_column_width = 5.46;
+        let product_name = current_product.Product["Product Name"];
+        let productNameSize = measureTextSize(
+          product_name,
+          36,
+          "bold",
+          1.0,
+          left_column_width
+        );
+        slide.addText(product_name, {
+          x: margin_left,
+          y: 1.0,
+          w: left_column_width,
+          h: (productNameSize.height + spacer).toString(),
+          align: "left",
+          valign: "top",
+          color: "d6002a",
+          bold: true,
+          fontSize: 36,
+          lineSpacing: 36 * 1.0,
+        });
+
+        // Description
+        let description = current_product["Product Overview"].Overview;
+        let descriptionSize = measureTextSize(
+          description,
+          14,
+          "normal",
+          1.5,
+          left_column_width
+        );
+
+        slide.addText(description, {
+          x: margin_left,
+          y: 1.0 + productNameSize.height + spacer,
+          w: left_column_width,
+          h: (descriptionSize.height + spacer).toString(),
+          align: "left",
+          valign: "top",
+          color: "555555",
+          bold: false,
+          fontSize: 14,
+          lineSpacing: 14 * 1.5,
+        });
+
+        // Learn more link
+        slide.addText(
+          [
+            {
+              text: "Learn more online",
+              options: {
+                hyperlink: {
+                  url: current_product.Product.Source,
+                  tooltip: current_product.Product.Source,
+                },
+              },
+            },
+          ],
+          {
+            x: margin_left,
+            y:
+              1.0 +
+              productNameSize.height +
+              spacer +
+              descriptionSize.height +
+              spacer,
+            w: left_column_width,
+            h: 0.6,
+            align: "left",
+            valign: "top",
+            color: "d6002a",
+            bold: true,
+            fontSize: 14,
+          }
+        );
+
+        // ----------------- KEY FEATURES & BENEFITS ----------------- //
+        // Loop for each feature
+
+        let margin_left_column_two = 6.82;
+        let right_column_width = 5.66;
+
+        // Key Features & Benefits
+        let featuredHeadline = "Key Features & Benefits";
+        let featuredHeadlineSize = measureTextSize(
+          featuredHeadline,
+          16,
+          "bold",
+          1.0,
+          right_column_width
+        );
+
+        slide.addText("Key Features & Benefits", {
+          x: margin_left_column_two,
+          y: 1.0,
+          w: right_column_width,
+          h: featuredHeadlineSize.height + 0.1,
+          align: "left",
+          valign: "top",
+          color: "d6002a",
+          bold: true,
+          fontSize: 16,
+        });
+
+        let feature_count = current_product["Product Overview"]["Key Features"].length;
+        let feature_y_position = 1.0;
+
+        for (let i = 0; i < feature_count; i++) {
+          // Loop for each feature
+          let subheaderFeature = current_product["Product Overview"]["Key Features"][i].Feature;
+          let subheaderFeatureSize = measureTextSize(
+            subheaderFeature,
+            18,
+            "bold",
+            1.0,
+            right_column_width
+          );
+
+          let descriptionFeature = current_product["Product Overview"]["Key Features"][i].Description;
+          let descriptionFeatureSize = measureTextSize(
+            descriptionFeature,
+            10,
+            "normal",
+            1.0,
+            right_column_width
+          );
+
+          // Check size of the feature copy
+          // Check the slides
+          let totalFeatureHeight = feature_y_position +
+            featuredHeadlineSize.height +
+            spacer +
+            subheaderFeatureSize.height +
+            0.2 +
+            descriptionFeatureSize.height +
+            spacer;
+
+          if (totalFeatureHeight < 7.1) {
+            // Add the slides
+            slide.addText(subheaderFeature, {
+              x: margin_left_column_two,
+              y: feature_y_position + featuredHeadlineSize.height + spacer,
+              w: right_column_width,
+              h: subheaderFeatureSize.height + 0.1,
+              align: "left",
+              valign: "top",
+              color: "000000",
+              bold: true,
+              fontSize: 18,
+            });
+
+            slide.addText(descriptionFeature, {
+              x: margin_left_column_two,
+              y:
+                feature_y_position +
+                featuredHeadlineSize.height +
+                spacer +
+                subheaderFeatureSize.height +
+                0.2,
+              w: right_column_width,
+              h: descriptionFeatureSize.height + 0.1,
+              align: "left",
+              valign: "top",
+              color: "555555",
+              bold: false,
+              fontSize: 10,
+            });
+
+            feature_y_position +=
+              subheaderFeatureSize.height +
+              spacer +
+              descriptionFeatureSize.height +
+              0.2;
+          }
+        }
+
+        // S&P Global Logo
+
+        pptx.writeFile({ fileName: current_product.Product["Product Name"] + ".pptx" });
       }
-    }
 
-    // S&P Global Logo
-
-    pptx.writeFile({ fileName: current_product.Product["Product Name"] + ".pptx" });
-  }
-
-    // Find my_products in the product_list
+        // Find my_products in the product_list
   </script>
   <body>
     <div class="container">
