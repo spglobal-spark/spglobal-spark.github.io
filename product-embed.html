@@ -96,6 +96,35 @@
         overflow: hidden; /* Hides any overflowing content */
         text-overflow: ellipsis; /* Adds an ellipsis (...) at the end if content is truncated */
       }
+
+      .button_grid_container {
+        /* Base styles for mobile (1 column) */
+        display: grid;
+        grid-template-columns: 1fr; /* 1 column by default */
+        gap: 32px; /* Gap between grid items */
+        padding: 0; /* Padding around the container */
+        width: 100%; /* Take full width */
+        max-width: 1408px; /* Max width for the container */
+        box-sizing: border-box; /* Include padding in element's total width and height */
+      }
+
+      .features-overline {
+        margin-top: 0;
+      }
+
+      /* Tablet breakpoint (768px and up): 2 columns */
+      @media (min-width: 768px) {
+        .button_grid_container {
+          grid-template-columns: repeat(2, 1fr); /* 2 columns */
+        }
+      }
+
+      /* Desktop breakpoint (1024px and up): 4 columns */
+      @media (min-width: 1024px) {
+        .button_grid_container {
+          grid-template-columns: repeat(4, 1fr); /* 4 columns */
+        }
+      }
     </style>
   </head>
   <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs/dist/pptxgen.bundle.js"></script>
@@ -165,17 +194,13 @@
       if (bestMatch) {
         console.log("Found best match for '" + searchTermRaw + "':", bestMatch.Product["Product Name"] + " (Score: " + highestScore + ")");
         // You can now use bestMatch as needed
-        document.getElementById("download_buttons").innerHTML +=
+        document.getElementById("card_grid").innerHTML +=
          generateCard(bestMatch);
          console.log(bestMatchIndex);
       } else {
         console.log("Product not found for:", searchTermRaw);
       }
     }
-
-            // Update status
-            document.getElementById("status").innerText =
-              "Your presentation(s) are ready. Click the button(s) below to download.";
 
           } catch (error) {
             // Catch any errors that occurred during the fetch or parsing
@@ -194,22 +219,18 @@
 
     function generateCard(_current_product) {
     let card = `
-        <div class="product_card">
+        <button class="product_card">
             <div class="division_title">${_current_product["Product"]["Division"]}</div>
             <b>${_current_product["Product"]["Product Name"]}</b>
             <div class="product_description limit_text">${_current_product["Product Overview"]["Overview"]}</div>
             <!-- <p><a href="${_current_product["Product"]["Source"]}" target="_blank">${_current_product["Product"]["Source"]}</a></p> -->
-        </div>
+        </button>
     `;
     return card;
     }
 
   </script>
   <body>
-    <div class="container">
-      <h1 id="headline">PowerPoint Generator</h1>
-      <p id="status">Generating ... please wait.</p>
-      <div id="download_buttons"></div>
-    </div>
+    <div id="card_grid" class="button_grid_container"></div>
   </body>
 </html>
