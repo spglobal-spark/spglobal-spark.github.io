@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PowerPoint Generator</title>
+    <style>
+      body {
+        font-family: Helvetica, Arial, sans-serif;
+        display: flex;
+        justify-content: center; /* Horizontally center */
+        align-items: center; /* Vertically center */
+        min-height: 100vh; /* Ensure body takes full viewport height */
+        margin: 0;
+        background-color: #f0f2f5; /* A light background for a cleaner look */
+      }
+
+      .container {
+        text-align: center;
+        background-color: #ffffff;
+        padding: 40px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      #headline {
+        color: #333333;
+      }
+
+      #status {
+        color: #555555;
+        margin-bottom: 20px;
+      }
+
+      #download_buttons button {
+        background-color: #d6002a; /* S&P Global Red */
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: background-color 0.2s ease-in-out; /* Smooth hover effect */
+      }
+
+      #download_buttons button:hover {
+        background-color: #000000; /* Black fill on hover */
+      }
+
+      .product_card {
+        display: flex;
+        flex-direction: column; /* Stacks children vertically */
+        justify-content: top; /* Vertically centers content */
+
+        padding: 1.5rem;
+        border: 0;
+        border-radius: 0;
+
+        background-color: #deecf0;
+        width: calc(100%);
+
+        text-align: left;
+        vertical-align: top;
+        font-size: 1.375rem;
+        transition: transform 0.2s ease-in-out,
+          background-color 0.2s ease-in-out; /* Add transition for background-color */
+      }
+
+      .product_card:hover {
+        transform: translateY(-4px); /* Raise the card by 6px */
+      }
+
+      .product_card:hover b,
+      .product_card:hover strong {
+        text-decoration: underline;
+      }
+
+      .division_title {
+        font-size: 0.75rem;
+        color: #555;
+        margin-bottom: 0.25rem;
+      }
+
+      .product_description {
+        color: #555; /* Dark text color */
+        font-size: 0.75rem;
+        margin-top: 1rem;
+        line-height: 1.5;
+      }
+
+      .limit_text {
+        display: -webkit-box !important;
+        -webkit-line-clamp: 5; /* Limits the text to 5 lines */
+        -webkit-box-orient: vertical;
+        overflow: hidden; /* Hides any overflowing content */
+        text-overflow: ellipsis; /* Adds an ellipsis (...) at the end if content is truncated */
+      }
+    </style>
+  </head>
+  <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs/dist/pptxgen.bundle.js"></script>
+  <script>
+
+        // Which Products are we featuring?
+        const my_products = ['Advanced Country', 'Capital IQ', 'Credit Analytics', 'Global Risk Portal'];
+        console.log("Product Slides:", my_products);
+
+        // Define the URL of the JSON file
+        const url = "https://spglobal-spark.github.io/spark-product-list.json";
+        var product_list = [];
+
+        // Create an async function to fetch the data
+        async function getProductList() {
+          try {
+            // Await the fetch call to the URL
+            const response = await fetch(url);
+
+            // Check if the response was successful (status code 200-299)
+            if (!response.ok) {
+              throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            // Await the parsing of the response body as JSON
+            product_list = await response.json();
+
+            // Log the resulting JSON data to the console
+            console.log("Successfully fetched product data");
+
+
+    // Iterate through the products you are searching for
+    for (var i = 0; i < my_products.length; i++) {
+      const searchTermRaw = my_products[i];
+      // Prepare the search term: remove special characters, convert to lower case, and split into words.
+      // Filtering out empty strings handles cases with multiple spaces.
+      const searchWords = removeSpecialCharacters(searchTermRaw)
+        .toLowerCase()
+        .split(' ')
+        .filter(word => word.length > 0);
+
+      let bestMatch = null;
+      let highestScore = 0;
+      let bestMatchIndex = -1;
+
+      // Iterate through the entire product list to score each one against the search term
+      product_list.forEach((product, index) => {
+        const productName = removeSpecialCharacters(product.Product["Product Name"]).toLowerCase();
+        let currentScore = 0;
+
+        // Increase score for each search word found in the product name
+        searchWords.forEach(word => {
+          if (productName.includes(word)) {
+            currentScore++;
+          }
+        });
+
+        // If the current product has a better score, it becomes the new best match
+        if (currentScore > highestScore) {
+          highestScore = currentScore;
+          bestMatch = product;
+          bestMatchIndex = index;
+        }
+      });
+
+      // A match is only considered valid if at least one word matched (score > 0)
+      if (bestMatch) {
+        console.log("Found best match for '" + searchTermRaw + "':", bestMatch.Product["Product Name"] + " (Score: " + highestScore + ")");
+        // You can now use bestMatch as needed
+        document.getElementById("download_buttons").innerHTML +=
+         generateCard(bestMatch);
+         console.log(bestMatchIndex);
+      } else {
+        console.log("Product not found for:", searchTermRaw);
+      }
+    }
+
+            // Update status
+            document.getElementById("status").innerText =
+              "Your presentation(s) are ready. Click the button(s) below to download.";
+
+          } catch (error) {
+            // Catch any errors that occurred during the fetch or parsing
+            console.error("Could not fetch the product list:", error);
+          }
+        }
+
+        // Call the function to execute it
+        getProductList();
+
+        // Convert to unicode
+        function removeSpecialCharacters(str) {
+        return str.replace(/[^\w\s]|_/g, '') // Remove special characters
+                  .replace(/\s+/g, ' '); // Replace multiple spaces with a single space
+    }
+
+    function generateCard(_current_product) {
+    let card = `
+        <div class="product_card">
+            <div class="division_title">${_current_product["Product"]["Division"]}</div>
+            <b>${_current_product["Product"]["Product Name"]}</b>
+            <div class="product_description limit_text">${_current_product["Product Overview"]["Overview"]}</div>
+            <!-- <p><a href="${_current_product["Product"]["Source"]}" target="_blank">${_current_product["Product"]["Source"]}</a></p> -->
+        </div>
+    `;
+    return card;
+    }
+
+  </script>
+  <body>
+    <div class="container">
+      <h1 id="headline">PowerPoint Generator</h1>
+      <p id="status">Generating ... please wait.</p>
+      <div id="download_buttons"></div>
+    </div>
+  </body>
+</html>
