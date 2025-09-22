@@ -1,10 +1,7 @@
 
     <style>
       .product_container {
-        font-family: Helvetica, Arial, sans-serif;
         display: block;
-        margin: 0;
-        background-color: #f0f2f5; /* A light background for a cleaner look */
       }
 
       .container {
@@ -115,9 +112,6 @@
 
         border-radius: 0;
         margin-bottom: 1rem;
-        background-color: #f0f0f0; /* #ffffff; */
-        /* border: 1px solid rgb(230, 230, 230); /* Light border for separation */
-        /* box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15); /* Pretty box shadow */
       }
       
       /* --- NEW STYLES --- */
@@ -127,13 +121,13 @@
 
       #show-more-btn {
         background-color: transparent;
-        border: 1px solid #555;
-        color: #333;
+        border: 1px solid #000;
+        color: #000;
         padding: 8px 16px;
         margin-top: 1rem;
         cursor: pointer;
         font-weight: bold;
-        border-radius: 4px;
+        border-radius: 0;
         transition: all 0.2s ease-in-out;
       }
 
@@ -237,15 +231,6 @@
 
           // A match is only considered valid if at least one word matched (score > 0)
           if (bestMatch) {
-            /*
-            console.log(
-              "Found best match for '" + searchTermRaw + "':",
-              bestMatch.Product["Product Name"] +
-                " (Score: " +
-                highestScore +
-                ")"
-            );
-            */
             // Store it in the found products array
             found_products.push(bestMatch);
             // You can now use bestMatch as needed
@@ -253,7 +238,6 @@
               bestMatch,
               bestMatchIndex
             );
-            //console.log(bestMatchIndex);
           } else {
             console.log("Product not found for:", searchTermRaw);
           }
@@ -294,10 +278,9 @@
     function generateCard(_current_product, _index) {
       let card = `
         <button class="product_card" data-index="${_index}" onclick="handleCardClick(${_index})">
-            <div class="division_title">${_current_product["Product"]["Division"]}</div>
+            <div class="caps-bold-micro block text-black-base">${_current_product["Product"]["Division"]}</div>
             <b>${_current_product["Product"]["Product Name"]}</b>
-            <div class="product_description limit_text">${_current_product["Product Overview"]["Overview"]}</div>
-            <!-- <p><a href="${_current_product["Product"]["Source"]}" target="_blank">${_current_product["Product"]["Source"]}</a></p> -->
+            <div class="body-regular-s limit_text">${_current_product["Product Overview"]["Overview"]}</div>
         </button>
     `;
       return card;
@@ -328,6 +311,14 @@
       column_right.classList.add("column-right");
       summaryContainer.appendChild(column_right);
 
+        // Recommended Tag
+      const recommended = document.createElement("div");
+      recommended.classList.add("caps-bold-micro");
+      recommended.classList.add("text-red-core");
+      recommended.style.marginBottom = "2rem";
+      recommended.innerText = "Recommended";
+      column_left.appendChild(recommended);
+
       // Add Tags
       const divisionTitle = document.createElement("div");
       divisionTitle.innerHTML =
@@ -335,12 +326,11 @@
         _current_product["Product"]["Division"] +
         "</b> | " +
         _current_product["Product"]["Type"];
-      divisionTitle.className = "overline";
-      divisionTitle.style.marginBottom = "0.5rem";
+    divisionTitle.style.marginBottom = "1rem";
       column_left.appendChild(divisionTitle);
 
       // Product Name
-      const productHeadlineLink = document.createElement("h1");
+      const productHeadlineLink = document.createElement("h2");
       productHeadlineLink.id = "product-headline"; // Keep the original ID for potential styling
       //productHeadlineLink.classList.add("product-link"); // Add the product-link class for consistency
       productHeadlineLink.innerText =
@@ -350,6 +340,7 @@
 
       // Product Description
       const productDescription = document.createElement("p");
+      productDescription.classList.add("body-regular-l");
       productDescription.id = "product-description";
       productDescription.innerText =
         _current_product["Product Overview"]["Overview"];
@@ -367,10 +358,10 @@
       column_left.appendChild(learnMoreLink);
 
       // Add Features & Benefits
-      const aiFeatures = document.createElement("h2");
+      const aiFeatures = document.createElement("div");
       aiFeatures.textContent = "Features & Benefits";
-      aiFeatures.style.marginBottom = "0";
-      aiFeatures.className = "overline features-overline";
+      aiFeatures.classList.add("caps-bold-micro");
+      aiFeatures.classList.add("text-red-core");
       column_right.appendChild(aiFeatures);
 
       // List
@@ -392,13 +383,14 @@
 
             const titleColumn = document.createElement("div");
             titleColumn.style.marginTop = "2rem";
-            const titleHeader = document.createElement("h3");
+            const titleHeader = document.createElement("h4");
             titleHeader.textContent = item["Feature"];
             titleColumn.appendChild(titleHeader);
 
             const descriptionColumn = document.createElement("div");
             const descriptionParagraph = document.createElement("p");
             descriptionParagraph.textContent = item["Description"];
+            descriptionParagraph.classList.add("body-regular-s");
             descriptionColumn.appendChild(descriptionParagraph);
 
             rowDiv.appendChild(titleColumn);
@@ -410,6 +402,7 @@
         if (dataArray.length > 5) {
             const showMoreBtn = document.createElement("button");
             showMoreBtn.id = "show-more-btn";
+            showMoreBtn.classList.add("body-bold-s");
             showMoreBtn.textContent = "Show more";
             
             showMoreBtn.onclick = function() {
@@ -438,8 +431,6 @@
     }
   </script>
   <div class="product_container">
-    <h2>Recommended</h2>
     <div id="body_container"></div>
-    <hr>
     <div id="card_grid" class="button_grid_container"></div>
   </div>
