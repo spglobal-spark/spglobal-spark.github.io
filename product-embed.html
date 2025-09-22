@@ -127,6 +127,30 @@
         /* border: 1px solid rgb(230, 230, 230); /* Light border for separation */
         /* box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15); /* Pretty box shadow */
       }
+      
+      /* --- NEW STYLES --- */
+      .feature-item.hidden {
+        display: none;
+      }
+
+      #show-more-btn {
+        background-color: transparent;
+        border: 1px solid #555;
+        color: #333;
+        padding: 8px 16px;
+        margin-top: 1rem;
+        cursor: pointer;
+        font-weight: bold;
+        border-radius: 4px;
+        transition: all 0.2s ease-in-out;
+      }
+
+      #show-more-btn:hover {
+        background-color: #e0e0e0;
+        border-color: #000;
+      }
+      /* --- END NEW STYLES --- */
+
 
       /* Tablet breakpoint (768px and up): 2 columns */
       @media (min-width: 768px) {
@@ -156,7 +180,7 @@
       "Credit Analytics",
       "Global Risk Portal",
     ];
-    console.log("Product Slides:", my_products);
+    // console.log("Product Slides:", my_products);
 
     // Store the found products
     var found_products = [];
@@ -221,6 +245,7 @@
 
           // A match is only considered valid if at least one word matched (score > 0)
           if (bestMatch) {
+            /*
             console.log(
               "Found best match for '" + searchTermRaw + "':",
               bestMatch.Product["Product Name"] +
@@ -228,6 +253,7 @@
                 highestScore +
                 ")"
             );
+            */
             // Store it in the found products array
             found_products.push(bestMatch);
             // You can now use bestMatch as needed
@@ -235,7 +261,7 @@
               bestMatch,
               bestMatchIndex
             );
-            console.log(bestMatchIndex);
+            //console.log(bestMatchIndex);
           } else {
             console.log("Product not found for:", searchTermRaw);
           }
@@ -360,30 +386,63 @@
         _current_product["Product Overview"]["Key Features"],
         column_right
       );
+    }
+    
+    // --- UPDATED FUNCTION ---
+    function createSummaryElements(dataArray, parentContainer) {
+        dataArray.forEach((item, index) => {
+            const rowDiv = document.createElement("div");
+            // Add a class for easy selection and another to hide if necessary
+            rowDiv.classList.add("feature-item");
+            if (index >= 5) {
+                rowDiv.classList.add("hidden");
+            }
 
-      function createSummaryElements(dataArray, parentContainer) {
-        dataArray.forEach((item) => {
-          const rowDiv = document.createElement("div");
-          //rowDiv.classList.add("summary-row");
+            const titleColumn = document.createElement("div");
+            titleColumn.style.marginTop = "2rem";
+            const titleHeader = document.createElement("h3");
+            titleHeader.textContent = item["Feature"];
+            titleColumn.appendChild(titleHeader);
 
-          const titleColumn = document.createElement("div");
-          //titleColumn.classList.add("title-column");
-          const titleHeader = document.createElement("h3");
-          titleColumn.style.marginTop = "2rem";
-          titleHeader.textContent = item["Feature"];
-          titleColumn.appendChild(titleHeader);
+            const descriptionColumn = document.createElement("div");
+            const descriptionParagraph = document.createElement("p");
+            descriptionParagraph.textContent = item["Description"];
+            descriptionColumn.appendChild(descriptionParagraph);
 
-          const descriptionColumn = document.createElement("div");
-          //descriptionColumn.classList.add("description-column");
-          const descriptionParagraph = document.createElement("p");
-          descriptionParagraph.textContent = item["Description"];
-          descriptionColumn.appendChild(descriptionParagraph);
-
-          rowDiv.appendChild(titleColumn);
-          rowDiv.appendChild(descriptionColumn);
-          parentContainer.appendChild(rowDiv);
+            rowDiv.appendChild(titleColumn);
+            rowDiv.appendChild(descriptionColumn);
+            parentContainer.appendChild(rowDiv);
         });
-      }
+
+        // Add "Show more" button if there are more than 5 items
+        if (dataArray.length > 5) {
+            const showMoreBtn = document.createElement("button");
+            showMoreBtn.id = "show-more-btn";
+            showMoreBtn.textContent = "Show more";
+            
+            showMoreBtn.onclick = function() {
+                // Find the parent container of the button, which also contains the items
+                const container = this.parentElement; 
+                const isShowingAll = this.textContent === "Show less";
+                
+                // Select all feature items within that same container
+                const allItems = container.querySelectorAll(".feature-item");
+
+                allItems.forEach((item, index) => {
+                    if (index >= 5) {
+                        // The second argument of 'toggle' is a boolean:
+                        // true = add the class, false = remove the class.
+                        // We want to HIDE when isShowingAll is true, so we add the 'hidden' class.
+                        item.classList.toggle("hidden", isShowingAll);
+                    }
+                });
+
+                // Toggle button text
+                this.textContent = isShowingAll ? "Show more" : "Show less";
+            };
+
+            parentContainer.appendChild(showMoreBtn);
+        }
     }
   </script>
   <body style="display: block;">
