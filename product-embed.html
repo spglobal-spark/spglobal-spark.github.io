@@ -1,16 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Product Database</title>
+
     <style>
-      body {
+      .product_container {
         font-family: Helvetica, Arial, sans-serif;
-        display: flex;
-        justify-content: center; /* Horizontally center */
-        align-items: center; /* Vertically center */
-        min-height: 100vh; /* Ensure body takes full viewport height */
+        display: block;
         margin: 0;
         background-color: #f0f2f5; /* A light background for a cleaner look */
       }
@@ -170,7 +162,7 @@
         }
       }
     </style>
-  </head>
+
   <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs/dist/pptxgen.bundle.js"></script>
   <script>
     // Which Products are we featuring?
@@ -445,10 +437,9 @@
         }
     }
   </script>
-  <body style="display: block;">
+  <div class="product_container">
     <h2>Recommended</h2>
     <div id="body_container"></div>
     <hr>
     <div id="card_grid" class="button_grid_container"></div>
-  </body>
-</html>
+  </div>
