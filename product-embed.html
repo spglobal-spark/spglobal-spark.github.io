@@ -242,7 +242,8 @@
         }
 
         // Generate Details for the first product
-    generateDetails(found_products[0]);
+        generateDetails(found_products[0]);
+        //
       } catch (error) {
         // Catch any errors that occurred during the fetch or parsing
         console.error("Could not fetch the product list:", error);
@@ -251,6 +252,18 @@
 
     // Call the function to execute it
     getProductList();
+
+    // --- NEW --- Handles the click event on a product card
+    function handleCardClick(index) {
+      // Find the product in our main list using the index from the button
+      const product = product_list[index];
+      if (product) {
+        // Call generateDetails with the correct product object
+        generateDetails(product);
+        // Scroll the details section into view for a better user experience
+        document.getElementById('summary_container').scrollIntoView({ behavior: 'smooth' });
+      }
+    }
 
 
     // Convert to unicode
@@ -262,7 +275,7 @@
 
     function generateCard(_current_product, _index) {
       let card = `
-        <button class="product_card" data-index="${_index}" onclick="window.open('${_current_product["Product"]["Source"]}', '_blank')">
+        <button class="product_card" data-index="${_index}" onclick="handleCardClick(${_index})">
             <div class="division_title">${_current_product["Product"]["Division"]}</div>
             <b>${_current_product["Product"]["Product Name"]}</b>
             <div class="product_description limit_text">${_current_product["Product Overview"]["Overview"]}</div>
@@ -285,6 +298,8 @@
         summaryContainer.classList.add("section-container");
         summaryContainer.style.marginBottom = "4rem";
         productContainer.prepend(summaryContainer);
+      } else {
+        summaryContainer.innerHTML = ""; // Clear previous content
       }
 
       const column_left = document.createElement("div");
