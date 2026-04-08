@@ -1,0 +1,10 @@
+## RECSRecommendations Upload File,,,,,,,,,,,,,,,,,,,
+## RECS''## RECS'' indicates a Recommendations pre-process header. Please do not remove these lines.,,,,,,,,,,,,,,,,,,,
+## RECS,,,,,,,,,,,,,,,,,,,
+## RECSUse this file to upload product display information to Recommendations. Each product has its own row. Each line must contain 19 values and if not all are filled a space should be left.,,,,,,,,,,,,,,,,,,,
+## RECSThe last 100 columns (entity.custom1 - entity.custom100) are custom. The name 'customN' can be replaced with a custom name such as 'onSale' or 'brand'.,,,,,,,,,,,,,,,,,,,
+## RECSIf the products already exist in Recommendations then changes uploaded here will override the data in Recommendations. Any new attributes entered here will be added to the product''s entry in Recommendations.,,,,,,,,,,,,,,,,,,,
+## RECSentity.id,entity.name,entity.categoryId,entity.message,entity.thumbnailUrl,entity.value,entity.pageUrl,entity.inventory,entity.margin,entity.custom1,entity.custom2,entity.custom3,entity.custom4,entity.custom5,entity.custom6,entity.custom7,entity.custom8,entity.custom9,entity.custom10,...
+PRODUCT_MI_451_RESEARCH,451 Research,MI_SOLUTIONS,"451 Research offers technology data, research, and advisory services, supporting strategic business decisions across all phases of innovation. Discover more.",,,https://www.spglobal.com/market-intelligence/en/solutions/451-research,,,,,,,,,,,,,
+PRODUCT_MI_451_RESEARCH_DATACENTER_KNOWLEDGEBASE,451 Research Datacenter KnowledgeBase,MI_SOLUTIONS,"A global database of +12,960 colocation and wholesale datacenter facilities.",,,https://www.spglobal.com/market-intelligence/en/solutions/datacenter-knowledgebase,,,,,,,,,,,,,
+PRODUCT_MI_451_RESEARCH_M_AND_A_KNOWLEDGEBASE,451 Research M&A KnowledgeBase,MI_SOLUTIONS,A tech M&A transactions database that includes analysis of deal rationales and unique data on private-company valuations,,,https://www.spglobal.com/market-intelligence/en/solutions/ma-knowledgebase,,,,,,,,,,,,,
