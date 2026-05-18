@@ -845,7 +845,7 @@
     <div class="right-panel left-hidden">
       <div class="container">
         <!-- Change to a login -->
-        <button id="sso_login" style="padding: 16px; font-size: 16px">
+        <button id="sso_login" style="padding: 16px; font-size: 16px;display: none;">
           Login (SSO)
         </button>
       </div>
@@ -871,44 +871,6 @@
 
     <!-- Initialize Firebase -->
     <script type="module">
-      var login_attempt = false;
-      var logged_in = false;
-      // Import the functions you need from the SDKs you need
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
-      import {
-        getFirestore,
-        collection,
-        addDoc,
-      } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
-
-      import {
-        getAuth,
-        signInWithPopup,
-        signInWithRedirect,
-        getRedirectResult,
-        SAMLAuthProvider,
-        onAuthStateChanged,
-      } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
-
-      // TODO: Add SDKs for Firebase products that you want to use
-      // https://firebase.google.com/docs/web/setup#available-libraries
-
-      // Your web app's Firebase configuration
-      var config = {
-        apiKey: "AIzaSyBKEKlepI4jwm1G-X7Wvebn304jYagVhTM",
-        authDomain: "creator-app-7ff1d.firebaseapp.com",
-        projectId: "creator-app-7ff1d",
-        storageBucket: "creator-app-7ff1d.appspot.com",
-        messagingSenderId: "664849551099",
-        appId: "1:664849551099:web:346faa4bfa728606e3aa5e",
-      };
-
-      // Initialize Firebase
-      const app = initializeApp(config);
-      const db = getFirestore(app);
-
-      // SAML
-      const auth = getAuth(app);
 
       function launch_canvas() {
         // Show dashboard
@@ -935,83 +897,6 @@
         // Open help panel
         document.getElementsByName("help_button")[0].click();
       }
-
-      // Login
-      const user = auth.currentUser;
-      if (user) {
-        let login_button = document.getElementById("sso_login");
-        if (login_button) {
-          login_button.innerText = "Loading...";
-          login_button.disabled = true;
-        }
-      }
-
-      /* Launch canvas without login
-    setTimeout(1000, function () {
-      launch_canvas();
-    });
-    */
-
-      async function signIn() {
-        // ADDED ASYNC to allow AWAIT to work
-        if (!login_attempt) {
-          login_attempt = true;
-          // Hide the button clickablity
-          var login_button = document.getElementById("sso_login");
-          if (login_button) {
-            login_button.innerText = "Loading...";
-          }
-
-          const provider = new SAMLAuthProvider("saml.spglobal");
-          try {
-            const userCred = await signInWithPopup(auth, provider);
-            console.log("User signed in:", userCred);
-            const user = auth.currentUser;
-            if (user && !logged_in) {
-              logged_in = true;
-              // The user object has basic properties such as display name, email, etc.
-              //const displayName = user.displayName;
-              const email = user.email;
-              //const photoURL = user.photoURL;
-              const emailVerified = user.emailVerified;
-
-              console.log("SSO Login Successful");
-
-              // The user's ID, unique to the Firebase project. Do NOT use
-              // this value to authenticate with your backend server, if
-              // you have one. Use User.getToken() instead.
-              const uid = user.uid;
-
-              // Show dashboard
-              launch_canvas();
-
-              // If the @font-face has been loaded -- Update the canvas
-              fontLoaded("Akkurat LL", () => {
-                console.log("Font has been loaded!");
-                let login_button = document.getElementById("sso_login");
-                if (!login_button) {
-                  update_canvas();
-                }
-                // Perform actions that depend on the font being loaded
-              });
-            }
-          } catch (error) {
-            console.error("Error signing in:", error);
-            // Handle error
-            login_attempt = false;
-            var login_button = document.getElementById("sso_login");
-            if (login_button) {
-              login_button.innerText = "Login (SSO)";
-            }
-          }
-        }
-      }
-
-      // Function to handle the "Enter" key press
-      var sso_button = (document.getElementById("sso_login").onclick =
-        function () {
-          signIn();
-        });
 
       //<!-- Application Scripts -->
       /* Application starts */
@@ -1157,6 +1042,7 @@
         */
       ];
       canvas_content.template_size = template_sizes[0];
+
 
       // Banner
       const smallest_static_banner_height = 128;
@@ -1538,25 +1424,6 @@
           canvas_width: canvas_content.canvas_width,
           canvas_height: canvas_content.canvas_height,
         };
-
-        // Click the send data button
-        const user = auth.currentUser;
-        if (user) {
-          // Data being sent
-          const email = user.email.split("@")[0];
-          data_object.username = email;
-          // Create a reference to the Collection and Document
-          const docRef = addDoc(
-            collection(db, email + "-" + data_object.download),
-            data_object
-          );
-          // Create a reference to the download
-          const recordContent = addDoc(collection(db, "All-Downloads"), {
-            user: data_object.username,
-            time: data_object.timestamp,
-            division: data_object.logo,
-          });
-        }
       }
 
       // Download Canvas
@@ -1593,25 +1460,6 @@
           canvas_width: canvas_content.canvas_width,
           canvas_height: canvas_content.canvas_height,
         };
-
-        // Click the send data button
-        const user = auth.currentUser;
-        if (user) {
-          // Data being sent
-          const email = user.email.split("@")[0];
-          data_object.username = email;
-          // Create a reference to the Collection and Document
-          const docRef = addDoc(
-            collection(db, email + "-" + data_object.download),
-            data_object
-          );
-          // Create a reference to the download
-          const recordContent = addDoc(collection(db, "All-Downloads"), {
-            user: data_object.username,
-            time: data_object.timestamp,
-            division: data_object.logo,
-          });
-        }
       }
 
       // Expand the left side toolbox
@@ -2347,19 +2195,6 @@
                 canvas_width: canvas_content.canvas_width,
                 canvas_height: canvas_content.canvas_height,
               };
-
-              // Click the send data button
-              const user = auth.currentUser;
-              if (user) {
-                // Data being sent
-                const email = user.email.split("@")[0];
-                data_object.username = email;
-                // Create a reference to the Collection and Document
-                const docRef = addDoc(
-                  collection(db, email + "-" + data_object.download),
-                  data_object
-                );
-              }
             }
           }
         }
@@ -3220,35 +3055,6 @@
               "&body=" +
               encodeURIComponent(feedback_inputbox.value);
             window.location.href = link;
-
-            /*
-            // Click the send data button
-            const user = auth.currentUser;
-            if (user) {
-              // Data being sent
-              const email = user.email.split("@")[0];
-              // Get data
-              var data_object = {
-                user: email,
-                feedback: feedback_inputbox.value,
-                timestamp: new Date().toString(),
-              };
-
-              // Create a reference to the Collection and Document
-              const docRef = addDoc(collection(db, "Feedback"), data_object);
-              // Update button
-              feedback_button.textContent = "Sent!";
-              feedback_button.style.backgroundColor = "#000000";
-              feedback_button.disabled = true;
-
-              // Set a timeout to switch back after 5 seconds
-              setTimeout(() => {
-                feedback_button.textContent = "Send feedback"; // Revert to original text
-                feedback_button.style.backgroundColor = "#d6002a"; // Revert to original background color
-                feedback_button.disabled = false; // Re-enable the button
-              }, 5000); // 5000 milliseconds (5 seconds)
-            }
-            */
           });
 
           add_label_to_inside_tools_container("Overview");
@@ -6931,6 +6737,11 @@
           }
         });
       }
+
+
+      // Launch program
+      launch_canvas();
+      fontLoaded('Akkurat LL', update_canvas);
     </script>
 
     <!-- Baked SVGs -->
