@@ -1,6 +1,7 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
+    <script src="https://cdn.jsdelivr.net/npm/pica/dist/pica.min.js"></script>
     <link
       rel="icon"
       href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAMAAABlApw1AAABNVBMVEX////XACoAAAADAwP9/f3+/v7//v7++Pn//P1AQEDVAB7WACXbGT/jT2w8PDzXASvXAy3+/Pz//f3XASrwoK/VAB/XACjXAyzYCTH63eP8/PwBAQECAgIJCQm3t7fd3d3+/P0EBAQFBQUGBgYMDAw9PT22tra4uLjb29ve3t763uP//v/+//81NTU5OTk7Ozs+Pj4/Pz9BQUHTABNCQkLUABrUABxDQ0PVACDVACLVAR/WACPWASXXACnVAyHWAyfXAivXAixHR0fYAy3WBibYBC3YBC7YBi/XCCzZCjLZDDTZDTXaFzzbGT7bG0DcIUXiRmTjTWrkUG3kUW7kVXHvnavwnq3wobDyqbbIyMjJycn1vcj52+Hl5eX63OLm5ub64eb86Ov++Pj//Pz//f7//v3///7rC/PdAAABY0lEQVR42u3bRXbDQBBF0YojK+SA7aAdUMBhZmZmZqb9LyErkDL8LZ93pz16pwZdkzIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAiIlkDFjx8uxxdLrCbZMTm28WNoSc9SZaE27LJ7r7zQsN6Et0lbqtM98zEBHQHoMJtHUQoESAGgFqxR4Q+48s5quEZw8j44UapxXG5l6siDfqZM5znwEAEF9DUY/DP0G544IgiEr4tVjL2NP5VbXbLi+uP8wPCUjbzdRqpdsWZ7efLRMacLewt1XntJ3s4WBEQH1DU4nbso3NLQQoEaBGgBoBagSoEaBGgBoBagSoEaBGgBoBagSoEaBGgBoBagSoEaBGgBoBagSoEaBGgBoBagSoEaBGgBoBagSoEaBGgNp/AfO767VO21g5iLofuJ1Zq3Lb8tL+a2jAl90fnaacdpI6Pnu3bwuT/ixznx9xR2ax57su6fsGAACc8Qeld9NchmI1GwAAAABJRU5ErkJggg=="
@@ -1011,6 +1012,7 @@
       var sso_button = (document.getElementById("sso_login").onclick =
         function () {
           signIn();
+          //launch_canvas();
         });
 
       //<!-- Application Scripts -->
@@ -1137,9 +1139,12 @@
         };
       }
 
+      // Initialize pica
+      const pica = window.pica();
+
       const template_sizes = [
-        "1080x1350 Four-Five Ratio",
         "1200x628 Landscape",
+        "1080x1350 Four-Five Ratio",
         "1200x1200 Square",
         "628x1200 Portrait",
         /*
@@ -1483,11 +1488,11 @@
         var padding = 48;
         const maxWidth = Math.min(
           userDefinedWidth,
-          window.innerWidth - panelWidth - padding * 2
+          window.innerWidth - panelWidth - padding * 2,
         );
         const maxHeight = Math.min(
           userDefinedHeight,
-          window.innerHeight - padding * 2
+          window.innerHeight - padding * 2,
         );
 
         let newWidth = maxWidth;
@@ -1548,7 +1553,7 @@
           // Create a reference to the Collection and Document
           const docRef = addDoc(
             collection(db, email + "-" + data_object.download),
-            data_object
+            data_object,
           );
           // Create a reference to the download
           const recordContent = addDoc(collection(db, "All-Downloads"), {
@@ -1603,7 +1608,7 @@
           // Create a reference to the Collection and Document
           const docRef = addDoc(
             collection(db, email + "-" + data_object.download),
-            data_object
+            data_object,
           );
           // Create a reference to the download
           const recordContent = addDoc(collection(db, "All-Downloads"), {
@@ -1617,7 +1622,7 @@
       // Expand the left side toolbox
       function clear_inside_tools_container() {
         const insideToolsContainer = document.querySelector(
-          ".inside_tools_container"
+          ".inside_tools_container",
         );
         insideToolsContainer.innerHTML = "";
         // Remove active state from main menu buttons
@@ -1783,7 +1788,7 @@
         brandImagesButton.addEventListener("click", function () {
           window.open(
             "https://mediaportal.spglobal.com/search/images",
-            "_blank"
+            "_blank",
           );
         });
         //container.appendChild(brandImagesButton);
@@ -1792,7 +1797,7 @@
           "Portals",
           "Can upload up to two images to be visible on the canvas. \nThe blue dot over the image represents the focal point. The canvas will try to automatically center the image around the focal point. \nMargins can be added to single portal images in the Layout Panel. \nImages may take a while to load, while they are processing a blue progress loading bar can be seen at the top of the application.",
           false,
-          "0px"
+          "0px",
         );
 
         addAccordion(
@@ -1800,7 +1805,7 @@
           "On brand photography:",
           true,
           "12px",
-          brandImagesButton
+          brandImagesButton,
         );
 
         add_label_to_inside_tools_container("Add Image");
@@ -1888,7 +1893,7 @@
 
         addButton.addEventListener("click", function () {
           canvas_content.portal_upload_image_number = parseInt(
-            event.target.name
+            event.target.name,
           );
           fileInput.click();
         });
@@ -1911,16 +1916,16 @@
             if (n == 0) {
               // Transfer focal point information over
               canvas_content.portal_focal_point[0].x = parseFloat(
-                canvas_content.portal_focal_point[1].x
+                canvas_content.portal_focal_point[1].x,
               );
               canvas_content.portal_focal_point[0].y = parseFloat(
-                canvas_content.portal_focal_point[1].y
+                canvas_content.portal_focal_point[1].y,
               );
               canvas_content.portal_focal_point[0].relative_x = parseFloat(
-                canvas_content.portal_focal_point[1].relative_x
+                canvas_content.portal_focal_point[1].relative_x,
               );
               canvas_content.portal_focal_point[0].relative_y = parseFloat(
-                canvas_content.portal_focal_point[1].relative_y
+                canvas_content.portal_focal_point[1].relative_y,
               );
               // Transfer mirroring information over
               canvas_content.portal_image_flip[0] =
@@ -2015,7 +2020,7 @@
       // Add icon buttons
       function add_square_buttons_to_inside_tools_container(
         button_container_id,
-        svg_id
+        svg_id,
       ) {
         const container = document.querySelector(".inside_tools_container");
 
@@ -2047,10 +2052,10 @@
       function add_button_to_inside_tools_container(
         label_string,
         name = "",
-        inline_fixed_width = false
+        inline_fixed_width = false,
       ) {
         const insideToolsContainer = document.querySelector(
-          ".inside_tools_container"
+          ".inside_tools_container",
         );
         const button = document.createElement("button");
         button.className = "toolbox_expanded_button";
@@ -2072,7 +2077,7 @@
         openStateCopy,
         isOpen,
         setMarginTop = "0px",
-        addButton = undefined
+        addButton = undefined,
       ) {
         // Create a new accordion element
         const accordion = document.createElement("div");
@@ -2131,10 +2136,10 @@
       // Add labels
       function add_label_to_inside_tools_container(
         label_string,
-        padding_bottom = 11
+        padding_bottom = 11,
       ) {
         const insideToolsContainer = document.querySelector(
-          ".inside_tools_container"
+          ".inside_tools_container",
         );
         const label = document.createElement("div");
         label.className = "toolbox_expanded_label";
@@ -2147,7 +2152,7 @@
       // Text label
       function add_text_to_inside_tools_container(text) {
         const insideToolsContainer = document.querySelector(
-          ".inside_tools_container"
+          ".inside_tools_container",
         );
         const textContainer = document.createElement("div");
         textContainer.classList.add("text-container");
@@ -2213,7 +2218,7 @@
           last_active_textbox = button_label;
           update_character_limit_inputbox(
             event.target,
-            headline_character_limit
+            headline_character_limit,
           ); // Max recommended headline length
           canvas_content.headline = event.target.value;
           calculate_headline_minimum_container_width();
@@ -2244,7 +2249,7 @@
           let event_name_character_limit = 32;
           update_character_limit_inputbox(
             event.target,
-            event_name_character_limit
+            event_name_character_limit,
           );
           event.target.value = event.target.value.toUpperCase();
           canvas_content.event_name = event.target.value;
@@ -2357,7 +2362,7 @@
                 // Create a reference to the Collection and Document
                 const docRef = addDoc(
                   collection(db, email + "-" + data_object.download),
-                  data_object
+                  data_object,
                 );
               }
             }
@@ -2402,7 +2407,7 @@
               headline_textbox.value = canvas_content.headline;
               update_character_limit_inputbox(
                 headline_textbox,
-                headline_character_limit
+                headline_character_limit,
               );
               headline_textbox.focus();
             }
@@ -2412,7 +2417,7 @@
               body_textbox.value = canvas_content.body;
               update_character_limit_inputbox(
                 body_textbox,
-                body_character_limit
+                body_character_limit,
               );
               body_textbox.focus();
             }
@@ -2422,7 +2427,7 @@
               button_textbox.value = canvas_content.button;
               update_character_limit_inputbox(
                 button_textbox,
-                button_character_limit
+                button_character_limit,
               );
               button_textbox.focus();
             }
@@ -2476,7 +2481,7 @@
       // Toggle switch
       function add_toggle_switch_with_label(labelText, state) {
         const insideToolsContainer = document.querySelector(
-          ".inside_tools_container"
+          ".inside_tools_container",
         );
 
         const toggleSwitchContainer = document.createElement("div");
@@ -2503,7 +2508,7 @@
           toggleSwitch.classList.toggle("on");
           toggle_switch_value_changed(
             toggleSwitchContainer,
-            toggleSwitch.classList.contains("on")
+            toggleSwitch.classList.contains("on"),
           );
         });
 
@@ -2591,10 +2596,10 @@
 
       function add_input_box_to_inside_tools_container(
         input_box_name,
-        default_string = ""
+        default_string = "",
       ) {
         const insideToolsContainer = document.querySelector(
-          ".inside_tools_container"
+          ".inside_tools_container",
         );
         const div = document.createElement("div");
         div.style = "display: block";
@@ -2683,7 +2688,7 @@
 
         // Get references to the elements
         const insideToolsContainer = document.querySelector(
-          ".inside_tools_container"
+          ".inside_tools_container",
         );
         const appLogo = document.getElementById("app-logo");
 
@@ -2740,7 +2745,7 @@
             let select_position = create_dropdown_menu(
               color_list,
               "button_color",
-              canvas_content.button_color
+              canvas_content.button_color,
             );
           }
         }
@@ -2757,7 +2762,7 @@
           addAccordion(
             "File",
             "Download images, save and import designs, read error reports or potential issues.",
-            false
+            false,
           );
 
           // Create recommendations list
@@ -2796,7 +2801,7 @@
           // Project name setting
           let project_name_inputbox = add_input_box_to_inside_tools_container(
             "project",
-            canvas_content.project_name
+            canvas_content.project_name,
           );
           project_name_inputbox.style.height = "40px";
           add_label_to_inside_tools_container("FILE");
@@ -2836,7 +2841,7 @@
             : "Download Image (.PNG)";
           let download_button = add_button_to_inside_tools_container(
             download_label,
-            "download_template"
+            "download_template",
           );
 
           let download_jpg_label = found_errors
@@ -2844,7 +2849,7 @@
             : "Download Image (.JPG)";
           let download_jpg_button = add_button_to_inside_tools_container(
             download_jpg_label,
-            "download_template"
+            "download_template",
           );
 
           if (
@@ -2861,15 +2866,15 @@
           addAccordion(
             "What does this do?",
             "Your design will be converted to a Web friendly format called JSON and saved to your Downloads folder. \nYou can open the file at a later date and continue editing where you left off.",
-            false
+            false,
           );
           add_button_to_inside_tools_container(
             "Save File (.JSON)",
-            "save_template"
+            "save_template",
           );
           add_button_to_inside_tools_container(
             "Open File (.JSON)",
-            "import_template"
+            "import_template",
           );
         }
 
@@ -2899,25 +2904,25 @@
           addAccordion(
             "Text",
             "Modify copy and change the font size.\nUsers can force line breaks using the Return key in the text inputbox.\nThe font size automatically resizes to fit the text area based on the widest word.",
-            false
+            false,
           );
           add_label_to_inside_tools_container("FONT SIZE");
           // Set font size
           let toggle_font_size = add_toggle_switch_with_label(
             "Small",
-            canvas_content.font_size.small
+            canvas_content.font_size.small,
           );
 
           add_label_to_inside_tools_container("INSERT CHARACTER");
           add_button_to_inside_tools_container(
             "TM",
             (name = "Trademark"),
-            true
+            true,
           );
           add_button_to_inside_tools_container(
             "®",
             (name = "Registered"),
-            true
+            true,
           );
           add_button_to_inside_tools_container("©", (name = "Copyright"), true);
 
@@ -2926,7 +2931,7 @@
           // Headline
           add_toggle_switch_with_label(
             "Show headline",
-            canvas_content.headline_visibility
+            canvas_content.headline_visibility,
           );
 
           if (canvas_content.headline_visibility) {
@@ -2936,7 +2941,7 @@
 
             let headline_button = add_input_box_to_inside_tools_container(
               "headline",
-              canvas_content.headline
+              canvas_content.headline,
             );
             headline_button.style.height = "72px";
           }
@@ -2944,7 +2949,7 @@
           // Body
           add_toggle_switch_with_label(
             "Show body",
-            canvas_content.body_visibility
+            canvas_content.body_visibility,
           );
 
           if (canvas_content.body_visibility) {
@@ -2953,7 +2958,7 @@
 
             let body_button = add_input_box_to_inside_tools_container(
               "body",
-              canvas_content.body
+              canvas_content.body,
             );
             body_button.style.height = "128px";
           }
@@ -2962,12 +2967,12 @@
           addAccordion(
             "Important",
             "Social media does not support buttons. Use ONLY in PAID ADs and LINKED PREVIEWS.",
-            true
+            true,
           );
 
           add_toggle_switch_with_label(
             "Show button",
-            canvas_content.button_visibility
+            canvas_content.button_visibility,
           );
 
           if (canvas_content.button_visibility) {
@@ -2975,14 +2980,14 @@
             button_label.id = "button_label";
             add_input_box_to_inside_tools_container(
               "button",
-              canvas_content.button
+              canvas_content.button,
             );
 
             add_label_to_inside_tools_container("Button Style");
             let select_position = create_dropdown_menu(
               ["none", "outline", "solid"],
               "button_style",
-              canvas_content.button_style
+              canvas_content.button_style,
             );
           }
 
@@ -3000,7 +3005,7 @@
           addAccordion(
             "Layout",
             "Change the canvas size, canvas oriention, move the logo and change the portal size.",
-            false
+            false,
           );
           // Templates
           add_label_to_inside_tools_container("Template (Size)");
@@ -3008,12 +3013,12 @@
           let select_template = create_dropdown_menu(
             template_sizes,
             "canvas_size",
-            canvas_content.template_size
+            canvas_content.template_size,
           );
           addAccordion(
             "Size guide:",
             "1080x1350 is the most compatible option.",
-            true
+            true,
           );
 
           // Update logo position
@@ -3021,7 +3026,7 @@
           create_dropdown_menu(
             ["top", "bottom"], // "top right", "bottom right"
             "logo_position",
-            canvas_content.logo.corner.toLowerCase().replace(/_/g, " ")
+            canvas_content.logo.corner.toLowerCase().replace(/_/g, " "),
           );
 
           // Size and position
@@ -3045,7 +3050,7 @@
             let select_position = create_dropdown_menu(
               portal_position_options,
               "portal_side",
-              canvas_content.portal_side
+              canvas_content.portal_side,
             );
 
             let slider_range = canvas_content.portal_size_values.length; // - 1; // Cap at 70%
@@ -3054,7 +3059,7 @@
               portal_slider_label_name +
                 canvas_content.portal_size_percent +
                 "%",
-              0
+              0,
             );
             // Update range slider
             for (var i = 0; i < canvas_content.portal_size_values.length; i++) {
@@ -3071,7 +3076,7 @@
               canvas_content.portal_size_percent == 100
             ) {
               let error_message = add_text_to_inside_tools_container(
-                "Two Portal Layout Max 70%"
+                "Two Portal Layout Max 70%",
               );
               error_message.style.marginTop = "8px";
             }
@@ -3079,7 +3084,7 @@
             create_range_slider(
               slider_range,
               canvas_content.portal_size_slider,
-              "portal_size_slider"
+              "portal_size_slider",
             );
           }
 
@@ -3092,7 +3097,7 @@
               // Margins
               add_toggle_switch_with_label(
                 "Margins",
-                canvas_content.portal_override_margins
+                canvas_content.portal_override_margins,
               );
             }
           }
@@ -3100,14 +3105,14 @@
           if (is_fullscreen_image()) {
             add_toggle_switch_with_label(
               "Show Overlay",
-              canvas_content.portal_color_overlay
+              canvas_content.portal_color_overlay,
             );
 
             if (canvas_content.portal_color_overlay) {
               create_range_slider(
                 canvas_content.portal_overlay_opacity.length,
                 canvas_content.portal_overlay_slider,
-                "portal_opacity_slider"
+                "portal_opacity_slider",
               );
             }
           }
@@ -3121,14 +3126,14 @@
           if (canvas_content.text_bottom_aligned == false) {
             let event_name = add_input_box_to_inside_tools_container(
               "event_name",
-              canvas_content.event_name
+              canvas_content.event_name,
             );
             event_name.style.height = "40px";
           } else {
             addAccordion(
               "Event title: Hidden*",
               "Change Logo Alignement to Bottom under the Layout Panel.",
-              true
+              true,
             );
           }
           //-- Hide speaker
@@ -3137,14 +3142,14 @@
             add_label_to_inside_tools_container("Speaker name");
             let speaker_name = add_input_box_to_inside_tools_container(
               "speaker_name",
-              canvas_content.speaker_name
+              canvas_content.speaker_name,
             );
             speaker_name.style.height = "40px";
             // Speaker Title
             add_label_to_inside_tools_container("Speaker title");
             let speaker_title = add_input_box_to_inside_tools_container(
               "speaker_title",
-              canvas_content.speaker_title
+              canvas_content.speaker_title,
             );
             speaker_title.style.height = "40px";
           } else {
@@ -3153,14 +3158,14 @@
               addAccordion(
                 "Speaker: Hidden*",
                 "Upload an image under the Image Panel",
-                true
+                true,
               );
             }
             if (canvas_content.portal_count == 2) {
               addAccordion(
                 "Speaker: Hidden*",
                 "Reduce to one image under the Image Panel",
-                true
+                true,
               );
             }
           }
@@ -3176,7 +3181,7 @@
           addAccordion(
             "Get started",
             "Weclome to S&P Global Social Media content creation tool developed by The 199.",
-            true
+            true,
           );
 
           // Brand Image Library
@@ -3189,7 +3194,7 @@
           watch_button.addEventListener("click", function () {
             window.open(
               "https://spgl.sharepoint.com/:v:/r/sites/team_nam_corp_ProjectGold_m/Shared%20Documents/General/03%20WEB%20AND%20DAM/Social%20Media/Essential%20Canvas%20Walkthrough.mp4?csf=1&web=1&e=PgD02t&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D",
-              "_blank"
+              "_blank",
             );
           });
 
@@ -3199,7 +3204,7 @@
 
           let feedback_inputbox = add_input_box_to_inside_tools_container(
             "feedback",
-            ""
+            "",
           );
           feedback_inputbox.placeholder = "Type your feedback here ...";
           feedback_inputbox.style.height = "128px";
@@ -3256,19 +3261,19 @@
           addAccordion(
             "File",
             "Download images, save and import designs.",
-            false
+            false,
           );
           addAccordion("Color", "Change background and font color", false);
           addAccordion("Text", "Modify copy and change the font size", false);
           addAccordion(
             "Image",
             "Create image portals, set the focal point, flip images horizontally and zoom.",
-            false
+            false,
           );
           addAccordion(
             "Layout",
             "Change the canvas size, canvas orientation, move the logo and change the portal size",
-            false
+            false,
           );
           addAccordion("Logo", "Switch between divisional logos", false);
         }
@@ -3284,7 +3289,7 @@
           if (canvas_content.portal_count == 2) {
             add_toggle_switch_with_label(
               "Primary image side",
-              canvas_content.portal_primary_image_side
+              canvas_content.portal_primary_image_side,
             );
           }
 
@@ -3306,22 +3311,22 @@
                 }
                 // Show scale
                 let zoom_label = zoom_label_generate(
-                  canvas_content.portal_image_scale[i]
+                  canvas_content.portal_image_scale[i],
                 );
                 let zoom_scale = add_label_to_inside_tools_container(
                   zoom_label,
-                  0
+                  0,
                 );
                 zoom_scale.id = "zoom-scale-label";
                 create_range_slider(
                   4,
                   canvas_content.portal_image_scale[i],
-                  "image_scale_" + i
+                  "image_scale_" + i,
                 );
                 // Mirror horizontally
                 let toggle_switch = add_toggle_switch_with_label(
                   "Mirror horizontally",
-                  canvas_content.portal_image_flip[i]
+                  canvas_content.portal_image_flip[i],
                 );
                 toggle_switch.name = i;
                 // Create the delete button
@@ -3338,7 +3343,7 @@
       // Text wrap
       function add_text_wrap_button_and_input() {
         const insideToolsContainer = document.querySelector(
-          ".inside_tools_container"
+          ".inside_tools_container",
         );
 
         const textBalance = document.createElement("div");
@@ -3473,7 +3478,7 @@
       // Dropdown menu
       function create_dropdown_menu(options, name, selected_string) {
         const insideToolsContainer = document.querySelector(
-          ".inside_tools_container"
+          ".inside_tools_container",
         );
 
         const select = document.createElement("select");
@@ -3564,7 +3569,7 @@
         maskRectWidth,
         maskRectHeight,
         image_flip,
-        image_number
+        image_number,
       ) {
         if (!img) {
           return;
@@ -3574,7 +3579,7 @@
         const image = new Image();
         image.src = img.src;
 
-        image.onload = function () {
+        image.onload = async function () {
           // To scaling proportionally to fit to frame
           // Divide the image dimensions by the mask dimensions
           const width_scale = image.width / maskRectWidth;
@@ -3636,10 +3641,10 @@
               console.log("Expensive downscale of the high res image");
               // Expensive high resolution downscale
               /* ALTERNATIVE DOWNSCALER https://github.com/nodeca/pica */
-              downscaled_image = high_resolution_image_downscale(
+              downscaled_image = await high_resolution_image_pica_downscale(
                 image,
                 1 / scaleFactor,
-                image_number
+                image_number,
               );
             }
           }
@@ -3647,7 +3652,7 @@
           // Flip the image horizontally
           let transformed_image = flip_image_horizontally(
             downscaled_image,
-            image_flip
+            image_flip,
           );
 
           // Draw the image in the center of the mask (Constrained by the edges of the image)
@@ -3656,7 +3661,7 @@
             pos_x - img_x_position,
             pos_y - img_y_position,
             scaledWidth,
-            scaledHeight
+            scaledHeight,
           );
           ctx.restore();
 
@@ -3683,7 +3688,7 @@
               0,
               0,
               canvas_content.canvas_width,
-              canvas_content.canvas_height
+              canvas_content.canvas_height,
             );
             ctx.globalAlpha = 1; // Reset the globalAlpha to 1 after drawing
           }
@@ -3693,7 +3698,7 @@
             draw_divider(
               canvas_content.portal_divider_x,
               canvas_content.portal_divider_y,
-              canvas_content.portal_divider_height
+              canvas_content.portal_divider_height,
             );
           }
 
@@ -3746,7 +3751,7 @@
           0,
           1.05,
           700,
-          false
+          false,
         );
 
         var speaker_title_properties = { height: 0 };
@@ -3762,7 +3767,7 @@
             0,
             1.05,
             700,
-            false
+            false,
           );
         }
 
@@ -3798,7 +3803,7 @@
           0,
           1.05,
           700,
-          true
+          true,
         );
 
         if (canvas_content.speaker_title != "") {
@@ -3816,7 +3821,7 @@
             0,
             1.05,
             400,
-            true
+            true,
           );
         }
       }
@@ -3870,7 +3875,7 @@
           if (canvas_content.background_color != spglobal_colors.white) {
             // Switch to knockout version
             svgSponsorElement = document.getElementById(
-              "spg_sustainable1_knockout"
+              "spg_sustainable1_knockout",
             );
             // Convert to black
             var fill_color = "#ffffff";
@@ -4056,7 +4061,7 @@
           logo_height > canvas_content.marginHeight
         ) {
           console.log(
-            `ERROR: Logo too large for available space ${logo_width} x ${logo_height}`
+            `ERROR: Logo too large for available space ${logo_width} x ${logo_height}`,
           );
         }
 
@@ -4165,7 +4170,7 @@
               sponsor_position.x,
               sponsor_position.y,
               sponsor_logo_width,
-              sponsor_logo_height
+              sponsor_logo_height,
             );
           };
           sponsor_image.src = sponsorblobURL;
@@ -4204,7 +4209,7 @@
 
           // Get knock out logo
           let svgSustainableLogoElement = document.getElementById(
-            "spg_sustainable1_knockout"
+            "spg_sustainable1_knockout",
           );
 
           // Clone the SVG
@@ -4226,7 +4231,7 @@
               s1_position.x,
               s1_position.y,
               s1_logo_width,
-              s1_logo_height
+              s1_logo_height,
             );
           };
           s1_image.src = s1blobURL;
@@ -4271,7 +4276,7 @@
                   canvas_content.logo.sponsor_x,
                   canvas_content.logo.sponsor_y,
                   canvas_content.logo.sponsor_width,
-                  canvas_content.logo.sponsor_height
+                  canvas_content.logo.sponsor_height,
                 );
                 // White text
                 drawTextInRedRectangle(ctx, "Logo Overlaps", {
@@ -4322,7 +4327,7 @@
 
         canvas_content.margin = calculate_canvas_margin(
           canvas.width,
-          canvas.height
+          canvas.height,
         );
 
         // Margins at 100% of the Canvas
@@ -4370,7 +4375,7 @@
           width: canvas_content.marginWidth,
           height: canvas_content.marginHeight,
         },
-        color = "#92BFF5"
+        color = "#92BFF5",
       ) {
         if (show_guides) {
           // Draw the blue rectangle outline
@@ -4382,7 +4387,7 @@
               position.x,
               position.y,
               position.width,
-              position.height
+              position.height,
             );
           }, 100);
         }
@@ -4428,7 +4433,7 @@
             portal_full.width,
             portal_full.height,
             canvas_content.portal_image_flip[0],
-            0
+            0,
           );
         }
 
@@ -4457,7 +4462,7 @@
             portal_large.width,
             portal_large.height,
             canvas_content.portal_image_flip[0],
-            0
+            0,
           );
 
           let img_b = get_image(1);
@@ -4468,7 +4473,7 @@
             portal_small.width,
             portal_small.height,
             canvas_content.portal_image_flip[1],
-            1
+            1,
           );
         }
 
@@ -4495,7 +4500,7 @@
             0,
             0,
             canvas_content.canvas_width,
-            canvas_content.canvas_height
+            canvas_content.canvas_height,
           );
         }
       }
@@ -4551,7 +4556,7 @@
         // Dynamic font size
         let estimate_headline_size = estimate_typescale(
           canvas.width,
-          canvas.height
+          canvas.height,
         );
 
         // Larger font size if the font size is not set to small
@@ -4587,7 +4592,7 @@
             0,
             1.05,
             700,
-            true
+            true,
           );
 
           event_name_height =
@@ -4604,7 +4609,7 @@
         // Headline
         let headline_unformatted = remove_new_lines_and_return_lines(
           canvas_content.headline,
-          canvas_content.ignore_line_breaks.headline
+          canvas_content.ignore_line_breaks.headline,
         );
 
         let headline_lineheight = canvas_content.seek_and_prosper_active
@@ -4626,11 +4631,11 @@
             0,
             headline_lineheight,
             700,
-            false
+            false,
           );
           // Shrink font size
           estimate_headline_size = round_to_nearest_typescale(
-            headline_properties.font_size - 1
+            headline_properties.font_size - 1,
           );
         }
 
@@ -4679,12 +4684,12 @@
           0,
           headline_lineheight,
           700,
-          false
+          false,
         );
 
         // Constrain headline font size to specific sizes
         let headline_fixed_font_size = round_to_nearest_typescale(
-          headline_properties.font_size
+          headline_properties.font_size,
         );
 
         // Calculate the margins between text
@@ -4751,7 +4756,7 @@
           0,
           1.2, // Line height
           400, // Regular
-          false // Do not render
+          false, // Do not render
         );
 
         // ----------------------- CALCULATE BUTTON --------------------------//
@@ -4774,7 +4779,7 @@
           button_padding,
           button_position_x,
           button_position_y,
-          false // do not render
+          false, // do not render
         );
 
         // Text boxe sizes
@@ -4821,7 +4826,7 @@
           0,
           headline_lineheight,
           700,
-          false // Render text
+          false, // Render text
         );
 
         // RECALCULATE BODY
@@ -4836,7 +4841,7 @@
           0,
           1.2, // Line height
           400, // Regular
-          false // Render text
+          false, // Render text
         );
 
         // Calculate total height of the container
@@ -4891,7 +4896,7 @@
           safe_area_position_y,
           safe_area_height,
           safe_area_width,
-          visible
+          visible,
         ) {
           // The text height calculations are slightly off
           area_height = area_height * 0.9; // This 0.9 number makes the text height calculation more visually accurate
@@ -4939,7 +4944,7 @@
           text_area.y,
           text_area.height,
           text_area.width,
-          headline_text.length > 0
+          headline_text.length > 0,
         );
 
         var body_outside_bounds = is_outside_boundingbox(
@@ -4952,7 +4957,7 @@
           text_area.y,
           text_area.height,
           text_area.width,
-          body_text.length > 0
+          body_text.length > 0,
         );
 
         var button_outside_bounds = is_outside_boundingbox(
@@ -4965,7 +4970,7 @@
           text_area.y,
           text_area.height,
           text_area.width,
-          button_text.length > 0
+          button_text.length > 0,
         );
 
         // Check for cosponsor
@@ -5026,7 +5031,7 @@
           0,
           headline_lineheight,
           700,
-          true // Render text
+          true, // Render text
         );
 
         // Body area changes if the button is bottom right
@@ -5063,7 +5068,7 @@
             text_area.y,
             text_area.height,
             text_area.width,
-            body_text.length > 0
+            body_text.length > 0,
           );
 
           var button_outside_bounds = is_outside_boundingbox(
@@ -5076,7 +5081,7 @@
             text_area.y,
             text_area.height,
             text_area.width,
-            button_text.length > 0
+            button_text.length > 0,
           );
 
           // Recalculate
@@ -5144,7 +5149,7 @@
           0,
           1.2, // Line height
           400, // Regular
-          true // Render text
+          true, // Render text
         );
 
         // Check body collision again
@@ -5159,7 +5164,7 @@
             text_area.y,
             text_area.height,
             text_area.width,
-            body_text.length > 0
+            body_text.length > 0,
           );
         }
 
@@ -5176,7 +5181,7 @@
             button_padding,
             button_position_x,
             button_position_y,
-            true
+            true,
           );
           console.log(button_properties);
         }
@@ -5192,7 +5197,7 @@
           text_area.y,
           text_area.height,
           text_area.width,
-          show_button
+          show_button,
         );
 
         // Ignore if the button has been forced to the bottom right corner
@@ -5240,7 +5245,7 @@
         let show_boundingboxes = false;
         let show_text_safe_area = false;
         console.log(
-          "text outside bounds: " + canvas_content.error.text_outside_bounds
+          "text outside bounds: " + canvas_content.error.text_outside_bounds,
         );
         if (
           canvas_content.error.text_outside_bounds > 0 ||
@@ -5257,7 +5262,7 @@
               body_properties,
               button_properties,
               show_boundingboxes, // show all
-              show_text_safe_area
+              show_text_safe_area,
             );
           }, delayInSeconds * 1000); // Convert seconds to milliseconds
         }
@@ -5269,7 +5274,7 @@
           body_properties,
           button_properties,
           show_boundingboxes,
-          show_text_safe_area
+          show_text_safe_area,
         ) {
           // Draw guides around total available text area
           if (
@@ -5283,7 +5288,7 @@
               position.x,
               text_area.y,
               text_area.width,
-              text_area.height
+              text_area.height,
             );
 
             drawVerticalTextInBlueLabel(ctx, "Text safe area", {
@@ -5386,12 +5391,12 @@
               headline_properties.x,
               headline_properties.y,
               headline_properties.width,
-              headline_properties.height
+              headline_properties.height,
             );
             drawTextInRedRectangle(
               ctx,
               "Text exceeds safe area",
-              headline_properties
+              headline_properties,
             );
           }
 
@@ -5407,12 +5412,12 @@
               body_properties.x,
               body_properties.y,
               body_properties.width,
-              body_properties.height
+              body_properties.height,
             );
             drawTextInRedRectangle(
               ctx,
               "Text exceeds safe area",
-              body_properties
+              body_properties,
             );
           }
 
@@ -5428,7 +5433,7 @@
               button_properties.x,
               button_properties.y,
               button_properties.width,
-              button_properties.height
+              button_properties.height,
             );
             var text_in_rect = canvas_content.error.button_outside_bounds
               ? "Button outside bounds"
@@ -5483,7 +5488,7 @@
                 ? currentIndex
                 : maxIndex;
             },
-            0
+            0,
           );
           let longestLineWords = lines[longestLineIndex].split(" ");
           longestLineWords = merge_spglobal_and_dow_strings(longestLineWords);
@@ -5508,7 +5513,7 @@
         // It prevents weird text balances that get caused by overshooting
         let final_line_count = add_spaces.split(/\r?\n/).length;
         console.log(
-          `number of lines: ${numberOfLines} final line count ${final_line_count}`
+          `number of lines: ${numberOfLines} final line count ${final_line_count}`,
         );
         if (numberOfLines > final_line_count) {
           return balance_text_wrap(text, final_line_count);
@@ -5713,7 +5718,7 @@
         padding,
         x,
         y,
-        render = true
+        render = true,
       ) {
         // Reset line
         ctx.setLineDash([]);
@@ -5898,7 +5903,7 @@
       // Portal Image Focal Point Setter
       function create_image_preview_with_focal_point(image, img_number) {
         const insideToolsContainer = document.querySelector(
-          ".inside_tools_container"
+          ".inside_tools_container",
         );
 
         // Find portal canvas
@@ -5928,7 +5933,7 @@
             canvas_content.portal_focal_point[n].y,
             canvas_content.portal_focal_point[n].size / 2,
             0,
-            2 * Math.PI
+            2 * Math.PI,
           );
           portal_ctx.fillStyle = canvas_content.portal_focal_point[n].dragging
             ? "rgba(44, 146, 229, 0.8)"
@@ -5940,7 +5945,7 @@
             canvas_content.portal_focal_point[n].y,
             canvas_content.portal_focal_point[n].size / 8,
             0,
-            2 * Math.PI
+            2 * Math.PI,
           );
           portal_ctx.fillStyle = "rgba(255, 255, 255, 1.0)";
           portal_ctx.fill();
@@ -5952,7 +5957,7 @@
 
           const scaleFactor = Math.min(
             portal_canvas.width / img.width,
-            portal_canvas.height / img.height
+            portal_canvas.height / img.height,
           );
           const width = img.width * scaleFactor;
           const height = img.height * scaleFactor;
@@ -5962,7 +5967,7 @@
             (portal_canvas.width - width) / 2,
             (portal_canvas.height - height) / 2,
             width,
-            height
+            height,
           );
           draw_focal_point();
         }
@@ -5988,7 +5993,7 @@
             // Reset scale
             canvas_content.portal_image_scale[n] = 0;
             let slider_range = document.getElementsByName(
-              "image_scale_" + n
+              "image_scale_" + n,
             )[0];
             if (slider_range) {
               slider_range.value = 0;
@@ -6025,7 +6030,7 @@
 
           const scaleFactor = Math.min(
             portal_canvas.width / img.width,
-            portal_canvas.height / img.height
+            portal_canvas.height / img.height,
           );
           const width = img.width * scaleFactor;
           const height = img.height * scaleFactor;
@@ -6034,11 +6039,11 @@
 
           canvas_content.portal_focal_point[n].x = Math.max(
             imgX,
-            Math.min(x, imgX + width)
+            Math.min(x, imgX + width),
           );
           canvas_content.portal_focal_point[n].y = Math.max(
             imgY,
-            Math.min(y, imgY + height)
+            Math.min(y, imgY + height),
           );
 
           draw_image_and_focal_point();
@@ -6063,7 +6068,7 @@
             // Calculate the relative position of the focal point within the image
             const scaleFactor = Math.min(
               portal_canvas.width / img.width,
-              portal_canvas.height / img.height
+              portal_canvas.height / img.height,
             );
             const width = img.width * scaleFactor;
             const height = img.height * scaleFactor;
@@ -6125,7 +6130,7 @@
         letterSpacing,
         defaultLineHeight,
         fontWeight,
-        renderText
+        renderText,
       ) {
         // Get the width of the text
         function get_text_width(text, fontSize, letterSpacing) {
@@ -6147,7 +6152,7 @@
           return (
             words.some(
               (word) =>
-                get_text_width(word, fontSize, letterSpacing) > rectWidth
+                get_text_width(word, fontSize, letterSpacing) > rectWidth,
             ) ||
             get_text_width(customString, fontSize, letterSpacing) > rectWidth
           );
@@ -6280,17 +6285,17 @@
 
         // Fit text in the available text space
         let fit_textInArea = fit_text(
-          canvas_content.text_container_minimum_character_width
+          canvas_content.text_container_minimum_character_width,
         );
 
         // Remove unwanted text new lines -- Sometimes the text breaks onto a new line then it registers the new line
         let removeEmptyTextLines = remove_added_empty_lines(
           text,
-          fit_textInArea
+          fit_textInArea,
         );
         let cleanedUpLineBreaks = add_new_lines_and_remove_duplicates(
           text,
-          removeEmptyTextLines
+          removeEmptyTextLines,
         );
 
         let textForRendering = cleanedUpLineBreaks;
@@ -6307,7 +6312,7 @@
           var calculate_width = get_text_width(
             textForRendering[i],
             fontSize,
-            letterSpacing
+            letterSpacing,
           );
           if (calculate_width > text_width_max) {
             text_width_max = calculate_width;
@@ -6356,7 +6361,7 @@
             snap_y +
               position_y +
               i * fontSize * lineHeight +
-              fontSize * offset_y
+              fontSize * offset_y,
           );
 
           // Apply seek and prosper style
@@ -6373,7 +6378,7 @@
               line,
               position_x,
               y_position_map[i],
-              false
+              false,
             );
 
             if (text_width != 0) {
@@ -6388,7 +6393,7 @@
                 position_x - seek_and_prosper_highlight_padding,
                 y_position_map[i] - fontSize + shave_off_top,
                 text_width + seek_and_prosper_highlight_padding * 2,
-                fontSize + seek_and_prosper_highlight_padding
+                fontSize + seek_and_prosper_highlight_padding,
               );
             }
           }
@@ -6409,7 +6414,7 @@
               line,
               position_x,
               y_position_map[i],
-              true
+              true,
             );
           }
         }
@@ -6535,7 +6540,7 @@
         // Capitalize the first letter of the first word in every sentence
         let modifiedString = lowercaseString.replace(
           /(^\w)|(\.\s*\w)/g,
-          capitalize_first_letter_of_sentence
+          capitalize_first_letter_of_sentence,
         );
 
         // Sort capitalizationArray in descending order of length
@@ -6550,7 +6555,7 @@
             "(?<=^|\\s|[^\\w])" +
               escapedLowercaseElement.split(" ").join("\\s+") +
               "(?=$|\\s|[^\\w])",
-            "g"
+            "g",
           );
           modifiedString = modifiedString.replace(regex, element);
         });
@@ -6630,6 +6635,97 @@
       }
 
       //---------------- IMAGE DOWNSCALING -----------------//
+      function sharpenedDownscale(img, scale) {
+        var canvas = document.createElement("canvas");
+        canvas.width = img.width * scale;
+        canvas.height = img.height * scale;
+        var ctx = canvas.getContext("2d");
+
+        // Step downscaling
+        var oc = document.createElement("canvas");
+        var octx = oc.getContext("2d");
+        oc.width = img.width * 0.5;
+        oc.height = img.height * 0.5;
+        octx.drawImage(img, 0, 0, oc.width, oc.height);
+
+        while (oc.width * 0.5 > canvas.width) {
+          octx.drawImage(
+            oc,
+            0,
+            0,
+            oc.width,
+            oc.height,
+            0,
+            0,
+            oc.width * 0.5,
+            oc.height * 0.5,
+          );
+        }
+
+        ctx.drawImage(
+          oc,
+          0,
+          0,
+          oc.width,
+          oc.height,
+          0,
+          0,
+          canvas.width,
+          canvas.height,
+        );
+
+        // Sharpening
+        var sharpeningAmount = 0.8; // Adjust this value to control the amount of sharpening
+        var blurred = document.createElement("canvas");
+        var blurredCtx = blurred.getContext("2d");
+        blurred.width = canvas.width;
+        blurred.height = canvas.height;
+        blurredCtx.filter = "blur(1px)";
+        blurredCtx.drawImage(canvas, 0, 0);
+
+        ctx.globalCompositeOperation = "lighter";
+        ctx.drawImage(canvas, 0, 0);
+        ctx.globalCompositeOperation = "source-over";
+        ctx.drawImage(
+          blurred,
+          0,
+          0,
+          canvas.width,
+          canvas.height,
+          0,
+          0,
+          canvas.width,
+          canvas.height,
+        );
+
+        return canvas;
+      }
+
+      async function high_resolution_image_pica_downscale(
+        img,
+        scale,
+        img_number,
+      ) {
+        // Create an off-screen canvas to hold the final, downscaled image
+        const outputCanvas = document.createElement("canvas");
+        outputCanvas.width = Math.floor(img.width * scale);
+        outputCanvas.height = Math.floor(img.height * scale);
+
+        // Use pica to resize the image to the output canvas
+        // pica returns a Promise, so we await its completion
+        await pica.resize(img, outputCanvas, {
+          // You can fine-tune quality here if needed
+          quality: 3, // Lanczos3 (default) is great
+          unsharpAmount: 80, // Optional sharpening
+          unsharpRadius: 0.6,
+          unsharpThreshold: 2
+        });
+
+        // Store the downscaled canvas for reuse
+        temp_portal_downscaled_image[img_number] = outputCanvas;
+
+        return outputCanvas;
+      }
       // scales the image by (float) scale < 1
       // returns a canvas containing the scaled image.
       function high_resolution_image_downscale(img, scale, img_number) {
@@ -6645,14 +6741,14 @@
           0,
           0,
           image_canvas.width,
-          image_canvas.height
+          image_canvas.height,
         );
 
         image_canvas_context.drawImage(img, 0, 0);
         // Store downscaled image
         temp_portal_downscaled_image[img_number] = reduce_canvas_size(
           image_canvas,
-          scale
+          scale,
         );
         return temp_portal_downscaled_image[img_number];
       }
@@ -7108,21 +7204,43 @@
         </g>
       </svg>
       <!-- S&P Global Energy -->
-<?xml version="1.0" encoding="UTF-8"?>
-<svg id="spg_energy" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 163.9 78.2">
-  <g id="Logo">
-    <path id="Wordmark" class="st0" fill="#d6002a" d="M18.7,27.9c0,1.8-.6,3.5-1.9,4.9-1.8,1.8-4.5,2.4-6.9,2.5-2.7,0-5.4-.6-7.4-2.5-1.5-1.4-2.4-3.4-2.4-5.4h4.3c0,1.1.4,2.1,1.2,2.9,1,1,2.6,1.3,4,1.2,1.3,0,3-.2,3.9-1.2,1-1.1,1.4-3.2,0-4.2-1.4-1.1-3.5-1-5.2-1.2-1.8-.1-3.6-.5-5.1-1.5-1.4-1-2.3-2.6-2.5-4.3-.2-2.1.5-4,2-5.4s4.2-2.4,6.6-2.5c2.4,0,5,.6,6.8,2.3,1.4,1.3,2.3,3.1,2.4,5h-4.3c0-.8-.4-1.7-1-2.3-.9-.9-2.4-1.3-3.6-1.2-1.3,0-2.8.3-3.7,1.3-1.1,1.2-1.1,3.4.5,4.1.8.4,1.8.4,2.7.5,1,0,1.9.2,2.9.3,1.8.2,3.6.8,5,2.1,1.3,1.2,2,2.9,2,4.7ZM37,34.9l-1.6-1.9c-2.7,2.4-6.9,3.2-10.3,1.6-3.2-1.5-4.9-5.2-3.6-8.6.6-1.8,2.2-3.1,3.7-4.1-1.6-1.7-2.7-3.5-2.5-5.9.2-2.1,1.7-3.8,3.6-4.6,2.1-.8,4.6-.6,6.6.5,1.9,1.1,2.8,3.2,2.6,5.3-.2,2.7-2.2,4.4-4.4,5.7l4,4.4c.4-.8.5-1.9.6-2.9s0-1.9,0-2.9h6v3.3h-2.7c0,1.8-.4,3.7-1.4,5.2l4.3,4.7h-4.9,0ZM27.6,24.6c-1.1.7-2.3,1.4-2.7,2.7-.3,1.2,0,2.6.8,3.4,1.7,1.8,5.5,1.6,7.1-.2l-5.3-5.9ZM31.7,17c0-1-.4-1.9-1.4-2.3-.9-.4-2.1-.3-3,.3s-1,1.7-.7,2.7c.3,1.1,1.3,2,2.1,2.8,1.4-.8,3-1.6,3-3.4ZM62.4,19c0,2.1-.7,4.2-2.3,5.6s-3.8,1.9-5.9,1.9h-4.9v8.3h-4.2V11.6h9.1c2.1,0,4.3.5,5.9,1.8,1.7,1.4,2.3,3.5,2.3,5.6h0ZM58.2,19.1c0-1.1-.3-2.2-1.2-2.9-.8-.7-1.9-.9-3-.9h-4.8v7.5h4.8c1,0,2.2-.1,3-.9.8-.7,1.2-1.8,1.2-2.9h0ZM87.3,34.8l-.5-2.6c-1.1,2.2-3.9,3.1-6.2,3-2.5,0-4.8-.7-6.6-2.6-2.5-2.6-3-6.1-3-9.5s.5-6.8,3-9.4c3.5-3.5,10.2-3.7,13.8,0,1.2,1.3,2,2.9,2.1,4.7h-4.3c0-.8-.5-1.5-1-2.1-1.8-2.1-5.7-1.8-7.5.1-1.7,1.8-1.8,4.5-1.8,6.8s.2,5,1.8,6.7c1.8,1.9,5.5,2,7.2.1,1.2-1.2,1.5-2.9,1.5-4.5h-5.6v-3.5h9.7v12.8h-2.7ZM100.3,34.8c-1.5.3-3.2.4-4.6-.4-1.4-.8-1.9-2.4-1.9-3.9V11.1h4.1v18.7c0,.5,0,1.2.6,1.5.5.3,1.1.1,1.7.1v3.4h0ZM117.7,26.3c0,2.3-.5,4.5-2,6.3-2.9,3.5-9.1,3.5-12,0-2.8-3.5-2.8-9.1,0-12.6,2.9-3.5,9.1-3.5,12,0,1.5,1.8,2,4,2,6.3ZM113.6,26.3c0-1.5-.1-3.2-1.2-4.3-1.3-1.4-3.8-1.4-5.2,0-1,1.1-1.2,2.8-1.2,4.3s.1,3.2,1.2,4.3c1.3,1.4,3.8,1.4,5.2,0,1.1-1.1,1.2-2.8,1.2-4.3ZM136.7,26.4c0,2.8-.8,5.7-3.1,7.4-2.5,2.1-7.1,2.1-8.9-.8l-.2,1.9h-3.5V11.1h4.1v7.9c.9-1.2,2.7-1.6,4.1-1.7,1.6,0,3.3.3,4.5,1.4,2,1.7,3.1,4.2,3.1,7.6h0ZM132.5,26.3c0-1.4-.2-3-1.1-4.1-.9-1-2.1-1.5-3.4-1.3-1.3.2-2.2,1.1-2.7,2.3-.5,1.3-.5,2.8-.4,4.2.1,1.3.4,2.7,1.4,3.6,1.5,1.4,3.9,1,5.2-.5.9-1.2,1.1-2.8,1.1-4.2ZM154.9,34.6c-1.9.8-4.7.6-4.9-1.9-1.5,2.7-5.6,3.2-8.2,2-1.4-.6-2.6-1.8-3-3.4-.4-1.6-.1-3.3.9-4.6,1.1-1.4,3-2,4.7-2.2l5-.3v-1c0-.7-.2-1.7-.8-2.2-.5-.4-1.3-.5-1.9-.5-1.6,0-3.2.6-3.3,2.4h-4c0-1.5.7-3,1.9-4,1.2-.9,2.7-1.4,4.2-1.5,2.9-.2,6.2.5,7.3,3.4.4,1.1.5,2.3.5,3.4v6.4c0,.7.5,1.3,1.3,1,0,0,0,0,.1,0v3.1h0ZM149.5,27.2l-4.3.3c-1.1,0-2.3.7-2.5,2,0,1.3.8,2.2,2.1,2.4,1.1.1,2.5-.2,3.4-.9.9-.7,1.3-1.8,1.3-3v-.8h0ZM163.9,34.8c-1.6.3-3.3.4-4.6-.5-1.4-.8-1.8-2.4-1.8-3.9V11.1h4.1v18.7c0,.5,0,1.2.6,1.5.5.3,1.2.1,1.7.1,0,0,0,3.4,0,3.4Z"/>
-    <rect id="Bar" x="0" width="163.9" height="4.2"/>
-  </g>
-  <g id="Name">
-    <path d="M15.2,47.2v1.7H1.8v8.9h11.8v1.7H1.8v9.9h13.5v1.7H0v-23.8h15.2Z"/>
-    <path d="M19.4,54.2h1.5v3.2c1-2.3,3.6-3.7,6-3.7,3.8,0,6,2.6,6,6.3v11h-1.7v-10.8c0-2.8-1.4-4.8-4.4-4.8s-5.7,3.1-5.7,6.8v8.8h-1.7v-16.8h0Z"/>
-    <path d="M39.5,69.1c-1.4-1.6-2.2-3.9-2.2-6.5s.3-4.2,1.7-6c1.4-1.9,3.4-3,5.9-3,4.7,0,7.4,3.7,7.4,8.1s0,.6,0,1.1h-13.3c0,3.7,2.2,6.8,6,6.8s4.7-1.7,5.1-3.9h1.7c-.5,3.1-3.5,5.5-6.9,5.5s-4.4-1-5.5-2.4h0ZM50.5,61.4c0-3.2-2-6.2-5.7-6.2s-5.7,2.9-5.8,6.2h11.5,0Z"/>
-    <path d="M56.8,54.2h1.5v3.4c.9-2.4,3.2-3.6,5.6-3.6s1.1,0,1.6.1v1.6c-.5-.1-1.1-.1-1.6-.1-3.9,0-5.3,3.2-5.3,6.9v8.4h-1.7v-16.8h0Z"/>
-    <path d="M67.3,73.3c0-1.7,1.1-3.3,3-3.7-1.3-.2-2.2-1.4-2.2-2.6s1-2.5,2.4-3c-1.2-1-1.9-2.5-1.9-4.4,0-3.6,2.9-5.9,6.3-5.9s2.9.4,4,1.2c.4-1.5,1.8-2.3,3.3-2.3s.4,0,.6,0v1.4h-.6c-1.2,0-2.1.6-2.3,1.8.8,1,1.3,2.2,1.3,3.8,0,3.6-2.9,5.8-6.4,5.8s-2.5-.2-3.4-.8c-.9.3-1.7,1-1.7,2,0,1.5,1.7,1.7,3,1.7h3.4c2.6,0,4.1.4,5.3,1.5.8.8,1.3,1.6,1.3,3.1,0,3.7-3.9,5.1-7.9,5.1s-7.4-1.4-7.4-4.8h0ZM80.9,73c0-2.4-2.2-3.1-4.8-3.1h-4.5c-1.5.3-2.8,1.2-2.8,3.2s2.9,3.4,5.9,3.4,6.2-.8,6.2-3.5h0ZM79.3,59.6c0-2.8-2.1-4.4-4.7-4.4s-4.6,1.6-4.6,4.4,2,4.3,4.6,4.3,4.7-1.5,4.7-4.3Z"/>
-    <path d="M86.2,77.5v-1.6c.6.3,1.3.5,2.2.5,1.6,0,2.6-.7,3.4-2.7l1-2.5-6.8-17h1.8l5.8,14.9,5.6-14.9h1.8l-7.7,20.1c-1,2.7-2.5,3.7-4.8,3.7s-2-.3-2.3-.5h0Z"/>
-  </g>
-</svg>
+      <?xml version="1.0" encoding="UTF-8"?>
+      <svg
+        id="spg_energy"
+        xmlns="http://www.w3.org/2000/svg"
+        version="1.1"
+        viewBox="0 0 163.9 78.2"
+      >
+        <g id="Logo">
+          <path
+            id="Wordmark"
+            class="st0"
+            fill="#d6002a"
+            d="M18.7,27.9c0,1.8-.6,3.5-1.9,4.9-1.8,1.8-4.5,2.4-6.9,2.5-2.7,0-5.4-.6-7.4-2.5-1.5-1.4-2.4-3.4-2.4-5.4h4.3c0,1.1.4,2.1,1.2,2.9,1,1,2.6,1.3,4,1.2,1.3,0,3-.2,3.9-1.2,1-1.1,1.4-3.2,0-4.2-1.4-1.1-3.5-1-5.2-1.2-1.8-.1-3.6-.5-5.1-1.5-1.4-1-2.3-2.6-2.5-4.3-.2-2.1.5-4,2-5.4s4.2-2.4,6.6-2.5c2.4,0,5,.6,6.8,2.3,1.4,1.3,2.3,3.1,2.4,5h-4.3c0-.8-.4-1.7-1-2.3-.9-.9-2.4-1.3-3.6-1.2-1.3,0-2.8.3-3.7,1.3-1.1,1.2-1.1,3.4.5,4.1.8.4,1.8.4,2.7.5,1,0,1.9.2,2.9.3,1.8.2,3.6.8,5,2.1,1.3,1.2,2,2.9,2,4.7ZM37,34.9l-1.6-1.9c-2.7,2.4-6.9,3.2-10.3,1.6-3.2-1.5-4.9-5.2-3.6-8.6.6-1.8,2.2-3.1,3.7-4.1-1.6-1.7-2.7-3.5-2.5-5.9.2-2.1,1.7-3.8,3.6-4.6,2.1-.8,4.6-.6,6.6.5,1.9,1.1,2.8,3.2,2.6,5.3-.2,2.7-2.2,4.4-4.4,5.7l4,4.4c.4-.8.5-1.9.6-2.9s0-1.9,0-2.9h6v3.3h-2.7c0,1.8-.4,3.7-1.4,5.2l4.3,4.7h-4.9,0ZM27.6,24.6c-1.1.7-2.3,1.4-2.7,2.7-.3,1.2,0,2.6.8,3.4,1.7,1.8,5.5,1.6,7.1-.2l-5.3-5.9ZM31.7,17c0-1-.4-1.9-1.4-2.3-.9-.4-2.1-.3-3,.3s-1,1.7-.7,2.7c.3,1.1,1.3,2,2.1,2.8,1.4-.8,3-1.6,3-3.4ZM62.4,19c0,2.1-.7,4.2-2.3,5.6s-3.8,1.9-5.9,1.9h-4.9v8.3h-4.2V11.6h9.1c2.1,0,4.3.5,5.9,1.8,1.7,1.4,2.3,3.5,2.3,5.6h0ZM58.2,19.1c0-1.1-.3-2.2-1.2-2.9-.8-.7-1.9-.9-3-.9h-4.8v7.5h4.8c1,0,2.2-.1,3-.9.8-.7,1.2-1.8,1.2-2.9h0ZM87.3,34.8l-.5-2.6c-1.1,2.2-3.9,3.1-6.2,3-2.5,0-4.8-.7-6.6-2.6-2.5-2.6-3-6.1-3-9.5s.5-6.8,3-9.4c3.5-3.5,10.2-3.7,13.8,0,1.2,1.3,2,2.9,2.1,4.7h-4.3c0-.8-.5-1.5-1-2.1-1.8-2.1-5.7-1.8-7.5.1-1.7,1.8-1.8,4.5-1.8,6.8s.2,5,1.8,6.7c1.8,1.9,5.5,2,7.2.1,1.2-1.2,1.5-2.9,1.5-4.5h-5.6v-3.5h9.7v12.8h-2.7ZM100.3,34.8c-1.5.3-3.2.4-4.6-.4-1.4-.8-1.9-2.4-1.9-3.9V11.1h4.1v18.7c0,.5,0,1.2.6,1.5.5.3,1.1.1,1.7.1v3.4h0ZM117.7,26.3c0,2.3-.5,4.5-2,6.3-2.9,3.5-9.1,3.5-12,0-2.8-3.5-2.8-9.1,0-12.6,2.9-3.5,9.1-3.5,12,0,1.5,1.8,2,4,2,6.3ZM113.6,26.3c0-1.5-.1-3.2-1.2-4.3-1.3-1.4-3.8-1.4-5.2,0-1,1.1-1.2,2.8-1.2,4.3s.1,3.2,1.2,4.3c1.3,1.4,3.8,1.4,5.2,0,1.1-1.1,1.2-2.8,1.2-4.3ZM136.7,26.4c0,2.8-.8,5.7-3.1,7.4-2.5,2.1-7.1,2.1-8.9-.8l-.2,1.9h-3.5V11.1h4.1v7.9c.9-1.2,2.7-1.6,4.1-1.7,1.6,0,3.3.3,4.5,1.4,2,1.7,3.1,4.2,3.1,7.6h0ZM132.5,26.3c0-1.4-.2-3-1.1-4.1-.9-1-2.1-1.5-3.4-1.3-1.3.2-2.2,1.1-2.7,2.3-.5,1.3-.5,2.8-.4,4.2.1,1.3.4,2.7,1.4,3.6,1.5,1.4,3.9,1,5.2-.5.9-1.2,1.1-2.8,1.1-4.2ZM154.9,34.6c-1.9.8-4.7.6-4.9-1.9-1.5,2.7-5.6,3.2-8.2,2-1.4-.6-2.6-1.8-3-3.4-.4-1.6-.1-3.3.9-4.6,1.1-1.4,3-2,4.7-2.2l5-.3v-1c0-.7-.2-1.7-.8-2.2-.5-.4-1.3-.5-1.9-.5-1.6,0-3.2.6-3.3,2.4h-4c0-1.5.7-3,1.9-4,1.2-.9,2.7-1.4,4.2-1.5,2.9-.2,6.2.5,7.3,3.4.4,1.1.5,2.3.5,3.4v6.4c0,.7.5,1.3,1.3,1,0,0,0,0,.1,0v3.1h0ZM149.5,27.2l-4.3.3c-1.1,0-2.3.7-2.5,2,0,1.3.8,2.2,2.1,2.4,1.1.1,2.5-.2,3.4-.9.9-.7,1.3-1.8,1.3-3v-.8h0ZM163.9,34.8c-1.6.3-3.3.4-4.6-.5-1.4-.8-1.8-2.4-1.8-3.9V11.1h4.1v18.7c0,.5,0,1.2.6,1.5.5.3,1.2.1,1.7.1,0,0,0,3.4,0,3.4Z"
+          />
+          <rect id="Bar" x="0" width="163.9" height="4.2" />
+        </g>
+        <g id="Name">
+          <path
+            d="M15.2,47.2v1.7H1.8v8.9h11.8v1.7H1.8v9.9h13.5v1.7H0v-23.8h15.2Z"
+          />
+          <path
+            d="M19.4,54.2h1.5v3.2c1-2.3,3.6-3.7,6-3.7,3.8,0,6,2.6,6,6.3v11h-1.7v-10.8c0-2.8-1.4-4.8-4.4-4.8s-5.7,3.1-5.7,6.8v8.8h-1.7v-16.8h0Z"
+          />
+          <path
+            d="M39.5,69.1c-1.4-1.6-2.2-3.9-2.2-6.5s.3-4.2,1.7-6c1.4-1.9,3.4-3,5.9-3,4.7,0,7.4,3.7,7.4,8.1s0,.6,0,1.1h-13.3c0,3.7,2.2,6.8,6,6.8s4.7-1.7,5.1-3.9h1.7c-.5,3.1-3.5,5.5-6.9,5.5s-4.4-1-5.5-2.4h0ZM50.5,61.4c0-3.2-2-6.2-5.7-6.2s-5.7,2.9-5.8,6.2h11.5,0Z"
+          />
+          <path
+            d="M56.8,54.2h1.5v3.4c.9-2.4,3.2-3.6,5.6-3.6s1.1,0,1.6.1v1.6c-.5-.1-1.1-.1-1.6-.1-3.9,0-5.3,3.2-5.3,6.9v8.4h-1.7v-16.8h0Z"
+          />
+          <path
+            d="M67.3,73.3c0-1.7,1.1-3.3,3-3.7-1.3-.2-2.2-1.4-2.2-2.6s1-2.5,2.4-3c-1.2-1-1.9-2.5-1.9-4.4,0-3.6,2.9-5.9,6.3-5.9s2.9.4,4,1.2c.4-1.5,1.8-2.3,3.3-2.3s.4,0,.6,0v1.4h-.6c-1.2,0-2.1.6-2.3,1.8.8,1,1.3,2.2,1.3,3.8,0,3.6-2.9,5.8-6.4,5.8s-2.5-.2-3.4-.8c-.9.3-1.7,1-1.7,2,0,1.5,1.7,1.7,3,1.7h3.4c2.6,0,4.1.4,5.3,1.5.8.8,1.3,1.6,1.3,3.1,0,3.7-3.9,5.1-7.9,5.1s-7.4-1.4-7.4-4.8h0ZM80.9,73c0-2.4-2.2-3.1-4.8-3.1h-4.5c-1.5.3-2.8,1.2-2.8,3.2s2.9,3.4,5.9,3.4,6.2-.8,6.2-3.5h0ZM79.3,59.6c0-2.8-2.1-4.4-4.7-4.4s-4.6,1.6-4.6,4.4,2,4.3,4.6,4.3,4.7-1.5,4.7-4.3Z"
+          />
+          <path
+            d="M86.2,77.5v-1.6c.6.3,1.3.5,2.2.5,1.6,0,2.6-.7,3.4-2.7l1-2.5-6.8-17h1.8l5.8,14.9,5.6-14.9h1.8l-7.7,20.1c-1,2.7-2.5,3.7-4.8,3.7s-2-.3-2.3-.5h0Z"
+          />
+        </g>
+      </svg>
       <!-- Dow Jones Indices -->
       <svg
         id="spg_dow_jones_indices"
