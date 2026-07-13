@@ -944,6 +944,9 @@
       // Minimum font size
       const minimum_font_size = 16; //22;
 
+      // Bold Font Weight
+      const bold_font_weight = 700;
+
       // User defined settings
       let canvas_content = {};
       let userDefinedAspectRatio;
@@ -1021,9 +1024,10 @@
 
       // Portal content
       canvas_content.portal_color_overlay = true; // Default to ON
-      canvas_content.portal_overlay_value = 0.4;
-      canvas_content.portal_overlay_opacity = [0.3, 0.4, 0.5, 0.6, 0.7, 0.8]; // Default to ON
-      canvas_content.portal_overlay_slider = 3;
+      canvas_content.portal_overlay_value = 0.2; //0.4
+      //canvas_content.portal_overlay_opacity = [0.3, 0.4, 0.5, 0.6, 0.7, 0.8]; // Default to ON
+      canvas_content.portal_overlay_opacity = [0.2, 0.3, 0.4, 0.5]; // Default to ON
+      canvas_content.portal_overlay_slider = 0; //3
 
       canvas_content.portal_image_flip = [false, false];
       canvas_content.portal_size_percent = 50;
@@ -3570,7 +3574,7 @@
           "#ffffff",
           0,
           1.05,
-          700,
+          bold_font_weight,
           false,
         );
 
@@ -3586,7 +3590,7 @@
             "#ffffff",
             0,
             1.05,
-            700,
+            bold_font_weight,
             false,
           );
         }
@@ -3622,7 +3626,7 @@
           "#ffffff",
           0,
           1.05,
-          700,
+          bold_font_weight,
           true,
         );
 
@@ -4411,7 +4415,7 @@
             canvas_content.color_font,
             0,
             1.05,
-            700,
+            bold_font_weight,
             true,
           );
 
@@ -4450,7 +4454,7 @@
             canvas_content.color_font,
             0,
             headline_lineheight,
-            700,
+            bold_font_weight,
             false,
           );
           // Shrink font size
@@ -4503,7 +4507,7 @@
           canvas_content.color_font,
           0,
           headline_lineheight,
-          700,
+          bold_font_weight,
           false,
         );
 
@@ -4645,7 +4649,7 @@
           canvas_content.color_font,
           0,
           headline_lineheight,
-          700,
+          bold_font_weight,
           false, // Render text
         );
 
@@ -4850,7 +4854,7 @@
           canvas_content.color_font,
           0,
           headline_lineheight,
-          700,
+          bold_font_weight,
           true, // Render text
         );
 
