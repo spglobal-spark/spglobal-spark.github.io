@@ -1024,9 +1024,9 @@
 
       // Portal content
       canvas_content.portal_color_overlay = true; // Default to ON
-      canvas_content.portal_overlay_value = 0.2; //0.4
+      canvas_content.portal_overlay_value = 0.0; // 0.2 //0.4
       //canvas_content.portal_overlay_opacity = [0.3, 0.4, 0.5, 0.6, 0.7, 0.8]; // Default to ON
-      canvas_content.portal_overlay_opacity = [0.2, 0.3, 0.4, 0.5]; // Default to ON
+      canvas_content.portal_overlay_opacity = [0.0, 0.3, 0.4, 0.5]; // Default to ON
       canvas_content.portal_overlay_slider = 0; //3
 
       canvas_content.portal_image_flip = [false, false];
@@ -2966,6 +2966,7 @@
           }
           // Overlay
           if (is_fullscreen_image()) {
+          /*
             add_toggle_switch_with_label(
               "Show Overlay",
               canvas_content.portal_color_overlay,
@@ -2978,6 +2979,7 @@
                 "portal_opacity_slider",
               );
             }
+            */
           }
         }
         if (buttonName === "event_button") {
