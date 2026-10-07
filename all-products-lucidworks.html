@@ -173,31 +173,35 @@
     const itemsPerPage = 20;
 
     // 1. Fetch and Parse the RSS Feed
-    async function initFeed() {
-        try {
-            const response = await fetch(CORS_PROXY + encodeURIComponent(RSS_URL));
-            if (!response.ok) throw new Error("Network response was not ok");
-            const xmlText = await response.text();
-            
-            const parser = new DOMParser();
-            const xmlDoc = parser.parseFromString(xmlText, "text/xml");
-            const items = xmlDoc.querySelectorAll("item");
+async function initFeed() {
+    // We use rss2json to bypass CORS and parse the XML into JSON automatically
+    const rss2jsonUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(RSS_URL)}`;
+    
+    try {
+        const response = await fetch(rss2jsonUrl);
+        if (!response.ok) throw new Error("Network response was not ok");
+        const data = await response.json();
+        
+        if (data.status !== "ok") throw new Error("Failed to parse feed");
 
-            allItems = Array.from(items).map(item => ({
-                title: item.querySelector("title")?.textContent || 'Untitled',
-                link: item.querySelector("link")?.textContent || '#',
-                description: item.querySelector("description")?.textContent || 'No description available.'
-            }));
+        // Map the rss2json format to our app's format
+        allItems = data.items.map(item => ({
+            title: item.title || 'Untitled',
+            link: item.link || '#',
+            // rss2json sometimes puts the text in content or description depending on the feed
+            description: item.description || item.content || 'No description available.'
+        }));
 
-            document.getElementById('counter').innerText = `${allItems.length} Products Available`;
-            renderPage(1);
+        document.getElementById('counter').innerText = `${allItems.length} Products Available`;
+        renderPage(1);
 
-        } catch (error) {
-            console.error("Error fetching feed:", error);
-            document.getElementById('counter').innerText = "Failed to load feed.";
-            document.getElementById('grid').innerHTML = "<p>Error loading the RSS feed. Please check the console for details.</p>";
-        }
+    } catch (error) {
+        console.error("Error fetching feed:", error);
+        document.getElementById('counter').innerText = "Failed to load feed.";
+        document.getElementById('grid').innerHTML = "<p>Error loading the RSS feed.</p>";
     }
+}
+
 
     // 2. Render Cards for the Current Page
     function renderPage(page) {
