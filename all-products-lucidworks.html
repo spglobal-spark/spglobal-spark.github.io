@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S&P Global Product Feed</title>
+    <style>
+        :root {
+            --primary-color: #004488;
+            --background: #f4f7f9;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-muted: #666666;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--background);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e0e4e8;
+        }
+
+        .counter {
+            font-size: 1.1em;
+            font-weight: 600;
+            background: var(--primary-color);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+
+        .card-img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            background: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 0.9em;
+        }
+
+        .skeleton {
+            animation: pulse 1.5s infinite;
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+        }
+
+        @keyframes pulse {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .card-content {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-title {
+            font-size: 1.1em;
+            margin: 0 0 10px 0;
+            line-height: 1.3;
+            color: var(--primary-color);
+        }
+
+        .card-desc {
+            font-size: 0.9em;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin: 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 40px;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .page-btn {
+            padding: 8px 14px;
+            border: 1px solid #d1d5db;
+            background: white;
+            cursor: pointer;
+            border-radius: 6px;
+            font-weight: 500;
+            color: var(--text-main);
+            transition: all 0.2s;
+        }
+
+        .page-btn:hover:not(:disabled) {
+            background: #f3f4f6;
+        }
+
+        .page-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Product Solutions</h1>
+        <div class="counter" id="counter">Loading...</div>
+    </div>
+    
+    <div id="grid" class="grid"></div>
+    <div id="pagination" class="pagination"></div>
+</div>
+
+<script>
+    const RSS_URL = 'https://www.spglobal.com/en/feeds/all-solutions-rss-feed';
+    // Using a CORS proxy to bypass browser cross-origin blocks for both the XML feed and HTML scraping for OG images.
+    const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
+    
+    let allItems = [];
+    let currentPage = 1;
+    const itemsPerPage = 20;
+
+    // 1. Fetch and Parse the RSS Feed
+    async function initFeed() {
+        try {
+            const response = await fetch(CORS_PROXY + encodeURIComponent(RSS_URL));
+            if (!response.ok) throw new Error("Network response was not ok");
+            const xmlText = await response.text();
+            
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(xmlText, "text/xml");
+            const items = xmlDoc.querySelectorAll("item");
+
+            allItems = Array.from(items).map(item => ({
+                title: item.querySelector("title")?.textContent || 'Untitled',
+                link: item.querySelector("link")?.textContent || '#',
+                description: item.querySelector("description")?.textContent || 'No description available.'
+            }));
+
+            document.getElementById('counter').innerText = `${allItems.length} Products Available`;
+            renderPage(1);
+
+        } catch (error) {
+            console.error("Error fetching feed:", error);
+            document.getElementById('counter').innerText = "Failed to load feed.";
+            document.getElementById('grid').innerHTML = "<p>Error loading the RSS feed. Please check the console for details.</p>";
+        }
+    }
+
+    // 2. Render Cards for the Current Page
+    function renderPage(page) {
+        currentPage = page;
+        const grid = document.getElementById('grid');
+        grid.innerHTML = ''; 
+
+        const startIdx = (page - 1) * itemsPerPage;
+        const endIdx = startIdx + itemsPerPage;
+        const pageItems = allItems.slice(startIdx, endIdx);
+
+        pageItems.forEach((item, index) => {
+            const card = document.createElement('a');
+            card.href = item.link;
+            card.target = "_blank"; // Opens link in new tab
+            card.className = 'card';
+
+            const imgContainerId = `img-${startIdx + index}`;
+
+            card.innerHTML = `
+                <div id="${imgContainerId}" class="card-img skeleton"></div>
+                <div class="card-content">
+                    <h2 class="card-title">${item.title}</h2>
+                    <p class="card-desc">${item.description}</p>
+                </div>
+            `;
+            grid.appendChild(card);
+
+            // Fetch the Open Graph Image asynchronously
+            fetchOgImage(item.link, imgContainerId);
+        });
+
+        renderPagination();
+    }
+
+    // 3. Extract Open Graph Image from Target Links
+    async function fetchOgImage(url, imgContainerId) {
+        const imgContainer = document.getElementById(imgContainerId);
+        if (!imgContainer) return;
+
+        try {
+            const response = await fetch(CORS_PROXY + encodeURIComponent(url));
+            const htmlText = await response.text();
+            
+            // Regex to find the og:image meta tag content
+            const match = htmlText.match(/<meta[^>]*property=["']og:image["'][^>]*content=["']([^"']+)["'][^>]*>/i)
+                       || htmlText.match(/<meta[^>]*content=["']([^"']+)["'][^>]*property=["']og:image["'][^>]*>/i);
+
+            if (match && match[1]) {
+                const img = document.createElement('img');
+                img.src = match[1];
+                img.className = 'card-img';
+                img.style.display = 'none';
+                
+                img.onload = () => {
+                    imgContainer.replaceWith(img);
+                    img.style.display = 'block';
+                };
+                img.onerror = () => showPlaceholder(imgContainer);
+            } else {
+                showPlaceholder(imgContainer);
+            }
+        } catch (error) {
+            showPlaceholder(imgContainer);
+        }
+    }
+
+    function showPlaceholder(element) {
+        element.classList.remove('skeleton');
+        element.innerHTML = '<span>No Image Available</span>';
+    }
+
+    // 4. Handle Pagination Logic
+    function renderPagination() {
+        const pagination = document.getElementById('pagination');
+        pagination.innerHTML = '';
+        const totalPages = Math.ceil(allItems.length / itemsPerPage);
+
+        if (totalPages <= 1) return;
+
+        // Previous Button
+        const prevBtn = document.createElement('button');
+        prevBtn.innerText = 'Prev';
+        prevBtn.className = 'page-btn';
+        prevBtn.disabled = currentPage === 1;
+        prevBtn.onclick = () => renderPage(currentPage - 1);
+        pagination.appendChild(prevBtn);
+
+        // Page Numbers
+        for (let i = 1; i <= totalPages; i++) {
+            const btn = document.createElement('button');
+            btn.innerText = i;
+            btn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+            btn.onclick = () => renderPage(i);
+            pagination.appendChild(btn);
+        }
+
+        // Next Button
+        const nextBtn = document.createElement('button');
+        nextBtn.innerText = 'Next';
+        nextBtn.className = 'page-btn';
+        nextBtn.disabled = currentPage === totalPages;
+        nextBtn.onclick = () => renderPage(currentPage + 1);
+        pagination.appendChild(nextBtn);
+    }
+
+    // Boot up the application
+    initFeed();
+
+</script>
+</body>
+</html>
