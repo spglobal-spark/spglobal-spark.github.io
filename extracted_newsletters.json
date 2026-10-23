@@ -1,0 +1,890 @@
+[
+  {
+    "name": "Agriculture",
+    "description": null,
+    "category": "Agriculture",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Beverages",
+    "description": null,
+    "category": "Agriculture",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Biofuels",
+    "description": null,
+    "category": "Agriculture",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Cement",
+    "description": null,
+    "category": "Agriculture",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Cocoa",
+    "description": null,
+    "category": "Agriculture",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Coffee",
+    "description": null,
+    "category": "Agriculture",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Dairy",
+    "description": null,
+    "category": "Agriculture",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Dried Distillers Grains (DDG)",
+    "description": null,
+    "category": "Agriculture",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Food",
+    "description": null,
+    "category": "Agriculture",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Grains",
+    "description": null,
+    "category": "Agriculture",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Livestock",
+    "description": null,
+    "category": "Agriculture",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Meat",
+    "description": null,
+    "category": "Agriculture",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Non-Sugar Sweeteners",
+    "description": null,
+    "category": "Agriculture",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Oilseeds",
+    "description": null,
+    "category": "Agriculture",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Pesticides",
+    "description": null,
+    "category": "Agriculture",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Rice",
+    "description": null,
+    "category": "Agriculture",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Sugar",
+    "description": null,
+    "category": "Agriculture",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Sustainability",
+    "description": null,
+    "category": "Agriculture",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Vegetable Oils",
+    "description": null,
+    "category": "Agriculture",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Coal",
+    "description": null,
+    "category": "Coal",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Metallurgical Coal",
+    "description": null,
+    "category": "Coal",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Thermal Coal",
+    "description": null,
+    "category": "Coal",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Electric Power",
+    "description": null,
+    "category": "Electric Power",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Nuclear",
+    "description": null,
+    "category": "Electric Power",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Ferrous",
+    "description": null,
+    "category": "Ferrous",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Coking Coal",
+    "description": null,
+    "category": "Ferrous",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Ferroalloys",
+    "description": null,
+    "category": "Ferrous",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Ferrous Scrap",
+    "description": null,
+    "category": "Ferrous",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Finished Steel",
+    "description": null,
+    "category": "Ferrous",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Iron Ore",
+    "description": null,
+    "category": "Ferrous",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Nonferrous",
+    "description": null,
+    "category": "Ferrous",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Nonferrous",
+    "description": null,
+    "category": "Nonferrous",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Aluminum",
+    "description": null,
+    "category": "Nonferrous",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Copper",
+    "description": null,
+    "category": "Nonferrous",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Ferrous",
+    "description": null,
+    "category": "Nonferrous",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Other Nonferrous Metals",
+    "description": null,
+    "category": "Nonferrous",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Precious Metals",
+    "description": null,
+    "category": "Nonferrous",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Refined Products",
+    "description": null,
+    "category": "Refined Products",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Diesel_Gasoil",
+    "description": null,
+    "category": "Refined Products",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Jet Fuel",
+    "description": null,
+    "category": "Refined Products",
+    "business_line": "Energy"
+  },
+  {
+    "name": "LPG",
+    "description": null,
+    "category": "Refined Products",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Naphtha",
+    "description": null,
+    "category": "Refined Products",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Gasoline",
+    "description": null,
+    "category": "Refined Products",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Fuel Oil",
+    "description": null,
+    "category": "Refined Products",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Refining",
+    "description": null,
+    "category": "Refined Products",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Chemicals",
+    "description": null,
+    "category": "Chemicals",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Aromatics",
+    "description": null,
+    "category": "Chemicals",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Olefins",
+    "description": null,
+    "category": "Chemicals",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Polymers",
+    "description": null,
+    "category": "Chemicals",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Solvents and Intermediates",
+    "description": null,
+    "category": "Chemicals",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Shipping",
+    "description": null,
+    "category": "Shipping",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Bunker Fuel",
+    "description": null,
+    "category": "Shipping",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Containers",
+    "description": null,
+    "category": "Shipping",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Dry Freight",
+    "description": null,
+    "category": "Shipping",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Wet Freight",
+    "description": null,
+    "category": "Shipping",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Energy Transition",
+    "description": null,
+    "category": "Energy Transition",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Carbon",
+    "description": null,
+    "category": "Energy Transition",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Emissions",
+    "description": null,
+    "category": "Energy Transition",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Hydrogen",
+    "description": null,
+    "category": "Energy Transition",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Renewables",
+    "description": null,
+    "category": "Energy Transition",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Upstream",
+    "description": null,
+    "category": "Upstream",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Data",
+    "description": null,
+    "category": "Upstream",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Basins",
+    "description": null,
+    "category": "Upstream",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Data Management & Delivery",
+    "description": null,
+    "category": "Upstream",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Research & Analysis",
+    "description": null,
+    "category": "Upstream",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Market Dynamics/Trends",
+    "description": null,
+    "category": "Upstream",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Geotechnology",
+    "description": null,
+    "category": "Upstream",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Subsurface Interpretation",
+    "description": null,
+    "category": "Upstream",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Engineering Services",
+    "description": null,
+    "category": "Upstream",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Reservoir Management & Production",
+    "description": null,
+    "category": "Upstream",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Analytics",
+    "description": null,
+    "category": "Upstream",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Artificial Intelligence",
+    "description": null,
+    "category": "Upstream",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Asset Valuation",
+    "description": null,
+    "category": "Upstream",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Mergers/Acquisitions",
+    "description": null,
+    "category": "Upstream",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Exploration & Production (E&P)",
+    "description": null,
+    "category": "Upstream",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Infrastructure",
+    "description": null,
+    "category": "Upstream",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Oil & Gas Benchmarking",
+    "description": null,
+    "category": "Upstream",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Offshore Rigs",
+    "description": null,
+    "category": "Upstream",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Above-Ground Risk",
+    "description": null,
+    "category": "Upstream",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Project Planning",
+    "description": null,
+    "category": "Upstream",
+    "business_line": "Energy"
+  },
+  {
+    "name": "GHG Reduction Management",
+    "description": null,
+    "category": "Upstream",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Emissions",
+    "description": null,
+    "category": "Upstream",
+    "business_line": "Energy"
+  },
+  {
+    "name": "CCUS",
+    "description": null,
+    "category": "Upstream",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Supply/Value Chain",
+    "description": null,
+    "category": "Upstream",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Crude Oil",
+    "description": null,
+    "category": "Crude Oil",
+    "business_line": "Energy"
+  },
+  {
+    "name": "LNG",
+    "description": null,
+    "category": "LNG",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Natural Gas",
+    "description": null,
+    "category": "Natural Gas",
+    "business_line": "Energy"
+  },
+  {
+    "name": "NGLs",
+    "description": null,
+    "category": "NGLs",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Fertilizers",
+    "description": null,
+    "category": "Fertilizers",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Water",
+    "description": null,
+    "category": "Water",
+    "business_line": "Energy"
+  },
+  {
+    "name": "Corporate Actions and Securities Processing Newsletter (biannual)",
+    "description": null,
+    "category": "Credit, Risk, & Regulation",
+    "business_line": "Market Intelligence"
+  },
+  {
+    "name": "Sustainability InFocus (monthly)",
+    "description": null,
+    "category": "Credit, Risk, & Regulation",
+    "business_line": "Market Intelligence"
+  },
+  {
+    "name": "Buyside Newsletter (monthly)",
+    "description": null,
+    "category": "Credit, Risk, & Regulation",
+    "business_line": "Market Intelligence"
+  },
+  {
+    "name": "Cappitech Newsletter - Regulatory Reporting (quarterly)",
+    "description": null,
+    "category": "Credit, Risk, & Regulation",
+    "business_line": "Market Intelligence"
+  },
+  {
+    "name": "Policy Intel (monthly)",
+    "description": null,
+    "category": "Credit, Risk, & Regulation",
+    "business_line": "Market Intelligence"
+  },
+  {
+    "name": "Banking Essentials - AMER (biweekly)",
+    "description": null,
+    "category": "Financial Services",
+    "business_line": "Market Intelligence"
+  },
+  {
+    "name": "Private Markets 360 newsletter",
+    "description": null,
+    "category": "Financial Services",
+    "business_line": "Market Intelligence"
+  },
+  {
+    "name": "Banking Essentials - EMEA (biweekly)",
+    "description": null,
+    "category": "Financial Services",
+    "business_line": "Market Intelligence"
+  },
+  {
+    "name": "Fintech Intelligence (monthly)",
+    "description": null,
+    "category": "Financial Services",
+    "business_line": "Market Intelligence"
+  },
+  {
+    "name": "Insurance IN/sights (monthly)",
+    "description": null,
+    "category": "Financial Services",
+    "business_line": "Market Intelligence"
+  },
+  {
+    "name": "M&A In Focus Newsletter (monthly)",
+    "description": null,
+    "category": "Financial Services",
+    "business_line": "Market Intelligence"
+  },
+  {
+    "name": "Investment Banking Essentials - AMER (biweekly)",
+    "description": null,
+    "category": "Financial Services",
+    "business_line": "Market Intelligence"
+  },
+  {
+    "name": "Investment Banking Essentials - EMEA (biweekly)",
+    "description": null,
+    "category": "Financial Services",
+    "business_line": "Market Intelligence"
+  },
+  {
+    "name": "Quantitative Research (ad-hoc)",
+    "description": null,
+    "category": "Financial Services",
+    "business_line": "Market Intelligence"
+  },
+  {
+    "name": "Top 5 Aftermarket Research Reports (monthly)",
+    "description": null,
+    "category": "Financial Services",
+    "business_line": "Market Intelligence"
+  },
+  {
+    "name": "Pricing Valuations & Reference Data (PVR) Newsletter (quarterly)",
+    "description": null,
+    "category": "Financial Services",
+    "business_line": "Market Intelligence"
+  },
+  {
+    "name": "Visible Alpha",
+    "description": null,
+    "category": "Financial Services",
+    "business_line": "Market Intelligence"
+  },
+  {
+    "name": "Essential Metals & Mining Newsletter (monthly)",
+    "description": null,
+    "category": "Commodities, Pricing, & Procurement",
+    "business_line": "Market Intelligence"
+  },
+  {
+    "name": "Pricing Pulse Commodity Price Updates (weekly)",
+    "description": null,
+    "category": "Commodities, Pricing, & Procurement",
+    "business_line": "Market Intelligence"
+  },
+  {
+    "name": "Expand Your Perspective (monthly)",
+    "description": null,
+    "category": "Cross Segment",
+    "business_line": "Market Intelligence"
+  },
+  {
+    "name": "Latin American Highlights - Spanish (bimonthly)",
+    "description": null,
+    "category": "Cross Segment",
+    "business_line": "Market Intelligence"
+  },
+  {
+    "name": "Latin American Highlights - Portuguese (bimonthly)",
+    "description": null,
+    "category": "Cross Segment",
+    "business_line": "Market Intelligence"
+  },
+  {
+    "name": "Journal of Commerce (JOC) (daily)",
+    "description": null,
+    "category": "Cross Segment",
+    "business_line": "Market Intelligence"
+  },
+  {
+    "name": "Supply Chain Essentials (monthly)",
+    "description": null,
+    "category": "Maritime, Trade, & Supply Chain",
+    "business_line": "Market Intelligence"
+  },
+  {
+    "name": "Generative AI Digest (monthly)",
+    "description": null,
+    "category": "Telecoms, Media, & Technology",
+    "business_line": "Market Intelligence"
+  },
+  {
+    "name": "TMT News E-Bulletin (monthly)",
+    "description": null,
+    "category": "Telecoms, Media, & Technology",
+    "business_line": "Market Intelligence"
+  },
+  {
+    "name": "PMI Week Ahead Economic Review (weekly)",
+    "description": null,
+    "category": "Economics",
+    "business_line": "Market Intelligence"
+  },
+  {
+    "name": "Economies In Flux Newsletter",
+    "description": null,
+    "category": "Economics",
+    "business_line": "Market Intelligence"
+  },
+  {
+    "name": "Africa in focus",
+    "description": "Our monthly selection of the best research articles published recently on Africa, to keep you on top of trends on the continent and other Emerging Markets.",
+    "category": null,
+    "business_line": "Ratings"
+  },
+  {
+    "name": "Asia Corporate Credit This Week",
+    "description": "Our Asia Corporate newsletter provides the latest rating and research updates and trend analysis.",
+    "category": null,
+    "business_line": "Ratings"
+  },
+  {
+    "name": "Australia & New Zealand Newsletter",
+    "description": "Our monthly newsletter aims to bring you a consolidated view of the top insights in Australia and New Zealand. To view these, simply register or log in when you are directed to the article page.",
+    "category": null,
+    "business_line": "Ratings"
+  },
+  {
+    "name": "Brazil Ratings & Commentaries",
+    "description": "Brazil's monthly newsletter containing our latest publications, podcasts, full analyses and upcoming events in local language.",
+    "category": null,
+    "business_line": "Ratings"
+  },
+  {
+    "name": "CLO Sector Intelligence",
+    "description": "Monthly Newsletter providing an update on the latest U.S. BSL index.",
+    "category": null,
+    "business_line": "Ratings"
+  },
+  {
+    "name": "Colombia Ratings & Commentaries",
+    "description": "BRC Ratings' monthly newsletter containing our latest publications, full analyses, ratings actions and upcoming events in local language.",
+    "category": null,
+    "business_line": "Ratings"
+  },
+  {
+    "name": "Credit Focus Digest",
+    "description": "Our selection of the best thematic research articles published recently by S&P Global Ratings, to keep you on top of material trends in the credit markets.",
+    "category": null,
+    "business_line": "Ratings"
+  },
+  {
+    "name": "EMEA Leveraged Finance Newsletter",
+    "description": "Our monthly Leveraged Finance newsletter providing an update on speculative-grade trends across EMEA.",
+    "category": null,
+    "business_line": "Ratings"
+  },
+  {
+    "name": "EMEA Infrastructure and Project Finance",
+    "description": "Monthly newsletter including our latest publications, research and rating updates from our EMEA Infrastructure and Project Finance sector.",
+    "category": null,
+    "business_line": "Ratings"
+  },
+  {
+    "name": "Emerging Markets Radar",
+    "description": "Leveraging our expansive credit coverage, EM Radar spotlights S&P Global Ratings’ authoritative, forward-looking insights on the largest and most relevant emerging markets across the globe in a monthly newsletter.",
+    "category": null,
+    "business_line": "Ratings"
+  },
+  {
+    "name": "Funds MMF Trends",
+    "description": "A curated monthly summary of our Fund ratings and research from across the globe.",
+    "category": null,
+    "business_line": "Ratings"
+  },
+  {
+    "name": "GCC in Focus",
+    "description": "Our bi-monthly newsletter providing the latest research, rating actions and events across the Middle East.",
+    "category": null,
+    "business_line": "Ratings"
+  },
+  {
+    "name": "Global Financial Institutions",
+    "description": "Latest articles and rating actions from the Global Financial Institutions team.",
+    "category": null,
+    "business_line": "Ratings"
+  },
+  {
+    "name": "Global Insurance Newsletter",
+    "description": "Please find below the latest articles and rating actions from the Global Insurance team.",
+    "category": null,
+    "business_line": "Ratings"
+  },
+  {
+    "name": "Global Sovereigns Newsletter",
+    "description": "Latest articles and rating actions from the Global Sovereign team.",
+    "category": null,
+    "business_line": "Ratings"
+  },
+  {
+    "name": "Global Sustainable Finance Newsletter",
+    "description": "Monthly newsletter containing our latest publications, including research, commentary and Second Party Opinions, as well as relevant Sustainability events.",
+    "category": null,
+    "business_line": "Ratings"
+  },
+  {
+    "name": "International Public Finance Newsletter",
+    "description": "Latest articles and rating actions from the Global IPF team.",
+    "category": null,
+    "business_line": "Ratings"
+  },
+  {
+    "name": "Latam Highlights",
+    "description": "Latin America's monthly newsletter containing our latest publications, podcasts, full analyses and upcoming events in local language.",
+    "category": null,
+    "business_line": "Ratings"
+  },
+  {
+    "name": "Latin America Weekly Spotlight",
+    "description": "Weekly summary of Latin America global scale ratings actions and upcoming events.",
+    "category": null,
+    "business_line": "Ratings"
+  },
+  {
+    "name": "Leveraged Finance Newsletter - Sector Intelligence",
+    "description": "Our monthly Leveraged Finance newsletter provides the latest rating updates, trend analysis and forecasts.",
+    "category": null,
+    "business_line": "Ratings"
+  },
+  {
+    "name": "Mexico Ratings & Commentaries",
+    "description": "Mexico's monthly newsletter containing our latest publications, full analyses and upcoming events in local language.",
+    "category": null,
+    "business_line": "Ratings"
+  },
+  {
+    "name": "Rating Performance Insights",
+    "description": "Our quarterly Ratings Performance Insights data dashboard provides our view on ratings performance and credit trends to watch.",
+    "category": null,
+    "business_line": "Ratings"
+  },
+  {
+    "name": "Structured Finance Credit Update",
+    "description": "Weekly Newsletter providing a Global Structured Finance update, three times a week (Monday, Tuesday & Wednesday).",
+    "category": null,
+    "business_line": "Ratings"
+  },
+  {
+    "name": "Structured Finance EMEA Newsletter",
+    "description": "The Structured Finance EMEA Newsletter provides a weekly summary of our latest publications, podcasts, new issues and presales, along with the latest ratings actions and upcoming events within Europe.",
+    "category": null,
+    "business_line": "Ratings"
+  },
+  {
+    "name": "Structured Finance in Asia Pacific",
+    "description": "Monthly newsletter containing our latest publications, podcasts, new issues/presales, ratings actions and upcoming events relating to Structured Finance in Asia-Pacific.",
+    "category": null,
+    "business_line": "Ratings"
+  },
+  {
+    "name": "This Week In Credit & This Month In Credit",
+    "description": "This Week In Credit is a data-driven research snapshot that delivers forward-looking, actionable insights on market-moving credit trends every Monday. This Month In Credit provides a longer-term perspective on current ratings trends on a monthly basis.",
+    "category": null,
+    "business_line": "Ratings"
+  },
+  {
+    "name": "U.S. CMBS Delinquency Rate Publication",
+    "description": "Monthly Newsletter providing an update on the latest U.S. CMBS delinquency rate",
+    "category": null,
+    "business_line": "Ratings"
+  },
+  {
+    "name": "U.S. Non-Traditional ABS",
+    "description": "Quarterly Newsletter providing the latest issuance update for the different Esoteric ABS sectors.",
+    "category": null,
+    "business_line": "Ratings"
+  },
+  {
+    "name": "U.S. Public Finance Newsletter",
+    "description": "A biweekly newsletter highlighting published commentaries and research as well as criteria and ratings lists in the U.S. Public Finance sector. Also includes upcoming webinars and events.",
+    "category": null,
+    "business_line": "Ratings"
+  },
+  {
+    "name": "Weekly EMEA Structured Finance Newsletter",
+    "description": "Weekly summary of latest publications, podcasts, new issues/presales, ratings actions and upcoming events.",
+    "category": null,
+    "business_line": "Ratings"
+  }
+]

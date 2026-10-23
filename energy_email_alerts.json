@@ -1,0 +1,154 @@
+[
+  {
+    "section_title": "New & Discontinued Price Symbols",
+    "description": "New and Discontinued Price Symbol Alerts are issued when we launch new assessments and announce discontinued assessments.",
+    "alerts": [
+      {
+        "alert_name": "Agriculture",
+        "group": null
+      },
+      {
+        "alert_name": "Natural Gas",
+        "group": null
+      },
+      {
+        "alert_name": "Crude Oil",
+        "group": null
+      },
+      {
+        "alert_name": "Chemicals",
+        "group": null
+      },
+      {
+        "alert_name": "Metals",
+        "group": null
+      },
+      {
+        "alert_name": "Shipping",
+        "group": null
+      },
+      {
+        "alert_name": "LNG",
+        "group": null
+      },
+      {
+        "alert_name": "Refined Products",
+        "group": null
+      },
+      {
+        "alert_name": "Energy Transition",
+        "group": null
+      },
+      {
+        "alert_name": "Fertilizers",
+        "group": null
+      }
+    ]
+  },
+  {
+    "section_title": "S&P Global Energy Subscriber Notes",
+    "description": "Subscriber Notes inform you of upcoming changes related to the markets that we report on, as well as requests for comment on new assessments, and announcements that assessments will be discontinued. Subscriber Notes can be received by Commodity Region, and Note Type.",
+    "alerts": [
+      {
+        "alert_name": "Agriculture",
+        "group": "Commodity of interest (You must select at least one value):"
+      },
+      {
+        "alert_name": "Coal",
+        "group": "Commodity of interest (You must select at least one value):"
+      },
+      {
+        "alert_name": "Natural Gas",
+        "group": "Commodity of interest (You must select at least one value):"
+      },
+      {
+        "alert_name": "Crude Oil",
+        "group": "Commodity of interest (You must select at least one value):"
+      },
+      {
+        "alert_name": "Chemicals",
+        "group": "Commodity of interest (You must select at least one value):"
+      },
+      {
+        "alert_name": "Power",
+        "group": "Commodity of interest (You must select at least one value):"
+      },
+      {
+        "alert_name": "Metals",
+        "group": "Commodity of interest (You must select at least one value):"
+      },
+      {
+        "alert_name": "Shipping",
+        "group": "Commodity of interest (You must select at least one value):"
+      },
+      {
+        "alert_name": "Refined Products",
+        "group": "Commodity of interest (You must select at least one value):"
+      },
+      {
+        "alert_name": "Energy Transition",
+        "group": "Commodity of interest (You must select at least one value):"
+      },
+      {
+        "alert_name": "Fertilizers",
+        "group": "Commodity of interest (You must select at least one value):"
+      },
+      {
+        "alert_name": "LNG",
+        "group": "Commodity of interest (You must select at least one value):"
+      },
+      {
+        "alert_name": "Contacts",
+        "group": "Subscriber Note Type (You must select at least one value):"
+      },
+      {
+        "alert_name": "Holiday Notice",
+        "group": "Subscriber Note Type (You must select at least one value):"
+      },
+      {
+        "alert_name": "Methodology Note",
+        "group": "Subscriber Note Type (You must select at least one value):"
+      },
+      {
+        "alert_name": "MOC Participation Request",
+        "group": "Subscriber Note Type (You must select at least one value):"
+      },
+      {
+        "alert_name": "Data Correction",
+        "group": "Subscriber Note Type (You must select at least one value):"
+      },
+      {
+        "alert_name": "Product Format Change",
+        "group": "Subscriber Note Type (You must select at least one value):"
+      },
+      {
+        "alert_name": "Upcoming Events/Survey",
+        "group": "Subscriber Note Type (You must select at least one value):"
+      },
+      {
+        "alert_name": "Market Notification",
+        "group": "Subscriber Note Type (You must select at least one value):"
+      },
+      {
+        "alert_name": "Other",
+        "group": "Subscriber Note Type (You must select at least one value):"
+      },
+      {
+        "alert_name": "Americas",
+        "group": "Regions (You must select at least one value):"
+      },
+      {
+        "alert_name": "Asia",
+        "group": "Regions (You must select at least one value):"
+      },
+      {
+        "alert_name": "Europe-Middle East-Africa",
+        "group": "Regions (You must select at least one value):"
+      },
+      {
+        "alert_name": "Global",
+        "group": "Regions (You must select at least one value):"
+      }
+    ]
+  }
+]
